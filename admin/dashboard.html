@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emma CMS - Complete Website Control</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="admin-styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <div class="login-logo">Emma CMS</div>
+            <div class="login-subtitle">Complete Website Control Panel</div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="login-btn">Login to Dashboard</button>
+                <div id="errorMessage" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">Emma CMS</div>
+            <div class="user-menu">
+                <div class="user-avatar">A</div>
+                <span>admin</span>
+                <button onclick="logout()" class="btn btn-secondary">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <a href="#" class="nav-item active" onclick="showSection('homepage')">
+                    <i class="fas fa-home"></i>
+                    Homepage
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('banners')">
+                    <i class="fas fa-image"></i>
+                    Banners
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('platform')">
+                    <i class="fas fa-cube"></i>
+                    Platform
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('usecases')">
+                    <i class="fas fa-lightbulb"></i>
+                    Use Cases
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('marketplace')">
+                    <i class="fas fa-store"></i>
+                    Market Place
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('pricing')">
+                    <i class="fas fa-dollar-sign"></i>
+                    Pricing
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('resources')">
+                    <i class="fas fa-book"></i>
+                    Resources
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('documentation')">
+                    <i class="fas fa-file-alt"></i>
+                    Documentation
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('company')">
+                    <i class="fas fa-building"></i>
+                    Company
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('partners')">
+                    <i class="fas fa-handshake"></i>
+                    Partners
+                </a>
+                <a href="#" class="nav-item" onclick="showSection('social')">
+                    <i class="fas fa-share-alt"></i>
+                    Address & Social Links
+                </a>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Homepage Section -->
+                <div id="homepageSection" class="content-section">
+                    <div class="page-header">
+                        <h1 class="page-title">Homepage Management</h1>
+                        <p class="page-subtitle">Control all homepage content and sections</p>
+                    </div>
+
+                    <div class="content-grid">
+                        <div class="preview-card">
+                            <h3 class="preview-title">
+                                <i class="fas fa-eye"></i>
+                                Live Preview
+                            </h3>
+                            <div class="preview-content">
+                                <div class="section-preview">
+                                    <h1 id="heroTitle">Meet Emma</h1>
+                                    <p id="heroSubtitle">Your Intelligent AI Assistant</p>
+                                    <p id="heroDescription">Built to Power the Future of Operations</p>
+                                    <button class="btn btn-primary" id="heroButton">See Emma in Action</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="management-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Hero Section</h3>
+                                <button class="btn btn-primary" onclick="editHeroSection()">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <label>Main Title</label>
+                                <input type="text" id="heroTitleInput" value="Meet Emma">
+                            </div>
+                            <div class="form-group">
+                                <label>Subtitle</label>
+                                <input type="text" id="heroSubtitleInput" value="Your Intelligent AI Assistant">
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <textarea id="heroDescriptionInput">Built to Power the Future of Operations</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Primary Button Text</label>
+                                <input type="text" id="heroButtonInput" value="See Emma in Action">
+                            </div>
+                            <button class="btn btn-success" onclick="saveHeroSection()">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Management -->
+                    <div class="management-card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h3 class="card-title">Navigation Bar</h3>
+                            <button class="btn btn-primary" onclick="editNavigation()">
+                                <i class="fas fa-edit"></i> Edit Navigation
+                            </button>
+                        </div>
+                        <div id="navigationContent">
+                            <div class="form-group">
+                                <label>Navigation Links (one per line)</label>
+                                <textarea id="navLinksInput" rows="5" placeholder="Home&#10;About Us&#10;Pricing&#10;Resources&#10;Sign In">Home
+About Us
+Pricing
+Resources
+Sign In</textarea>
+                            </div>
+                            <button class="btn btn-success" onclick="saveNavigation()">
+                                <i class="fas fa-save"></i> Save Navigation
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Banners Section -->
+                <div id="bannersSection" class="content-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Banner Management</h1>
+                        <p class="page-subtitle">Manage all website banners and promotional content</p>
+                    </div>
+
+                    <div class="content-grid">
+                        <div class="preview-card">
+                            <h3 class="preview-title">
+                                <i class="fas fa-eye"></i>
+                                Banner Preview
+                            </h3>
+                            <div class="preview-content">
+                                <div class="section-preview">
+                                    <h1 id="bannerPreviewTitle">Current Banner Title</h1>
+                                    <p id="bannerPreviewSubtitle">Current banner description</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="management-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Banners</h3>
+                                <button class="btn btn-success" onclick="addNewBanner()">
+                                    <i class="fas fa-plus"></i> New Banner
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Title/Name</th>
+                                            <th>Ordering</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="bannersTableBody">
+                                        <!-- Banners will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pricing Section -->
+                <div id="pricingSection" class="content-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title">Pricing Management</h1>
+                        <p class="page-subtitle">Manage pricing plans and section content</p>
+                    </div>
+
+                    <div class="content-grid">
+                        <div class="preview-card">
+                            <h3 class="preview-title">
+                                <i class="fas fa-eye"></i>
+                                Pricing Preview
+                            </h3>
+                            <div class="preview-content">
+                                <div class="section-preview">
+                                    <h2 id="pricingPreviewTitle">Custom Pricing Plans</h2>
+                                    <p id="pricingPreviewSubtitle">Tailored solutions for every organization's unique needs</p>
+                                    <div id="pricingPreviewCards">
+                                        <!-- Pricing cards will be loaded here -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="management-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Pricing Plans</h3>
+                                <button class="btn btn-success" onclick="addNewPricingPlan()">
+                                    <i class="fas fa-plus"></i> New Plan
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Plan Name</th>
+                                            <th>Type</th>
+                                            <th>Price</th>
+                                            <th>Featured</th>
+                                            <th>Order</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pricingPlansTableBody">
+                                        <!-- Pricing plans will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Section Content Management -->
+                    <div class="management-card" style="margin-top: 2rem;">
+                        <div class="card-header">
+                            <h3 class="card-title">Pricing Section Content</h3>
+                            <button class="btn btn-primary" onclick="editPricingSection()">
+                                <i class="fas fa-edit"></i> Edit Content
+                            </button>
+                        </div>
+                        <div id="pricingSectionContent">
+                            <div class="form-group">
+                                <label>Section Title</label>
+                                <input type="text" id="pricingTitleInput" value="Custom Pricing Plans">
+                            </div>
+                            <div class="form-group">
+                                <label>Section Subtitle</label>
+                                <input type="text" id="pricingSubtitleInput" value="Tailored solutions for every organization's unique needs">
+                            </div>
+                            <div class="form-group">
+                                <label>Custom Solutions Title</label>
+                                <input type="text" id="customSolutionsTitleInput" value="Need a Custom Solution?">
+                            </div>
+                            <div class="form-group">
+                                <label>Custom Solutions Description</label>
+                                <textarea id="customSolutionsDescriptionInput" rows="3">Every organization is unique. Let's work together to create the perfect AI solution for your specific needs, industry requirements, and scale.</textarea>
+                            </div>
+                            <button class="btn btn-success" onclick="savePricingSection()">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other sections will be added dynamically -->
+                <div id="otherSections" class="content-section" style="display: none;">
+                    <div class="page-header">
+                        <h1 class="page-title" id="sectionTitle">Section Management</h1>
+                        <p class="page-subtitle" id="sectionSubtitle">Manage this section content</p>
+                    </div>
+                    <div class="management-card">
+                        <div class="card-header">
+                            <h3 class="card-title" id="sectionCardTitle">Content Management</h3>
+                            <button class="btn btn-primary" onclick="editSection()">
+                                <i class="fas fa-edit"></i> Edit Content
+                            </button>
+                        </div>
+                        <div id="sectionContent">
+                            <!-- Dynamic content will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Edit Content</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveModalContent()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pricing Plan Modal -->
+    <div id="pricingPlanModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title" id="pricingPlanModalTitle">Add/Edit Pricing Plan</h3>
+                <button class="close-btn" onclick="closePricingPlanModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="pricingPlanForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="planName">Plan Name *</label>
+                            <input type="text" id="planName" name="planName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="planType">Plan Type</label>
+                            <select id="planType" name="planType">
+                                <option value="starter">Starter</option>
+                                <option value="professional">Professional</option>
+                                <option value="enterprise">Enterprise</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="planDescription">Plan Description</label>
+                        <textarea id="planDescription" name="planDescription" rows="2"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="priceAmount">Price Amount</label>
+                            <input type="text" id="priceAmount" name="priceAmount" placeholder="e.g., $99, Custom">
+                        </div>
+                        <div class="form-group">
+                            <label for="pricePeriod">Price Period</label>
+                            <input type="text" id="pricePeriod" name="pricePeriod" placeholder="e.g., per month, Contact Sales">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="buttonText">Button Text</label>
+                            <input type="text" id="buttonText" name="buttonText" placeholder="e.g., Contact Sales, Get Started">
+                        </div>
+                        <div class="form-group">
+                            <label for="buttonAction">Button Action</label>
+                            <select id="buttonAction" name="buttonAction">
+                                <option value="contact">Contact Sales</option>
+                                <option value="signup">Sign Up</option>
+                                <option value="demo">Request Demo</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="displayOrder">Display Order</label>
+                            <input type="number" id="displayOrder" name="displayOrder" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="isFeatured" name="isFeatured"> Featured Plan
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="features">Features (one per line)</label>
+                        <textarea id="features" name="features" rows="6" placeholder="Enter each feature on a new line"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isActive" name="isActive" checked> Active
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePricingPlanModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="savePricingPlan()">Save Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading...</p>
+    </div>
+
+    <!-- Alerts -->
+    <div id="alertContainer"></div>
+
+    <script src="admin-script.js"></script>
+</body>
+</html>

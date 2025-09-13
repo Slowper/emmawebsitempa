@@ -1,0 +1,39 @@
+/* Fix for pricing cards - Hide plan descriptions */
+.plan-description {
+    display: none !important; /* Hide plan descriptions as requested */
+}
+
+/* Ensure pricing cards are visible */
+.pricing-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: #1f2937 !important;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
+}
+
+.pricing-card.featured {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%) !important;
+    border: 2px solid rgba(139, 92, 246, 0.5) !important;
+}
+
+.plan-name {
+    color: #1f2937 !important;
+}
+
+.plan-features .feature-item {
+    color: #4b5563 !important;
+}
+
+.plan-features .feature-item svg {
+    color: #10b981 !important;
+}
+
+.price-amount {
+    background: var(--gradient-primary) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+}
+
+.price-period {
+    color: #6b7280 !important;
+}

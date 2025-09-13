@@ -1,0 +1,946 @@
+const express = require('express');
+const mysql = require('mysql2/promise');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+require('dotenv').config({ path: './config.env' });
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Security middleware
+app.use(helmet());
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://localhost:8000'],
+    credentials: true
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100 // limit each IP to 100 requests per windowMs
+});
+app.use('/api/', limiter);
+
+// Body parsing middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Serve static files
+app.use('/uploads', express.static('uploads'));
+app.use('/Logo And Recording', express.static('Logo And Recording'));
+app.use(express.static('public'));
+
+// Database connection
+const dbConfig = {
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'emma_cms',
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
+};
+
+const pool = mysql.createPool(dbConfig);
+
+// File upload configuration
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        let uploadPath = process.env.UPLOAD_PATH || './uploads';
+        
+        // Special handling for logo uploads
+        if (file.fieldname === 'logo') {
+            uploadPath = path.join(uploadPath, 'logo');
+        }
+        
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5242880 // 5MB
+    },
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png|gif|webp|svg/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+        
+        if (mimetype && extname) {
+            return cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'));
+        }
+    }
+});
+
+// JWT Authentication middleware
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ error: 'Access token required' });
+    }
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ error: 'Invalid or expired token' });
+        }
+        req.user = user;
+        next();
+    });
+};
+
+// Initialize database tables
+async function initializeDatabase() {
+    try {
+        const connection = await pool.getConnection();
+        
+        // Create users table
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS users (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                username VARCHAR(50) UNIQUE NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                role ENUM('admin', 'editor') DEFAULT 'editor',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Create content_sections table
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS content_sections (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                section_key VARCHAR(100) UNIQUE NOT NULL,
+                section_name VARCHAR(200) NOT NULL,
+                content_type ENUM('text', 'html', 'image', 'json') DEFAULT 'text',
+                content LONGTEXT,
+                image_url VARCHAR(500),
+                is_active BOOLEAN DEFAULT true,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Create website_settings table
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS website_settings (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                setting_key VARCHAR(100) UNIQUE NOT NULL,
+                setting_value LONGTEXT,
+                setting_type ENUM('text', 'number', 'boolean', 'json') DEFAULT 'text',
+                description TEXT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Create pricing_plans table
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS pricing_plans (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                plan_name VARCHAR(100) NOT NULL,
+                plan_description TEXT,
+                plan_type ENUM('starter', 'professional', 'enterprise', 'custom') DEFAULT 'custom',
+                price_amount VARCHAR(50) DEFAULT 'Custom',
+                price_period VARCHAR(50) DEFAULT 'Contact Sales',
+                is_featured BOOLEAN DEFAULT false,
+                features JSON,
+                button_text VARCHAR(100) DEFAULT 'Contact Sales',
+                button_action VARCHAR(100) DEFAULT 'contact',
+                display_order INT DEFAULT 0,
+                is_active BOOLEAN DEFAULT true,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Create pricing_sections table for section content
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS pricing_sections (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                section_key VARCHAR(100) UNIQUE NOT NULL,
+                section_name VARCHAR(200) NOT NULL,
+                content_type ENUM('text', 'html', 'json') DEFAULT 'text',
+                content LONGTEXT,
+                is_active BOOLEAN DEFAULT true,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Insert default admin user if not exists
+        const [users] = await connection.execute('SELECT COUNT(*) as count FROM users WHERE role = "admin"');
+        if (users[0].count === 0) {
+            const hashedPassword = await bcrypt.hash('admin123', 10);
+            await connection.execute(
+                'INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)',
+                ['admin', 'admin@emma.com', hashedPassword, 'admin']
+            );
+            console.log('Default admin user created: admin / admin123');
+        }
+
+        // Insert default content sections
+        const defaultSections = [
+            {
+                section_key: 'hero_title',
+                section_name: 'Hero Title',
+                content_type: 'text',
+                content: 'Meet Emma'
+            },
+            {
+                section_key: 'hero_subtitle',
+                section_name: 'Hero Subtitle',
+                content_type: 'text',
+                content: 'Your Intelligent AI Assistant'
+            },
+            {
+                section_key: 'hero_description',
+                section_name: 'Hero Description',
+                content_type: 'text',
+                content: 'Built to Power the Future of Operations'
+            },
+            {
+                section_key: 'capabilities_title',
+                section_name: 'Capabilities Section Title',
+                content_type: 'text',
+                content: "Emma's Core Capabilities"
+            },
+            {
+                section_key: 'capabilities_subtitle',
+                section_name: 'Capabilities Section Subtitle',
+                content_type: 'text',
+                content: 'Intelligent automation that adapts, learns, and takes initiative'
+            },
+            {
+                section_key: 'industries_title',
+                section_name: 'Industries Section Title',
+                content_type: 'text',
+                content: 'Industry Solutions'
+            },
+            {
+                section_key: 'industries_subtitle',
+                section_name: 'Industries Section Subtitle',
+                content_type: 'text',
+                content: 'Tailored AI agents for your specific industry needs'
+            },
+            {
+                section_key: 'pricing_title',
+                section_name: 'Pricing Section Title',
+                content_type: 'text',
+                content: 'Custom Pricing Plans'
+            },
+            {
+                section_key: 'pricing_subtitle',
+                section_name: 'Pricing Section Subtitle',
+                content_type: 'text',
+                content: 'Tailored solutions for every organization\'s unique needs'
+            },
+            {
+                section_key: 'custom_solutions_title',
+                section_name: 'Custom Solutions Title',
+                content_type: 'text',
+                content: 'Need a Custom Solution?'
+            },
+            {
+                section_key: 'custom_solutions_description',
+                section_name: 'Custom Solutions Description',
+                content_type: 'text',
+                content: 'Every organization is unique. Let\'s work together to create the perfect AI solution for your specific needs, industry requirements, and scale.'
+            },
+            {
+                section_key: 'pricing_title',
+                section_name: 'Pricing Section Title',
+                content_type: 'text',
+                content: 'Custom Pricing Plans'
+            },
+            {
+                section_key: 'pricing_subtitle',
+                section_name: 'Pricing Section Subtitle',
+                content_type: 'text',
+                content: 'Tailored solutions for every organization\'s unique needs'
+            },
+            {
+                section_key: 'custom_solutions_title',
+                section_name: 'Custom Solutions Title',
+                content_type: 'text',
+                content: 'Need a Custom Solution?'
+            },
+            {
+                section_key: 'custom_solutions_description',
+                section_name: 'Custom Solutions Description',
+                content_type: 'text',
+                content: 'Every organization is unique. Let\'s work together to create the perfect AI solution for your specific needs, industry requirements, and scale.'
+            },
+            {
+                section_key: 'footer_company_description',
+                section_name: 'Footer Company Description',
+                content_type: 'text',
+                content: 'Building the future of autonomous AI agents.'
+            }
+        ];
+
+        for (const section of defaultSections) {
+            await connection.execute(
+                'INSERT IGNORE INTO content_sections (section_key, section_name, content_type, content) VALUES (?, ?, ?, ?)',
+                [section.section_key, section.section_name, section.content_type, section.content]
+            );
+        }
+
+        // Insert default pricing plans
+        const defaultPricingPlans = [
+            {
+                plan_name: 'Starter',
+                plan_description: 'Perfect for small teams getting started with AI automation',
+                plan_type: 'starter',
+                price_amount: 'Custom',
+                price_period: 'Contact Sales',
+                is_featured: false,
+                features: JSON.stringify([
+                    'Up to 1,000 conversations/month',
+                    'Basic AI capabilities',
+                    'Email & SMS integration',
+                    'Standard support'
+                ]),
+                button_text: 'Contact Sales',
+                button_action: 'contact',
+                display_order: 1,
+                is_active: true
+            },
+            {
+                plan_name: 'Professional',
+                plan_description: 'Advanced features for growing organizations',
+                plan_type: 'professional',
+                price_amount: 'Custom',
+                price_period: 'Contact Sales',
+                is_featured: true,
+                features: JSON.stringify([
+                    'Up to 10,000 conversations/month',
+                    'Advanced AI capabilities',
+                    'Multi-channel integration',
+                    'Custom workflows',
+                    'Priority support'
+                ]),
+                button_text: 'Contact Sales',
+                button_action: 'contact',
+                display_order: 2,
+                is_active: true
+            },
+            {
+                plan_name: 'Enterprise',
+                plan_description: 'Complete solution for large organizations',
+                plan_type: 'enterprise',
+                price_amount: 'Custom',
+                price_period: 'Contact Sales',
+                is_featured: false,
+                features: JSON.stringify([
+                    'Unlimited conversations',
+                    'Full AI customization',
+                    'All integrations included',
+                    'Dedicated account manager',
+                    '24/7 premium support'
+                ]),
+                button_text: 'Contact Sales',
+                button_action: 'contact',
+                display_order: 3,
+                is_active: true
+            }
+        ];
+
+        for (const plan of defaultPricingPlans) {
+            await connection.execute(
+                'INSERT IGNORE INTO pricing_plans (plan_name, plan_description, plan_type, price_amount, price_period, is_featured, features, button_text, button_action, display_order, is_active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [plan.plan_name, plan.plan_description, plan.plan_type, plan.price_amount, plan.price_period, plan.is_featured, plan.features, plan.button_text, plan.button_action, plan.display_order, plan.is_active]
+            );
+        }
+
+        connection.release();
+        console.log('Database initialized successfully');
+    } catch (error) {
+        console.error('Database initialization error:', error);
+    }
+}
+
+// API Routes
+
+// Authentication routes
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password are required' });
+        }
+
+        const [rows] = await pool.execute(
+            'SELECT * FROM users WHERE username = ? OR email = ?',
+            [username, username]
+        );
+
+        if (rows.length === 0) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const user = rows[0];
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        if (!isValidPassword) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign(
+            { id: user.id, username: user.username, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Content management routes
+app.get('/api/content/sections', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT * FROM content_sections WHERE is_active = true ORDER BY section_name'
+        );
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching sections:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/content/section/:key', async (req, res) => {
+    try {
+        const { key } = req.params;
+        const [rows] = await pool.execute(
+            'SELECT * FROM content_sections WHERE section_key = ? AND is_active = true',
+            [key]
+        );
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Section not found' });
+        }
+        
+        res.json(rows[0]);
+    } catch (error) {
+        console.error('Error fetching section:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/content/section/:key', authenticateToken, async (req, res) => {
+    try {
+        const { key } = req.params;
+        const { content, content_type } = req.body;
+        
+        const [result] = await pool.execute(
+            'UPDATE content_sections SET content = ?, content_type = ?, updated_at = CURRENT_TIMESTAMP WHERE section_key = ?',
+            [content, content_type || 'text', key]
+        );
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Section not found' });
+        }
+        
+        res.json({ message: 'Content updated successfully' });
+    } catch (error) {
+        console.error('Error updating section:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/content/section', authenticateToken, async (req, res) => {
+    try {
+        const { section_key, section_name, content_type, content } = req.body;
+        
+        if (!section_key || !section_name) {
+            return res.status(400).json({ error: 'Section key and name are required' });
+        }
+        
+        const [result] = await pool.execute(
+            'INSERT INTO content_sections (section_key, section_name, content_type, content) VALUES (?, ?, ?, ?)',
+            [section_key, section_name, content_type || 'text', content || '']
+        );
+        
+        res.json({ 
+            message: 'Section created successfully',
+            id: result.insertId 
+        });
+    } catch (error) {
+        console.error('Error creating section:', error);
+        if (error.code === 'ER_DUP_ENTRY') {
+            res.status(400).json({ error: 'Section key already exists' });
+        } else {
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+});
+
+// Image upload route
+app.post('/api/upload/image', authenticateToken, upload.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image file provided' });
+        }
+        
+        const imageUrl = `/uploads/${req.file.filename}`;
+        res.json({ 
+            message: 'Image uploaded successfully',
+            imageUrl: imageUrl,
+            filename: req.file.filename
+        });
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ error: 'Upload failed' });
+    }
+});
+
+// Update section with image
+app.put('/api/content/section/:key/image', authenticateToken, upload.single('image'), async (req, res) => {
+    try {
+        const { key } = req.params;
+        
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image file provided' });
+        }
+        
+        const imageUrl = `/uploads/${req.file.filename}`;
+        
+        const [result] = await pool.execute(
+            'UPDATE content_sections SET image_url = ?, updated_at = CURRENT_TIMESTAMP WHERE section_key = ?',
+            [imageUrl, key]
+        );
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Section not found' });
+        }
+        
+        res.json({ 
+            message: 'Image updated successfully',
+            imageUrl: imageUrl
+        });
+    } catch (error) {
+        console.error('Error updating image:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Blog API routes
+app.get('/api/blogs', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(`
+            SELECT id, title, category, author, excerpt, content, image, authorImage, 
+                   gallery, created_at, updated_at, status
+            FROM blogs 
+            WHERE status = 'published' 
+            ORDER BY created_at DESC
+        `);
+        
+        const blogs = rows.map(blog => ({
+            ...blog,
+            gallery: blog.gallery ? JSON.parse(blog.gallery) : []
+        }));
+        
+        res.json(blogs);
+    } catch (error) {
+        console.error('Error fetching blogs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/blogs/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await pool.execute(`
+            SELECT id, title, category, author, excerpt, content, image, authorImage, 
+                   gallery, created_at, updated_at, status
+            FROM blogs 
+            WHERE id = ? AND status = 'published'
+        `, [id]);
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Blog not found' });
+        }
+        
+        const blog = {
+            ...rows[0],
+            gallery: rows[0].gallery ? JSON.parse(rows[0].gallery) : []
+        };
+        
+        res.json(blog);
+    } catch (error) {
+        console.error('Error fetching blog:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/blogs', authenticateToken, upload.fields([
+    { name: 'blogImage', maxCount: 1 },
+    { name: 'blogAuthorImage', maxCount: 1 }
+]), async (req, res) => {
+    try {
+        const { title, category, author, excerpt, content, gallery } = req.body;
+        
+        if (!title || !category || !author || !content) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        let imagePath = '';
+        let authorImagePath = '';
+        
+        if (req.files.blogImage) {
+            imagePath = `/uploads/blogs/${req.files.blogImage[0].filename}`;
+        }
+        
+        if (req.files.blogAuthorImage) {
+            authorImagePath = `/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
+        }
+        
+        const galleryArray = gallery ? gallery.split('\n').filter(url => url.trim()) : [];
+        
+        const [result] = await pool.execute(`
+            INSERT INTO blogs (title, category, author, excerpt, content, image, authorImage, gallery, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'published', NOW(), NOW())
+        `, [title, category, author, excerpt, content, imagePath, authorImagePath, JSON.stringify(galleryArray)]);
+        
+        res.json({ 
+            message: 'Blog created successfully', 
+            id: result.insertId 
+        });
+    } catch (error) {
+        console.error('Error creating blog:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/blogs/:id', authenticateToken, upload.fields([
+    { name: 'blogImage', maxCount: 1 },
+    { name: 'blogAuthorImage', maxCount: 1 }
+]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, category, author, excerpt, content, gallery } = req.body;
+        
+        if (!title || !category || !author || !content) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        // Get existing blog data
+        const [existingRows] = await pool.execute('SELECT image, authorImage FROM blogs WHERE id = ?', [id]);
+        if (existingRows.length === 0) {
+            return res.status(404).json({ error: 'Blog not found' });
+        }
+        
+        let imagePath = existingRows[0].image;
+        let authorImagePath = existingRows[0].authorImage;
+        
+        if (req.files.blogImage) {
+            imagePath = `/uploads/blogs/${req.files.blogImage[0].filename}`;
+        }
+        
+        if (req.files.blogAuthorImage) {
+            authorImagePath = `/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
+        }
+        
+        const galleryArray = gallery ? gallery.split('\n').filter(url => url.trim()) : [];
+        
+        await pool.execute(`
+            UPDATE blogs 
+            SET title = ?, category = ?, author = ?, excerpt = ?, content = ?, 
+                image = ?, authorImage = ?, gallery = ?, updated_at = NOW()
+            WHERE id = ?
+        `, [title, category, author, excerpt, content, imagePath, authorImagePath, JSON.stringify(galleryArray), id]);
+        
+        res.json({ message: 'Blog updated successfully' });
+    } catch (error) {
+        console.error('Error updating blog:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.delete('/api/blogs/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        await pool.execute('DELETE FROM blogs WHERE id = ?', [id]);
+        
+        res.json({ message: 'Blog deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting blog:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/pricing/plans', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(`
+            SELECT * FROM pricing_plans 
+            WHERE is_active = true 
+            ORDER BY display_order ASC
+        `);
+        
+        const plans = rows.map(plan => ({
+            ...plan,
+            features: plan.features ? JSON.parse(plan.features) : []
+        }));
+        
+        res.json(plans);
+    } catch (error) {
+        console.error('Error fetching pricing plans:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/pricing/plan/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await pool.execute(
+            'SELECT * FROM pricing_plans WHERE id = ? AND is_active = true',
+            [id]
+        );
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Pricing plan not found' });
+        }
+        
+        const plan = {
+            ...rows[0],
+            features: rows[0].features ? JSON.parse(rows[0].features) : []
+        };
+        
+        res.json(plan);
+    } catch (error) {
+        console.error('Error fetching pricing plan:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/pricing/plan', authenticateToken, async (req, res) => {
+    try {
+        const { plan_name, plan_description, plan_type, price_amount, price_period, is_featured, features, button_text, button_action, display_order } = req.body;
+        
+        if (!plan_name) {
+            return res.status(400).json({ error: 'Plan name is required' });
+        }
+        
+        const [result] = await pool.execute(`
+            INSERT INTO pricing_plans (plan_name, plan_description, plan_type, price_amount, price_period, is_featured, features, button_text, button_action, display_order, is_active)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, true)
+        `, [plan_name, plan_description, plan_type || 'custom', price_amount || 'Custom', price_period || 'Contact Sales', is_featured || false, JSON.stringify(features || []), button_text || 'Contact Sales', button_action || 'contact', display_order || 0]);
+        
+        res.json({ 
+            message: 'Pricing plan created successfully', 
+            id: result.insertId 
+        });
+    } catch (error) {
+        console.error('Error creating pricing plan:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/pricing/plan/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { plan_name, plan_description, plan_type, price_amount, price_period, is_featured, features, button_text, button_action, display_order, is_active } = req.body;
+        
+        if (!plan_name) {
+            return res.status(400).json({ error: 'Plan name is required' });
+        }
+        
+        await pool.execute(`
+            UPDATE pricing_plans 
+            SET plan_name = ?, plan_description = ?, plan_type = ?, price_amount = ?, price_period = ?, 
+                is_featured = ?, features = ?, button_text = ?, button_action = ?, display_order = ?, is_active = ?
+            WHERE id = ?
+        `, [plan_name, plan_description, plan_type, price_amount, price_period, is_featured, JSON.stringify(features || []), button_text, button_action, display_order, is_active !== undefined ? is_active : true, id]);
+        
+        res.json({ message: 'Pricing plan updated successfully' });
+    } catch (error) {
+        console.error('Error updating pricing plan:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.delete('/api/pricing/plan/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        await pool.execute('DELETE FROM pricing_plans WHERE id = ?', [id]);
+        
+        res.json({ message: 'Pricing plan deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting pricing plan:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Pricing sections API
+app.get('/api/pricing/sections', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(`
+            SELECT * FROM pricing_sections 
+            WHERE is_active = true 
+            ORDER BY section_name
+        `);
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching pricing sections:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/pricing/section/:key', authenticateToken, async (req, res) => {
+    try {
+        const { key } = req.params;
+        const { content, content_type } = req.body;
+        
+        const [result] = await pool.execute(
+            'UPDATE pricing_sections SET content = ?, content_type = ?, updated_at = CURRENT_TIMESTAMP WHERE section_key = ?',
+            [content, content_type || 'text', key]
+        );
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Pricing section not found' });
+        }
+        
+        res.json({ message: 'Pricing section updated successfully' });
+    } catch (error) {
+        console.error('Error updating pricing section:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Website settings routes
+app.get('/api/settings', async (req, res) => {
+    try {
+        console.log('Fetching website settings...');
+        const [rows] = await pool.execute('SELECT * FROM website_settings');
+        console.log('Settings rows:', rows);
+        
+        const settings = {};
+        rows.forEach(row => {
+            settings[row.setting_key] = {
+                value: row.setting_value,
+                type: row.setting_type,
+                description: row.description
+            };
+        });
+        
+        console.log('Settings object:', settings);
+        res.json(settings);
+    } catch (error) {
+        console.error('Error fetching settings:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/settings/:key', authenticateToken, async (req, res) => {
+    try {
+        const { key } = req.params;
+        const { value, type } = req.body;
+        
+        console.log(`Updating setting ${key} with value:`, value);
+        
+        const [result] = await pool.execute(
+            'INSERT INTO website_settings (setting_key, setting_value, setting_type) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value), setting_type = VALUES(setting_type), updated_at = CURRENT_TIMESTAMP',
+            [key, value, type || 'text']
+        );
+        
+        console.log('Setting updated successfully');
+        res.json({ message: 'Setting updated successfully' });
+    } catch (error) {
+        console.error('Error updating setting:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Logo upload endpoint
+app.post('/api/upload/logo', authenticateToken, upload.single('logo'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No logo file uploaded' });
+        }
+        
+        const logoUrl = `/uploads/logo/${req.file.filename}`;
+        console.log('Logo uploaded:', logoUrl);
+        
+        res.json({ 
+            message: 'Logo uploaded successfully',
+            url: logoUrl,
+            filename: req.file.filename
+        });
+    } catch (error) {
+        console.error('Error uploading logo:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve the main website
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Serve admin dashboard
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
+});
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+    if (error instanceof multer.MulterError) {
+        if (error.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ error: 'File too large' });
+        }
+    }
+    console.error('Unhandled error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+});
+
+// 404 handler
+app.use((req, res) => {
+    res.status(404).json({ error: 'Route not found' });
+});
+
+// Initialize database and start server
+initializeDatabase().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Emma CMS Server running on port ${PORT}`);
+        console.log(`Admin dashboard: http://localhost:${PORT}/admin`);
+        console.log(`Main website: http://localhost:${PORT}`);
+    });
+}).catch(error => {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+});
