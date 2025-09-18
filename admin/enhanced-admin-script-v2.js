@@ -5,6 +5,7 @@ class EnhancedCMS {
     constructor() {
         this.apiBase = '/api/content';
         this.currentUser = null;
+        this.eventListenersAttached = false;
         this.init();
     }
 
@@ -14,6 +15,11 @@ class EnhancedCMS {
     }
 
     setupEventListeners() {
+        // Prevent multiple event listener attachments
+        if (this.eventListenersAttached) {
+            return;
+        }
+        
         // Login form
         document.getElementById('loginForm').addEventListener('submit', (e) => {
             e.preventDefault();
@@ -69,6 +75,9 @@ class EnhancedCMS {
         
         // Rich text editor
         this.setupRichTextEditor();
+        
+        // Mark event listeners as attached
+        this.eventListenersAttached = true;
     }
 
     async checkAuth() {
@@ -160,6 +169,7 @@ class EnhancedCMS {
             'usecases': 'Use Cases Management',
             'casestudies': 'Case Studies Management',
             'pricing': 'Pricing Plans Management',
+            'resources': 'Resources Management',
             'media': 'Media Library',
             'theme': 'Theme Settings',
             'navigation': 'Navigation Management',
@@ -182,6 +192,8 @@ class EnhancedCMS {
         } else if (sectionName === 'pricing') {
             loadPricingPlans();
             loadPricingSectionContent();
+        } else if (sectionName === 'resources') {
+            this.loadResourcesContent();
         }
 
         document.getElementById('currentSectionTitle').textContent = titles[sectionName] || 'Dashboard';
@@ -327,9 +339,23 @@ class EnhancedCMS {
         // Real-time preview updates
         const heroFields = ['heroTitle', 'heroSubtitle', 'heroDescription', 'heroPrimaryBtn', 'heroSecondaryBtn'];
         heroFields.forEach(fieldId => {
-            document.getElementById(fieldId).addEventListener('input', () => {
-                this.updateHeroPreviewFromForm();
-            });
+            const element = document.getElementById(fieldId);
+            if (element) {
+                element.addEventListener('input', () => {
+                    this.updateHeroPreviewFromForm();
+                });
+            }
+        });
+
+        // Resources section preview updates
+        const resourcesFields = ['resourcesTitle', 'resourcesSubtitle'];
+        resourcesFields.forEach(fieldId => {
+            const element = document.getElementById(fieldId);
+            if (element) {
+                element.addEventListener('input', () => {
+                    this.updateResourcesPreview();
+                });
+            }
         });
     }
 
@@ -947,6 +973,8 @@ class EnhancedCMS {
                 document.getElementById('blogFormTitle').textContent = 'Edit Blog Post';
                 document.getElementById('blogFormElement').dataset.mode = 'edit';
                 document.getElementById('blogFormElement').dataset.id = blogId;
+            } else {
+                this.showError('Failed to load blog');
             }
         } catch (error) {
             this.showError('Error loading blog');
@@ -958,8 +986,17 @@ class EnhancedCMS {
         document.getElementById('blogCategory').value = blog.category || '';
         document.getElementById('blogAuthor').value = blog.author || '';
         document.getElementById('blogExcerpt').value = blog.excerpt || '';
-        document.getElementById('blogImage').value = blog.image || '';
-        document.getElementById('blogAuthorImage').value = blog.authorImage || '';
+        
+        // Don't set file input values - they can only be set to empty string
+        // Instead, show the current image URLs in a preview or placeholder
+        const blogImageInput = document.getElementById('blogImage');
+        const blogAuthorImageInput = document.getElementById('blogAuthorImage');
+        
+        // Clear file inputs
+        if (blogImageInput) blogImageInput.value = '';
+        if (blogAuthorImageInput) blogAuthorImageInput.value = '';
+        
+        // Set content and gallery (text areas)
         document.getElementById('blogContent').innerHTML = blog.content || '';
         document.getElementById('blogGallery').value = blog.gallery ? blog.gallery.join('\n') : '';
     }
@@ -1022,6 +1059,8 @@ class EnhancedCMS {
                 document.getElementById('useCaseFormTitle').textContent = 'Edit Use Case';
                 document.getElementById('useCaseFormElement').dataset.mode = 'edit';
                 document.getElementById('useCaseFormElement').dataset.id = useCaseId;
+            } else {
+                this.showError('Failed to load use case');
             }
         } catch (error) {
             this.showError('Error loading use case');
@@ -1039,7 +1078,10 @@ class EnhancedCMS {
         document.getElementById('useCaseStat2Number').value = useCase.stats && useCase.stats[1] ? useCase.stats[1].number : '';
         document.getElementById('useCaseStat2Label').value = useCase.stats && useCase.stats[1] ? useCase.stats[1].label : '';
         document.getElementById('useCaseContent').value = useCase.detailedContent || '';
-        document.getElementById('useCaseGallery').value = useCase.gallery ? useCase.gallery.join('\n') : '';
+        
+        // Don't set file input values - they can only be set to empty string
+        const useCaseGalleryInput = document.getElementById('useCaseGallery');
+        if (useCaseGalleryInput) useCaseGalleryInput.value = '';
     }
 
     async deleteUseCase(useCaseId) {
@@ -1069,6 +1111,145 @@ class EnhancedCMS {
             }
         } catch (error) {
             console.error('Error loading case studies:', error);
+        }
+    }
+
+    // Resources Management Methods
+    async loadResourcesContent() {
+        try {
+            // Load resources section content
+            const [resourcesResponse, blogsResponse, useCasesResponse, caseStudiesResponse] = await Promise.all([
+                fetch(`${this.apiBase}/section/resources_title`),
+                fetch(`${this.apiBase}/blogs`),
+                fetch(`${this.apiBase}/usecases`),
+                fetch(`${this.apiBase}/casestudies`)
+            ]);
+
+            // Load section content
+            if (resourcesResponse.ok) {
+                const resourcesData = await resourcesResponse.json();
+                document.getElementById('resourcesTitle').value = resourcesData.content || 'Resources';
+            }
+
+            // Load statistics and display resources
+            let totalBlogs = 0, totalUseCases = 0, totalCaseStudies = 0;
+            let allResources = [];
+            
+            if (blogsResponse.ok) {
+                const blogs = await blogsResponse.json();
+                totalBlogs = blogs.length;
+                // Add blogs to resources list
+                blogs.forEach(blog => {
+                    allResources.push({
+                        id: blog.id,
+                        title: blog.title,
+                        category: blog.category,
+                        author: blog.author,
+                        date: blog.date,
+                        type: 'Blog',
+                        status: 'Published'
+                    });
+                });
+            }
+            
+            if (useCasesResponse.ok) {
+                const useCases = await useCasesResponse.json();
+                totalUseCases = useCases.length;
+                // Add use cases to resources list
+                useCases.forEach(useCase => {
+                    allResources.push({
+                        id: useCase.id,
+                        title: useCase.title,
+                        category: useCase.industry,
+                        author: 'Admin',
+                        date: useCase.date || new Date().toISOString().split('T')[0],
+                        type: 'Use Case',
+                        status: 'Published'
+                    });
+                });
+            }
+            
+            if (caseStudiesResponse.ok) {
+                const caseStudies = await caseStudiesResponse.json();
+                totalCaseStudies = caseStudies.length;
+                // Add case studies to resources list
+                caseStudies.forEach(caseStudy => {
+                    allResources.push({
+                        id: caseStudy.id,
+                        title: caseStudy.title,
+                        category: caseStudy.industry,
+                        author: 'Admin',
+                        date: caseStudy.date || new Date().toISOString().split('T')[0],
+                        type: 'Case Study',
+                        status: caseStudy.published ? 'Published' : 'Draft'
+                    });
+                });
+            }
+
+            // Update statistics
+            document.getElementById('totalBlogs').textContent = totalBlogs;
+            document.getElementById('totalUseCases').textContent = totalUseCases;
+            document.getElementById('totalCaseStudies').textContent = totalCaseStudies;
+            document.getElementById('totalResources').textContent = allResources.length;
+
+            // Display resources in table
+            this.displayResources(allResources);
+            this.updateResourcesPreview();
+
+        } catch (error) {
+            console.error('Error loading resources content:', error);
+        }
+    }
+
+    displayResources(resources) {
+        const resourcesTable = document.getElementById('resourcesTable');
+        if (!resourcesTable) return;
+
+        resourcesTable.innerHTML = resources.map(resource => `
+            <tr>
+                <td>${resource.title}</td>
+                <td><span class="status-indicator status-live">${resource.category}</span></td>
+                <td>${resource.author}</td>
+                <td>${resource.date}</td>
+                <td><span class="status-indicator ${resource.status === 'Published' ? 'status-live' : 'status-draft'}">${resource.status}</span></td>
+                <td>
+                    <button onclick="editResource('${resource.type}', ${resource.id})" class="btn btn-secondary btn-sm">Edit</button>
+                    <button onclick="deleteResource('${resource.type}', ${resource.id})" class="btn btn-danger btn-sm">Delete</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    updateResourcesPreview() {
+        const title = document.getElementById('resourcesTitle').value || 'Resources';
+        const subtitle = document.getElementById('resourcesSubtitle').value || 'Discover insights, use cases, and best practices';
+        
+        document.getElementById('previewResourcesTitle').textContent = title;
+        document.getElementById('previewResourcesSubtitle').textContent = subtitle;
+    }
+
+    async saveResourcesSection() {
+        try {
+            const title = document.getElementById('resourcesTitle').value;
+            const subtitle = document.getElementById('resourcesSubtitle').value;
+
+            const response = await fetch(`${this.apiBase}/section/resources_title`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ content: title })
+            });
+
+            if (response.ok) {
+                showSuccess('Resources section updated successfully!');
+                this.updateResourcesPreview();
+            } else {
+                showError('Failed to update resources section');
+            }
+        } catch (error) {
+            console.error('Error saving resources section:', error);
+            showError('Error saving resources section');
         }
     }
 
@@ -1105,6 +1286,8 @@ class EnhancedCMS {
                 document.getElementById('caseStudyFormTitle').textContent = 'Edit Case Study';
                 document.getElementById('caseStudyFormElement').dataset.mode = 'edit';
                 document.getElementById('caseStudyFormElement').dataset.id = caseStudyId;
+            } else {
+                this.showError('Failed to load case study');
             }
         } catch (error) {
             this.showError('Error loading case study');
@@ -1125,7 +1308,14 @@ class EnhancedCMS {
         document.getElementById('caseStudyResult3Number').value = caseStudy.results && caseStudy.results[2] ? caseStudy.results[2].number : '';
         document.getElementById('caseStudyResult3Label').value = caseStudy.results && caseStudy.results[2] ? caseStudy.results[2].label : '';
         document.getElementById('caseStudyContent').value = caseStudy.content || '';
-        document.getElementById('caseStudyGallery').value = caseStudy.gallery ? caseStudy.gallery.join('\n') : '';
+        
+        // Don't set file input values - they can only be set to empty string
+        const caseStudyImageInput = document.getElementById('caseStudyImage');
+        const caseStudyGalleryInput = document.getElementById('caseStudyGallery');
+        
+        // Clear file inputs
+        if (caseStudyImageInput) caseStudyImageInput.value = '';
+        if (caseStudyGalleryInput) caseStudyGalleryInput.value = '';
     }
 
     async deleteCaseStudy(caseStudyId) {
@@ -1182,7 +1372,6 @@ class EnhancedCMS {
 
             const response = await fetch(url, {
                 method: method,
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('cms_token')}` },
                 body: formData
             });
 
@@ -1220,7 +1409,6 @@ class EnhancedCMS {
             }
         ].filter(stat => stat.number && stat.label)));
         formData.append('detailedContent', document.getElementById('useCaseContent').value);
-        formData.append('gallery', document.getElementById('useCaseGallery').value.split('\n').filter(url => url.trim()).join('\n'));
 
         // Add file uploads
         const useCaseGalleryInput = document.getElementById('useCaseGallery');
@@ -1236,7 +1424,6 @@ class EnhancedCMS {
 
             const response = await fetch(url, {
                 method: method,
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('cms_token')}` },
                 body: formData
             });
 
@@ -1279,7 +1466,6 @@ class EnhancedCMS {
             }
         ].filter(result => result.number && result.label)));
         formData.append('content', document.getElementById('caseStudyContent').value);
-        formData.append('gallery', document.getElementById('caseStudyGallery').value.split('\n').filter(url => url.trim()).join('\n'));
 
         // Add file uploads
         const caseStudyImageInput = document.getElementById('caseStudyImage');
@@ -1300,7 +1486,6 @@ class EnhancedCMS {
 
             const response = await fetch(url, {
                 method: method,
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('cms_token')}` },
                 body: formData
             });
 
@@ -1500,7 +1685,7 @@ async function saveLogoSettings() {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
             },
             body: JSON.stringify({ value: logoUrl, type: 'text' })
         });
@@ -1510,7 +1695,7 @@ async function saveLogoSettings() {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
             },
             body: JSON.stringify({ value: logoAlt, type: 'text' })
         });
@@ -1543,7 +1728,7 @@ async function uploadLogo() {
             const response = await fetch('/api/upload/logo', {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
                 },
                 body: formData
             });
@@ -1575,7 +1760,7 @@ async function loadLogoSettings() {
     try {
         const response = await fetch('/api/settings', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
             }
         });
         
@@ -1619,7 +1804,7 @@ async function loadBlogStyles() {
     try {
         const response = await fetch('/api/settings', {
             headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
+                'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
             }
         });
         
@@ -1673,7 +1858,7 @@ async function saveBlogStyles() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
                 },
                 body: JSON.stringify({ value: setting.value, type: 'text' })
             });
@@ -1905,10 +2090,32 @@ function hideBlogForm() {
     document.getElementById('blogForm').style.display = 'none';
 }
 
-function editBlog(blogId) {
+// Debounce function to prevent multiple rapid calls
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Debounced editBlog function
+const debouncedEditBlog = debounce((blogId) => {
+    console.log('editBlog called with ID:', blogId);
+    console.log('window.cms exists:', !!window.cms);
     if (window.cms) {
         window.cms.editBlog(blogId);
+    } else {
+        console.error('CMS not initialized');
     }
+}, 300);
+
+function editBlog(blogId) {
+    debouncedEditBlog(blogId);
 }
 
 function deleteBlog(blogId) {
@@ -2350,6 +2557,52 @@ function hideLoading() {
     }
 }
 
+function saveResourcesSection() {
+    if (window.cms) {
+        window.cms.saveResourcesSection();
+    }
+}
+
+// Debounced edit functions for other resource types
+const debouncedEditUseCase = debounce((id) => {
+    if (window.cms) {
+        window.cms.editUseCase(id);
+    }
+}, 300);
+
+const debouncedEditCaseStudy = debounce((id) => {
+    if (window.cms) {
+        window.cms.editCaseStudy(id);
+    }
+}, 300);
+
+function editResource(type, id) {
+    console.log('editResource called with type:', type, 'id:', id);
+    if (window.cms) {
+        if (type === 'Blog') {
+            debouncedEditBlog(id);
+        } else if (type === 'Use Case') {
+            debouncedEditUseCase(id);
+        } else if (type === 'Case Study') {
+            debouncedEditCaseStudy(id);
+        }
+    }
+}
+
+function deleteResource(type, id) {
+    if (confirm(`Are you sure you want to delete this ${type.toLowerCase()}?`)) {
+        if (window.cms) {
+            if (type === 'Blog') {
+                window.cms.deleteBlog(id);
+            } else if (type === 'Use Case') {
+                window.cms.deleteUseCase(id);
+            } else if (type === 'Case Study') {
+                window.cms.deleteCaseStudy(id);
+            }
+        }
+    }
+}
+
 console.log('✅ hideLoading function defined and ready to use');
 
 // Global notification functions
@@ -2398,3 +2651,9 @@ function showError(message) {
         notification.remove();
     }, 3000);
 }
+
+// Initialize CMS when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    window.cms = new EnhancedCMS();
+    console.log('CMS initialized');
+});

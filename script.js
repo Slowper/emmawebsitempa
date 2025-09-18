@@ -71,7 +71,7 @@ class AnimationManager {
 
     initHeroAnimations() {
         // Hero title animation
-        gsap.from('.hero-title .title-line', {
+        gsap.from('#hero-title', {
             duration: 1,
             y: 50,
             opacity: 0,
@@ -80,7 +80,7 @@ class AnimationManager {
         });
 
         // Hero subtitle animation
-        gsap.from('.hero-subtitle', {
+        gsap.from('#hero-subtitle', {
             duration: 1,
             y: 30,
             opacity: 0,
@@ -89,7 +89,7 @@ class AnimationManager {
         });
 
         // Hero actions animation
-        gsap.from('.hero-actions', {
+        gsap.from('#hero-actions', {
             duration: 1,
             y: 30,
             opacity: 0,
@@ -207,6 +207,7 @@ class AnimationManager {
         // Hero stats with counter animation
         gsap.utils.toArray('.stat').forEach((stat, index) => {
             const statNumber = stat.querySelector('.stat-number');
+            if (!statNumber) return; // Skip if element doesn't exist
             const finalValue = statNumber.textContent;
             
             gsap.from(stat, {
@@ -309,12 +310,12 @@ class AnimationManager {
             gsap.from(card, {
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 85%',
-                    end: 'bottom 15%',
+                    start: 'top 95%',
+                    end: 'bottom 5%',
                     toggleActions: 'play none none reverse'
                 },
-                duration: 1,
-                y: 60,
+                duration: 0.8,
+                y: 40,
                 opacity: 0,
                 scale: 0.9,
                 ease: 'power3.out',
@@ -322,39 +323,44 @@ class AnimationManager {
             });
         });
 
-        // Leadership cards with special animation
+        // Leadership cards with special animation - trigger immediately
         gsap.utils.toArray('.leadership-card').forEach((card, index) => {
-            gsap.from(card, {
+            // Set initial state
+            gsap.set(card, { opacity: 0, y: 20, scale: 0.95 });
+            
+            gsap.to(card, {
                 scrollTrigger: {
                     trigger: card,
-                    start: 'top 85%',
-                    end: 'bottom 15%',
+                    start: 'top 100%',
+                    end: 'bottom 0%',
                     toggleActions: 'play none none reverse'
                 },
-                duration: 1.2,
-                y: 80,
-                opacity: 0,
-                scale: 0.8,
-                rotation: 3,
-                ease: 'back.out(1.7)',
-                delay: index * 0.15
+                duration: 0.5,
+                y: 0,
+                opacity: 1,
+                scale: 1,
+                ease: 'power2.out',
+                delay: index * 0.08
             });
         });
 
-        // Subsection titles animation
+        // Subsection titles animation - trigger immediately
         gsap.utils.toArray('.subsection-title').forEach((title, index) => {
-            gsap.from(title, {
+            // Set initial state
+            gsap.set(title, { opacity: 0, y: 20 });
+            
+            gsap.to(title, {
                 scrollTrigger: {
                     trigger: title,
-                    start: 'top 80%',
-                    end: 'bottom 20%',
+                    start: 'top 100%',
+                    end: 'bottom 0%',
                     toggleActions: 'play none none reverse'
                 },
-                duration: 1,
-                y: 40,
-                opacity: 0,
-                ease: 'power3.out',
-                delay: index * 0.1
+                duration: 0.5,
+                y: 0,
+                opacity: 1,
+                ease: 'power2.out',
+                delay: index * 0.05
             });
         });
 
@@ -899,24 +905,21 @@ class AgenticAIApp {
 
 
     initMicroInteractions() {
-        // Add cursor trail effect
+        // Create custom neon cursor
         const cursor = document.createElement('div');
+        cursor.className = 'custom-cursor';
         cursor.style.position = 'fixed';
-        cursor.style.width = '20px';
-        cursor.style.height = '20px';
-        cursor.style.border = '2px solid var(--accent-primary)';
-        cursor.style.borderRadius = '50%';
         cursor.style.pointerEvents = 'none';
         cursor.style.zIndex = '9999';
-        cursor.style.transition = 'transform 0.1s ease';
         cursor.style.opacity = '0';
         document.body.appendChild(cursor);
 
+        // Mouse move handler
         document.addEventListener('mousemove', (e) => {
             gsap.to(cursor, {
                 duration: 0.1,
-                x: e.clientX - 10,
-                y: e.clientY - 10,
+                x: e.clientX,
+                y: e.clientY,
                 opacity: 1
             });
         });
@@ -929,20 +932,34 @@ class AgenticAIApp {
             });
         });
 
-        // Add click effect
-        document.addEventListener('click', () => {
-            gsap.to(cursor, {
-                duration: 0.1,
-                scale: 0.5,
-                ease: 'power2.out',
-                onComplete: () => {
-                    gsap.to(cursor, {
-                        duration: 0.1,
-                        scale: 1,
-                        ease: 'power2.out'
-                    });
-                }
+        // Hover effects
+        const hoverElements = document.querySelectorAll('a, button, input, textarea, select, [data-cursor="pointer"]');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
             });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+
+        // Text input cursor
+        const textInputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea');
+        textInputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                cursor.classList.add('text');
+            });
+            input.addEventListener('blur', () => {
+                cursor.classList.remove('text');
+            });
+        });
+
+        // Click effect
+        document.addEventListener('click', () => {
+            cursor.classList.add('click');
+            setTimeout(() => {
+                cursor.classList.remove('click');
+            }, 300);
         });
     }
 
@@ -2018,9 +2035,310 @@ let currentBlogData = null;
 let currentUseCaseData = null;
 let currentCaseStudyData = null;
 
+// Helper function to get default blog data
+function getDefaultBlogData() {
+    return [
+        {
+            id: 1,
+            title: 'The Future of AI-Powered Customer Service',
+            excerpt: 'Explore how AI is revolutionizing customer service and what it means for your business.',
+            category: 'AI Automation',
+            date: 'Dec 15, 2024',
+            author: 'Sarah Johnson',
+            image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop',
+            authorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+            content: `
+                <h2>Introduction</h2>
+                <p>Artificial Intelligence is transforming the way businesses interact with their customers. In this comprehensive guide, we explore the latest trends and technologies that are reshaping customer service.</p>
+                
+                <h2>The Current State of Customer Service</h2>
+                <p>Traditional customer service models are struggling to keep up with increasing customer expectations and growing volumes of inquiries. Companies are turning to AI-powered solutions to bridge this gap.</p>
+                
+                <h2>Key Benefits of AI in Customer Service</h2>
+                <ul>
+                    <li>24/7 availability</li>
+                    <li>Instant response times</li>
+                    <li>Consistent service quality</li>
+                    <li>Cost reduction</li>
+                    <li>Scalability</li>
+                </ul>
+                
+                <h2>Conclusion</h2>
+                <p>The future of customer service lies in the seamless integration of AI technologies with human expertise, creating more efficient and satisfying customer experiences.</p>
+            `
+        },
+        {
+            id: 2,
+            title: '10 Ways AI Can Boost Your Team\'s Productivity',
+            excerpt: 'Discover practical AI tools and strategies that can transform your team\'s workflow.',
+            category: 'Productivity',
+            date: 'Dec 12, 2024',
+            author: 'Mike Chen',
+            image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=250&fit=crop',
+            authorImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
+            content: `
+                <h2>Introduction</h2>
+                <p>Productivity is the key to success in today's fast-paced business environment. AI tools are revolutionizing how teams work, making processes more efficient and outcomes more effective.</p>
+                
+                <h2>Top 10 AI Productivity Boosters</h2>
+                <ol>
+                    <li>Automated task scheduling and prioritization</li>
+                    <li>Intelligent email management</li>
+                    <li>Smart document generation</li>
+                    <li>Predictive analytics for decision making</li>
+                    <li>Automated data entry and processing</li>
+                    <li>Intelligent meeting scheduling</li>
+                    <li>Smart content creation</li>
+                    <li>Automated quality assurance</li>
+                    <li>Predictive maintenance</li>
+                    <li>Intelligent resource allocation</li>
+                </ol>
+                
+                <h2>Implementation Strategies</h2>
+                <p>Successfully implementing AI tools requires careful planning, team training, and gradual adoption. Start with one tool and expand as your team becomes comfortable.</p>
+            `
+        },
+        {
+            id: 3,
+            title: 'Understanding Natural Language Processing in Business',
+            excerpt: 'A comprehensive guide to NLP and how it\'s being used in modern business applications.',
+            category: 'Technology',
+            date: 'Dec 10, 2024',
+            author: 'Emily Davis',
+            image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=250&fit=crop',
+            authorImage: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=40&h=40&fit=crop&crop=face',
+            content: `
+                <h2>What is Natural Language Processing?</h2>
+                <p>Natural Language Processing (NLP) is a branch of artificial intelligence that helps computers understand, interpret, and manipulate human language. It's the technology behind many of the AI applications we use today.</p>
+                
+                <h2>Key NLP Technologies</h2>
+                <ul>
+                    <li>Text analysis and sentiment analysis</li>
+                    <li>Language translation</li>
+                    <li>Speech recognition and synthesis</li>
+                    <li>Chatbots and virtual assistants</li>
+                    <li>Content generation and summarization</li>
+                </ul>
+                
+                <h2>Business Applications</h2>
+                <p>NLP is being used across various industries to improve customer service, automate content creation, analyze customer feedback, and enhance decision-making processes.</p>
+                
+                <h2>Future Trends</h2>
+                <p>As NLP technology continues to advance, we can expect more sophisticated language understanding, better context awareness, and more natural human-computer interactions.</p>
+            `
+        }
+    ];
+}
+
+// Helper function to get default use case data
+function getDefaultUseCaseData() {
+    return [
+        {
+            id: 1,
+            title: 'Healthcare Patient Management',
+            description: 'Streamline patient scheduling, appointment reminders, and follow-up care coordination.',
+            icon: 'fas fa-hospital',
+            stats: [
+                { number: '85%', label: 'Reduction in no-shows' },
+                { number: '40%', label: 'Time saved' }
+            ],
+            tags: ['Healthcare', 'Scheduling', 'Patient Care'],
+            date: 'Dec 20, 2024',
+            content: `
+                <h2>Overview</h2>
+                <p>This use case demonstrates how Emma can transform healthcare operations by automating patient management tasks and improving care coordination.</p>
+                
+                <h2>Key Features</h2>
+                <ul>
+                    <li>Automated appointment scheduling</li>
+                    <li>Smart reminder system</li>
+                    <li>Patient follow-up coordination</li>
+                    <li>Integration with existing healthcare systems</li>
+                </ul>
+                
+                <h2>Implementation Benefits</h2>
+                <p>Healthcare providers using this solution have seen significant improvements in patient satisfaction and operational efficiency.</p>
+            `
+        },
+        {
+            id: 2,
+            title: 'E-commerce Customer Support',
+            description: 'Handle order inquiries, product recommendations, and returns processing automatically.',
+            icon: 'fas fa-shopping-cart',
+            stats: [
+                { number: '92%', label: 'Query resolution' },
+                { number: '60%', label: 'Faster response' }
+            ],
+            tags: ['E-commerce', 'Support', 'Automation'],
+            date: 'Dec 18, 2024',
+            content: `
+                <h2>Overview</h2>
+                <p>E-commerce businesses can leverage Emma to provide instant, intelligent customer support that scales with their growth.</p>
+                
+                <h2>Key Features</h2>
+                <ul>
+                    <li>Order status tracking</li>
+                    <li>Product recommendations</li>
+                    <li>Returns and refunds processing</li>
+                    <li>Inventory inquiries</li>
+                </ul>
+                
+                <h2>Business Impact</h2>
+                <p>E-commerce companies using this solution have experienced higher customer satisfaction and reduced support costs.</p>
+            `
+        },
+        {
+            id: 3,
+            title: 'Educational Institution',
+            description: 'Manage student inquiries, course information, and administrative tasks efficiently.',
+            icon: 'fas fa-graduation-cap',
+            stats: [
+                { number: '75%', label: 'Query automation' },
+                { number: '50%', label: 'Admin time saved' }
+            ],
+            tags: ['Education', 'Student Services', 'Administration'],
+            date: 'Dec 16, 2024',
+            content: `
+                <h2>Overview</h2>
+                <p>Educational institutions can use Emma to streamline student services and administrative processes, improving the overall educational experience.</p>
+                
+                <h2>Key Features</h2>
+                <ul>
+                    <li>Course information and scheduling</li>
+                    <li>Student enrollment assistance</li>
+                    <li>Administrative task automation</li>
+                    <li>24/7 student support</li>
+                </ul>
+                
+                <h2>Educational Benefits</h2>
+                <p>Institutions using this solution have seen improved student satisfaction and more efficient administrative operations.</p>
+            `
+        }
+    ];
+}
+
+// Helper function to get default case study data
+function getDefaultCaseStudyData() {
+    return [
+        {
+            id: 1,
+            title: 'TechCorp Digital Transformation',
+            client: 'TechCorp Inc.',
+            industry: 'Technology',
+            date: 'Dec 22, 2024',
+            image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=250&fit=crop',
+            summary: 'How Emma helped TechCorp streamline their customer support operations and reduce response times by 70%.',
+            results: [
+                { number: '70%', label: 'Faster Response' },
+                { number: '85%', label: 'Customer Satisfaction' },
+                { number: '50%', label: 'Cost Reduction' }
+            ],
+            tags: ['Digital Transformation', 'Customer Support', 'AI Automation'],
+            content: `
+                <h2>Challenge</h2>
+                <p>TechCorp was struggling with high customer support volumes and long response times. Their traditional support system couldn't keep up with the growing demand.</p>
+                
+                <h2>Solution</h2>
+                <p>We implemented Emma as their primary customer support assistant, integrating with their existing CRM and ticketing systems.</p>
+                
+                <h2>Results</h2>
+                <p>The implementation resulted in significant improvements across all key metrics, transforming their customer support operations.</p>
+                
+                <h2>Key Achievements</h2>
+                <ul>
+                    <li>70% reduction in average response time</li>
+                    <li>85% improvement in customer satisfaction scores</li>
+                    <li>50% reduction in support costs</li>
+                    <li>24/7 availability for customer inquiries</li>
+                </ul>
+            `,
+            gallery: [
+                'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop'
+            ]
+        },
+        {
+            id: 2,
+            title: 'HealthFirst Patient Care Revolution',
+            client: 'HealthFirst Medical Group',
+            industry: 'Healthcare',
+            date: 'Dec 20, 2024',
+            image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=250&fit=crop',
+            summary: 'Emma transformed patient care coordination at HealthFirst, reducing no-shows by 60% and improving patient satisfaction.',
+            results: [
+                { number: '60%', label: 'Reduced No-shows' },
+                { number: '90%', label: 'Patient Satisfaction' },
+                { number: '35%', label: 'Admin Time Saved' }
+            ],
+            tags: ['Healthcare', 'Patient Care', 'Scheduling'],
+            content: `
+                <h2>Challenge</h2>
+                <p>HealthFirst was facing high no-show rates and administrative burden in managing patient appointments and follow-ups.</p>
+                
+                <h2>Solution</h2>
+                <p>We deployed Emma to handle patient scheduling, reminders, and follow-up care coordination across their network.</p>
+                
+                <h2>Results</h2>
+                <p>The implementation led to dramatic improvements in patient engagement and operational efficiency.</p>
+                
+                <h2>Key Achievements</h2>
+                <ul>
+                    <li>60% reduction in patient no-shows</li>
+                    <li>90% improvement in patient satisfaction</li>
+                    <li>35% reduction in administrative time</li>
+                    <li>Improved care coordination across departments</li>
+                </ul>
+            `,
+            gallery: [
+                'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop'
+            ]
+        },
+        {
+            id: 3,
+            title: 'EduTech Learning Enhancement',
+            client: 'EduTech University',
+            industry: 'Education',
+            date: 'Dec 18, 2024',
+            image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=250&fit=crop',
+            summary: 'Emma revolutionized student services at EduTech, providing 24/7 support and improving student engagement by 80%.',
+            results: [
+                { number: '80%', label: 'Student Engagement' },
+                { number: '65%', label: 'Query Resolution' },
+                { number: '45%', label: 'Admin Efficiency' }
+            ],
+            tags: ['Education', 'Student Services', 'Engagement'],
+            content: `
+                <h2>Challenge</h2>
+                <p>EduTech University needed to improve student services and reduce administrative workload while maintaining quality support.</p>
+                
+                <h2>Solution</h2>
+                <p>We implemented Emma to handle student inquiries, course information, and administrative tasks around the clock.</p>
+                
+                <h2>Results</h2>
+                <p>The solution transformed how students interact with university services and significantly improved operational efficiency.</p>
+                
+                <h2>Key Achievements</h2>
+                <ul>
+                    <li>80% improvement in student engagement</li>
+                    <li>65% of queries resolved automatically</li>
+                    <li>45% increase in administrative efficiency</li>
+                    <li>24/7 student support availability</li>
+                </ul>
+            `,
+            gallery: [
+                'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=400&h=300&fit=crop',
+                'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop'
+            ]
+        }
+    ];
+}
+
 // Blog Modal Functions
 async function openBlogModal(blogId) {
+    console.log('openBlogModal called with ID:', blogId);
     try {
+        // First try to get from API
         const response = await fetch(`/api/blogs/${blogId}`);
         if (response.ok) {
             const blog = await response.json();
@@ -2028,17 +2346,47 @@ async function openBlogModal(blogId) {
             displayBlogModal(blog);
             showModal('blogModal');
         } else {
-            console.error('Blog not found');
+            // Fallback to default data
+            console.log('API failed, using default data');
+            const defaultBlogs = getDefaultBlogData();
+            const blog = defaultBlogs.find(b => b.id == blogId);
+            if (blog) {
+                currentBlogData = blog;
+                displayBlogModal(blog);
+                showModal('blogModal');
+            } else {
+                console.error('Blog not found');
+            }
         }
     } catch (error) {
         console.error('Error loading blog:', error);
+        // Fallback to default data
+        console.log('Error occurred, using default data');
+        const defaultBlogs = getDefaultBlogData();
+        const blog = defaultBlogs.find(b => b.id == blogId);
+        if (blog) {
+            currentBlogData = blog;
+            displayBlogModal(blog);
+            showModal('blogModal');
+        }
     }
 }
 
 function displayBlogModal(blog) {
+    console.log('displayBlogModal called with:', blog);
     document.getElementById('blogModalTitle').textContent = blog.title;
     document.getElementById('blogModalCategory').textContent = blog.category;
-    document.getElementById('blogModalDate').textContent = new Date(blog.date).toLocaleDateString();
+    // Handle date parsing more safely
+    try {
+        const date = new Date(blog.date);
+        if (isNaN(date.getTime())) {
+            document.getElementById('blogModalDate').textContent = blog.date;
+        } else {
+            document.getElementById('blogModalDate').textContent = date.toLocaleDateString();
+        }
+    } catch (error) {
+        document.getElementById('blogModalDate').textContent = blog.date;
+    }
     document.getElementById('blogModalAuthor').textContent = blog.author;
     document.getElementById('blogModalAuthorImage').src = blog.authorImage || '/uploads/blogs/default-author.jpg';
     document.getElementById('blogModalAuthorImage').alt = blog.author;
@@ -2085,6 +2433,7 @@ function displayBlogModal(blog) {
 // Use Case Modal Functions
 async function openUseCaseModal(useCaseId) {
     try {
+        // First try to get from API
         const response = await fetch(`/api/content/usecases/${useCaseId}`);
         if (response.ok) {
             const useCase = await response.json();
@@ -2092,10 +2441,27 @@ async function openUseCaseModal(useCaseId) {
             displayUseCaseModal(useCase);
             showModal('usecaseModal');
         } else {
-            console.error('Use case not found');
+            // Fallback to default data
+            const defaultUseCases = getDefaultUseCaseData();
+            const useCase = defaultUseCases.find(u => u.id == useCaseId);
+            if (useCase) {
+                currentUseCaseData = useCase;
+                displayUseCaseModal(useCase);
+                showModal('usecaseModal');
+            } else {
+                console.error('Use case not found');
+            }
         }
     } catch (error) {
         console.error('Error loading use case:', error);
+        // Fallback to default data
+        const defaultUseCases = getDefaultUseCaseData();
+        const useCase = defaultUseCases.find(u => u.id == useCaseId);
+        if (useCase) {
+            currentUseCaseData = useCase;
+            displayUseCaseModal(useCase);
+            showModal('usecaseModal');
+        }
     }
 }
 
@@ -2120,7 +2486,7 @@ function displayUseCaseModal(useCase) {
     `).join('');
     
     // Display detailed content
-    const content = useCase.detailedContent || `
+    const content = useCase.content || `
         <h2>Overview</h2>
         <p>${useCase.description}</p>
         
@@ -2174,6 +2540,7 @@ function displayUseCaseModal(useCase) {
 // Case Study Modal Functions
 async function openCaseStudyModal(caseStudyId) {
     try {
+        // First try to get from API
         const response = await fetch(`/api/content/casestudies/${caseStudyId}`);
         if (response.ok) {
             const caseStudy = await response.json();
@@ -2181,10 +2548,27 @@ async function openCaseStudyModal(caseStudyId) {
             displayCaseStudyModal(caseStudy);
             showModal('casestudyModal');
         } else {
-            console.error('Case study not found');
+            // Fallback to default data
+            const defaultCaseStudies = getDefaultCaseStudyData();
+            const caseStudy = defaultCaseStudies.find(c => c.id == caseStudyId);
+            if (caseStudy) {
+                currentCaseStudyData = caseStudy;
+                displayCaseStudyModal(caseStudy);
+                showModal('casestudyModal');
+            } else {
+                console.error('Case study not found');
+            }
         }
     } catch (error) {
         console.error('Error loading case study:', error);
+        // Fallback to default data
+        const defaultCaseStudies = getDefaultCaseStudyData();
+        const caseStudy = defaultCaseStudies.find(c => c.id == caseStudyId);
+        if (caseStudy) {
+            currentCaseStudyData = caseStudy;
+            displayCaseStudyModal(caseStudy);
+            showModal('casestudyModal');
+        }
     }
 }
 
@@ -2242,11 +2626,38 @@ function displayCaseStudyModal(caseStudy) {
 
 // Modal Control Functions
 function showModal(modalId) {
+    console.log('showModal called with ID:', modalId);
     const modal = document.getElementById(modalId);
+    console.log('Modal element found:', modal);
     if (modal) {
+        // Move modal to body if it's not already there
+        if (modal.parentElement !== document.body) {
+            console.log('Moving modal to body element');
+            document.body.appendChild(modal);
+        }
+        
+        // Force the modal to be visible
         modal.style.display = 'flex';
+        modal.style.opacity = '1';
+        modal.style.visibility = 'visible';
+        modal.style.zIndex = '99999';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100vw';
+        modal.style.height = '100vh';
         modal.classList.add('show');
         document.body.style.overflow = 'hidden';
+        console.log('Modal should now be visible');
+        console.log('Modal computed styles:', {
+            display: getComputedStyle(modal).display,
+            opacity: getComputedStyle(modal).opacity,
+            visibility: getComputedStyle(modal).visibility,
+            zIndex: getComputedStyle(modal).zIndex,
+            position: getComputedStyle(modal).position
+        });
+    } else {
+        console.error('Modal element not found:', modalId);
     }
 }
 
@@ -2254,6 +2665,8 @@ function closeModal(modalId) {
     const modal = document.getElementById(modalId);
     if (modal) {
         modal.classList.remove('show');
+        modal.style.opacity = '0';
+        modal.style.visibility = 'hidden';
         setTimeout(() => {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
@@ -2389,7 +2802,60 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('resources')) {
         window.resourcesManager = new ResourcesManager();
     }
+    
+    // Ensure all modals are properly positioned
+    const modals = ['blogModal', 'usecaseModal', 'casestudyModal'];
+    modals.forEach(modalId => {
+        const modal = document.getElementById(modalId);
+        if (modal && modal.parentElement !== document.body) {
+            console.log(`Moving ${modalId} to body element`);
+            document.body.appendChild(modal);
+        }
+    });
 });
+
+// Test function to debug modal issues
+function testModal() {
+    console.log('Testing modal system...');
+    
+    // Check if modal exists
+    const modal = document.getElementById('blogModal');
+    console.log('Modal element:', modal);
+    console.log('Modal parent:', modal?.parentElement);
+    console.log('Modal in DOM:', document.body.contains(modal));
+    
+    const testBlog = {
+        id: 999,
+        title: 'Test Blog Post',
+        category: 'Test',
+        date: 'Dec 25, 2024',
+        author: 'Test Author',
+        authorImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+        image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&h=250&fit=crop',
+        content: '<h2>Test Content</h2><p>This is a test blog post to verify the modal system is working.</p>'
+    };
+    
+    currentBlogData = testBlog;
+    displayBlogModal(testBlog);
+    showModal('blogModal');
+    
+    // Additional debugging
+    setTimeout(() => {
+        const modalAfter = document.getElementById('blogModal');
+        console.log('Modal after showModal:', modalAfter);
+        console.log('Modal classes:', modalAfter?.className);
+        console.log('Modal styles:', modalAfter ? {
+            display: getComputedStyle(modalAfter).display,
+            opacity: getComputedStyle(modalAfter).opacity,
+            visibility: getComputedStyle(modalAfter).visibility,
+            zIndex: getComputedStyle(modalAfter).zIndex,
+            position: getComputedStyle(modalAfter).position
+        } : 'Modal not found');
+    }, 100);
+}
+
+// Make test function available globally
+window.testModal = testModal;
 
 // Export for potential module use
 if (typeof module !== 'undefined' && module.exports) {
@@ -2466,7 +2932,7 @@ class PricingManager {
         if (typeof gsap !== 'undefined') {
             gsap.registerPlugin(ScrollTrigger);
 
-            gsap.fromTo('.pricing-card', 
+            gsap.fromTo('#pricing-cards .pricing-card', 
                 { 
                     opacity: 0, 
                     y: 50,
@@ -2480,7 +2946,7 @@ class PricingManager {
                     stagger: 0.2,
                     ease: 'power2.out',
                     scrollTrigger: {
-                        trigger: '.pricing-cards',
+                        trigger: '#pricing-cards',
                         start: 'top 80%',
                         end: 'bottom 20%',
                         toggleActions: 'play none none reverse'
@@ -2508,7 +2974,7 @@ class PricingManager {
             );
 
             // Animate form appearance
-            gsap.fromTo('.contact-sales-form', 
+            gsap.fromTo('#sales-form', 
                 { 
                     opacity: 0,
                     scale: 0.9
@@ -2527,12 +2993,8 @@ class PricingManager {
         const form = document.getElementById('contact-sales-form');
         if (form) {
             form.style.display = 'flex';
+            form.classList.add('show');
             document.body.style.overflow = 'hidden';
-            
-            // Add show class for animation
-            setTimeout(() => {
-                form.classList.add('show');
-            }, 10);
             
             // Focus on first input
             const firstInput = form.querySelector('input[required]');
@@ -2545,14 +3007,9 @@ class PricingManager {
     closeContactForm() {
         const form = document.getElementById('contact-sales-form');
         if (form) {
-            // Remove show class for animation
             form.classList.remove('show');
-            
-            // Hide form after animation
-            setTimeout(() => {
-                form.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }, 300);
+            form.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
     }
 
@@ -2728,7 +3185,7 @@ class InteractiveHeroManager {
         // Auto-cycling settings
         this.autoCycleEnabled = true;
         this.avatarCycleInterval = null;
-        this.avatarCycleDelay = 3000; // 3 seconds between avatar changes
+        this.avatarCycleDelay = 8000; // 8 seconds between avatar changes
         this.userInteracted = false; // Track if user manually changed avatar
         this.typingInterval = null; // Track typing animation interval
         
@@ -2988,10 +3445,8 @@ class InteractiveHeroManager {
     }
     
     startAvatarCycle() {
-        console.log('Starting avatar cycle with delay:', this.avatarCycleDelay);
         this.avatarCycleInterval = setInterval(() => {
             if (!this.userInteracted) {
-                console.log('Auto-cycling to next avatar');
                 this.nextAvatar();
                 this.updateAvatarSpeech();
             }
@@ -3241,10 +3696,8 @@ class InteractiveHeroManager {
     }
 
     nextAvatar() {
-        console.log('nextAvatar called, current index:', this.avatarIndex);
         this.avatarIndex = (this.avatarIndex + 1) % this.avatars.length;
         this.currentAvatar = this.avatars[this.avatarIndex];
-        console.log('New avatar:', this.currentAvatar, 'at index:', this.avatarIndex);
         this.updateAvatarDisplay();
         this.updateLanguageButtons();
         this.updateAudioInfo();
@@ -3670,6 +4123,16 @@ class InteractiveHeroManager {
         }
     }
 
+    updateNotifications() {
+        // Update notification system for dynamic content
+        // This method can be used to show notifications about content updates
+        const notificationContainer = document.getElementById('notification-container');
+        if (notificationContainer) {
+            // Add notification logic here if needed
+            console.log('Notifications updated for industry:', this.currentIndustry);
+        }
+    }
+
 
     startSpeechCycle() {
         setInterval(() => {
@@ -3718,4 +4181,156 @@ document.addEventListener('DOMContentLoaded', () => {
                     cms.loadLogo();
                     cms.loadBlogStyles();
                 }
+                
+                
 });
+
+// New Avatar Cycling System
+class AvatarCycler {
+    constructor() {
+        this.avatars = [
+            {
+                image: '/Logo And Recording/US.jpeg',
+                comment: 'Emma - Enterprise AI Solution'
+            },
+            {
+                image: '/Logo And Recording/Saudi.jpeg',
+                comment: 'أنا إيما، حل الذكاء الاصطناعي المتقدم لتحويل الأعمال.'
+            },
+            {
+                image: '/Logo And Recording/India.jpeg',
+                comment: 'मैं एम्मा हूं, व्यावसायिक परिवर्तन के लिए उन्नत AI समाधान।'
+            },
+            {
+                image: '/Logo And Recording/image (3).jpeg',
+                comment: 'Healthcare AI Specialist - I can process medical data with 99.9% accuracy!'
+            },
+            {
+                image: '/Logo And Recording/image (4).jpeg',
+                comment: 'Banking AI Specialist - I help banks reduce operational costs by 40%'
+            },
+            {
+                image: '/Logo And Recording/image (5).jpeg',
+                comment: 'Education AI Specialist - Personalized learning for every student'
+            }
+        ];
+        
+        this.currentIndex = 0;
+        this.isPlaying = false;
+        this.intervalId = null;
+        
+        this.init();
+    }
+    
+    init() {
+        this.avatarImage = document.getElementById('avatar-image');
+        this.commentText = document.getElementById('avatar-comment-text');
+        this.avatarBox = document.querySelector('.avatar-box');
+        this.audioLanguages = document.querySelectorAll('.audio-language');
+        this.currentAudio = null;
+        
+        if (!this.avatarImage || !this.commentText) {
+            console.log('Avatar elements not found, retrying...');
+            setTimeout(() => this.init(), 1000);
+            return;
+        }
+        
+        this.startCycling();
+        this.addClickHandler();
+        this.addAudioHandlers();
+    }
+    
+    startCycling() {
+        if (this.isPlaying) return;
+        
+        this.isPlaying = true;
+        this.intervalId = setInterval(() => {
+            this.nextAvatar();
+        }, 4000); // Change every 4 seconds
+    }
+    
+    stopCycling() {
+        this.isPlaying = false;
+        if (this.intervalId) {
+            clearInterval(this.intervalId);
+            this.intervalId = null;
+        }
+    }
+    
+    nextAvatar() {
+        this.currentIndex = (this.currentIndex + 1) % this.avatars.length;
+        this.updateAvatar();
+    }
+    
+    updateAvatar() {
+        const avatar = this.avatars[this.currentIndex];
+        
+        // Add fade out effect
+        this.avatarBox.style.opacity = '0.7';
+        this.avatarBox.style.transform = 'scale(0.95)';
+        
+        setTimeout(() => {
+            this.avatarImage.src = avatar.image;
+            this.avatarImage.alt = `Emma Avatar ${this.currentIndex + 1}`;
+            this.commentText.textContent = avatar.comment;
+            
+            // Add fade in effect
+            this.avatarBox.style.opacity = '1';
+            this.avatarBox.style.transform = 'scale(1)';
+        }, 300);
+    }
+    
+    addClickHandler() {
+        if (this.avatarBox) {
+            this.avatarBox.addEventListener('click', () => {
+                this.nextAvatar();
+            });
+        }
+    }
+    
+    addAudioHandlers() {
+        this.audioLanguages.forEach(language => {
+            language.addEventListener('click', () => {
+                this.playAudio(language);
+            });
+        });
+    }
+    
+    playAudio(languageElement) {
+        // Stop current audio if playing
+        if (this.currentAudio) {
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+        }
+        
+        // Remove active class from all languages
+        this.audioLanguages.forEach(lang => lang.classList.remove('active'));
+        
+        // Add active class to clicked language
+        languageElement.classList.add('active');
+        
+        // Get audio file path
+        const audioPath = languageElement.getAttribute('data-audio');
+        
+        if (audioPath) {
+            // Create and play audio
+            this.currentAudio = new Audio(audioPath);
+            this.currentAudio.play().catch(error => {
+                console.log('Audio playback failed:', error);
+                // Remove active class if audio fails
+                languageElement.classList.remove('active');
+            });
+            
+            // Remove active class when audio ends
+            this.currentAudio.addEventListener('ended', () => {
+                languageElement.classList.remove('active');
+            });
+        }
+    }
+}
+
+// Initialize avatar cycler when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new AvatarCycler();
+});
+

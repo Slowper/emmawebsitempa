@@ -1023,6 +1023,83 @@ app.get('/api/blogs/:id', (req, res) => {
     }
 });
 
+// Backward compatibility PUT endpoint for blog editing
+app.put('/api/blogs/:id', upload.fields([
+    { name: 'blogImage', maxCount: 1 },
+    { name: 'blogAuthorImage', maxCount: 1 },
+    { name: 'blogGallery', maxCount: 10 }
+]), (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(`PUT /api/blogs/${id} - Received:`, req.body);
+        console.log(`PUT /api/blogs/${id} - Files:`, req.files);
+        
+        const blogIndex = blogsContent.findIndex(b => b.id == id);
+        if (blogIndex !== -1) {
+            const updatedBlog = { ...blogsContent[blogIndex], ...req.body };
+
+            // Handle uploaded files
+            if (req.files) {
+                if (req.files.blogImage && req.files.blogImage[0]) {
+                    updatedBlog.image = `/uploads/blogs/${req.files.blogImage[0].filename}`;
+                }
+                if (req.files.blogAuthorImage && req.files.blogAuthorImage[0]) {
+                    updatedBlog.authorImage = `/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
+                }
+                if (req.files.blogGallery) {
+                    updatedBlog.gallery = req.files.blogGallery.map(file => `/uploads/blogs/${file.filename}`);
+                }
+            }
+
+            blogsContent[blogIndex] = updatedBlog;
+            res.json({ message: 'Blog updated successfully' });
+        } else {
+            res.status(404).json({ error: 'Blog not found' });
+        }
+    } catch (error) {
+        console.error('Error updating blog:', error);
+        res.status(500).json({ error: 'Failed to update blog' });
+    }
+});
+
+// Backward compatibility POST endpoint for blog creation
+app.post('/api/blogs', upload.fields([
+    { name: 'blogImage', maxCount: 1 },
+    { name: 'blogAuthorImage', maxCount: 1 },
+    { name: 'blogGallery', maxCount: 10 }
+]), (req, res) => {
+    try {
+        console.log('POST /api/blogs - Received:', req.body);
+        console.log('POST /api/blogs - Files:', req.files);
+        
+        const newBlog = {
+            id: blogsContent.length + 1,
+            ...req.body,
+            published: true,
+            date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        };
+
+        // Handle uploaded files
+        if (req.files) {
+            if (req.files.blogImage && req.files.blogImage[0]) {
+                newBlog.image = `/uploads/blogs/${req.files.blogImage[0].filename}`;
+            }
+            if (req.files.blogAuthorImage && req.files.blogAuthorImage[0]) {
+                newBlog.authorImage = `/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
+            }
+            if (req.files.blogGallery) {
+                newBlog.gallery = req.files.blogGallery.map(file => `/uploads/blogs/${file.filename}`);
+            }
+        }
+
+        blogsContent.push(newBlog);
+        res.json({ message: 'Blog created successfully', blog: newBlog });
+    } catch (error) {
+        console.error('Error creating blog:', error);
+        res.status(500).json({ error: 'Failed to create blog' });
+    }
+});
+
 app.post('/api/content/blogs', upload.fields([
     { name: 'blogImage', maxCount: 1 },
     { name: 'blogAuthorImage', maxCount: 1 },
@@ -1101,6 +1178,19 @@ app.put('/api/content/blogs/:id', upload.fields([
 app.delete('/api/content/blogs/:id', (req, res) => {
     const { id } = req.params;
     console.log(`DELETE /api/content/blogs/${id}`);
+    const blogIndex = blogsContent.findIndex(b => b.id == id);
+    if (blogIndex !== -1) {
+        blogsContent.splice(blogIndex, 1);
+        res.json({ message: 'Blog deleted successfully' });
+    } else {
+        res.status(404).json({ error: 'Blog not found' });
+    }
+});
+
+// Backward compatibility DELETE endpoint for blog deletion
+app.delete('/api/blogs/:id', (req, res) => {
+    const { id } = req.params;
+    console.log(`DELETE /api/blogs/${id}`);
     const blogIndex = blogsContent.findIndex(b => b.id == id);
     if (blogIndex !== -1) {
         blogsContent.splice(blogIndex, 1);
@@ -1362,6 +1452,7 @@ let pricingContent = {
         {
             id: 'starter',
             name: 'Starter',
+            description: 'Perfect for small teams getting started with AI automation',
             features: [
                 'Up to 1,000 conversations/month',
                 'Basic AI capabilities',
@@ -1377,6 +1468,7 @@ let pricingContent = {
         {
             id: 'professional',
             name: 'Professional',
+            description: 'Ideal for growing businesses that need advanced AI capabilities',
             features: [
                 'Up to 10,000 conversations/month',
                 'Advanced AI capabilities',
@@ -1393,6 +1485,7 @@ let pricingContent = {
         {
             id: 'enterprise',
             name: 'Enterprise',
+            description: 'Complete solution for large organizations with complex requirements',
             features: [
                 'Unlimited conversations',
                 'Full AI customization',

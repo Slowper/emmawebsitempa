@@ -251,6 +251,10 @@ const contentMapping = {
     'industries_title': { elementId: 'industries-title', isHtml: false },
     'industries_subtitle': { elementId: 'industries-subtitle', isHtml: false },
     
+    // Resources section
+    'resources_title': { elementId: 'resources-title', isHtml: false },
+    'resources_subtitle': { elementId: 'resources-subtitle', isHtml: false },
+    
     // Footer
     'footer_company_description': { elementId: 'footer-description', isHtml: false }
 };
@@ -280,6 +284,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateHeroContent(contentMap);
         updateCapabilitiesContent(contentMap);
         updateIndustriesContent(contentMap);
+        updateResourcesContent(contentMap);
         updateFooterContent(contentMap);
         
         // Load pricing content
@@ -354,6 +359,24 @@ function updateIndustriesContent(contentMap) {
     }
 }
 
+function updateResourcesContent(contentMap) {
+    const resourcesTitle = contentMap.get('resources_title');
+    if (resourcesTitle && resourcesTitle.content) {
+        const titleElement = document.querySelector('#resources .section-title');
+        if (titleElement) {
+            titleElement.textContent = resourcesTitle.content;
+        }
+    }
+
+    const resourcesSubtitle = contentMap.get('resources_subtitle');
+    if (resourcesSubtitle && resourcesSubtitle.content) {
+        const subtitleElement = document.querySelector('#resources .section-subtitle');
+        if (subtitleElement) {
+            subtitleElement.textContent = resourcesSubtitle.content;
+        }
+    }
+}
+
 function updateFooterContent(contentMap) {
     const footerDescription = contentMap.get('footer_company_description');
     if (footerDescription && footerDescription.content) {
@@ -413,10 +436,10 @@ function updatePricingSection(pricingData) {
     const customFeatures = document.getElementById('custom-solutions-features');
     
     if (customTitle && pricingData.customSolutions) {
-        customTitle.textContent = pricingData.customSolutions.title;
+        customTitle.textContent = pricingData.customSolutions.title || 'Need a Custom Solution?';
     }
     if (customDescription && pricingData.customSolutions) {
-        customDescription.textContent = pricingData.customSolutions.description;
+        customDescription.textContent = pricingData.customSolutions.description || 'Every organization is unique. Let\'s work together to create the perfect AI solution for your specific needs.';
     }
     if (customFeatures && pricingData.customSolutions && pricingData.customSolutions.features) {
         customFeatures.innerHTML = '';
@@ -440,12 +463,19 @@ function createPricingCard(plan) {
     
     const badge = plan.featured ? '<div class="popular-badge">Most Popular</div>' : '';
     
-    const features = plan.features.map(feature => `
+    // Add fallbacks for undefined values
+    const planName = plan.name || 'Plan Name';
+    const planPrice = plan.price || 'Contact Us';
+    const planPeriod = plan.period || 'per month';
+    const planButtonText = plan.buttonText || 'Contact Sales';
+    const planFeatures = plan.features || [];
+    
+    const features = planFeatures.map(feature => `
         <div class="feature-item">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M9 12l2 2 4-4"></path>
             </svg>
-            <span>${feature}</span>
+            <span>${feature || 'Feature'}</span>
         </div>
     `).join('');
     
@@ -459,17 +489,16 @@ function createPricingCard(plan) {
                     <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
                 </svg>
             </div>
-            <h3 class="plan-name">${plan.name}</h3>
-            <p class="plan-description">${plan.description}</p>
+            <h3 class="plan-name">${planName}</h3>
         </div>
         <div class="plan-features">
             ${features}
         </div>
         <div class="plan-price">
-            <span class="price-amount">${plan.price}</span>
-            <span class="price-period">${plan.period}</span>
+            <span class="price-amount">${planPrice}</span>
+            <span class="price-period">${planPeriod}</span>
         </div>
-        <button class="${buttonClass} plan-btn">${plan.buttonText}</button>
+        <button class="${buttonClass} plan-btn">${planButtonText}</button>
     `;
     
     return card;

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no">
     <title>Emma - By KodeFast</title>
     <meta name="description" content="Emma - Cutting-edge AI platform delivering smart, autonomous AI agents across Healthcare, Banking, and Education industries.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,6 +12,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <script src="particles.min.js"></script>
 </head>
 <body>
 
@@ -70,28 +71,31 @@
         </div>
     </div>
 
-    <!-- Corner Logo -->
-    <div class="corner-logo">
-        <div class="logo-circle">
-            <img src="Logo And Recording/cropped_circle_image.png" alt="Emma Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="logo-fallback" style="display:none;">
-                <span class="logo-e">E</span>
-                <span class="logo-text">MMA</span>
-            </div>
-        </div>
-    </div>
-
     <!-- Sticky Navigation -->
     <nav class="navbar">
         <div class="nav-container">
+            <!-- Logo on the left -->
+            <div class="nav-logo">
+                <div class="logo-circle">
+                    <img src="Logo And Recording/cropped_circle_image.png" alt="Emma Logo" class="logo-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="logo-fallback" style="display:none;">
+                        <span class="logo-e">E</span>
+                        <span class="logo-text">MMA</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation links in the center -->
             <div class="nav-links" id="nav-links">
                 <!-- Navigation links will be loaded dynamically from CMS -->
                 <a href="#home" class="nav-link">Home</a>
-                <a href="#about" class="nav-link">About Us</a>
                 <a href="#pricing" class="nav-link">Pricing</a>
                 <a href="#resources" class="nav-link">Resources</a>
+                <a href="#about" class="nav-link">About Us</a>
                 <a href="#signin" class="nav-link">Sign In</a>
             </div>
+            
+            <!-- Actions on the right -->
             <div class="nav-actions">
                 <button class="search-btn" aria-label="Search">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -111,6 +115,8 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <!-- Particles.js Background -->
+        <div id="particles-js" class="particles-container"></div>
         <div class="container">
             <div class="hero-content">
                 <div class="hero-visual">
@@ -166,230 +172,32 @@
                             </svg>
                         </div>
                         
-                        <div class="avatar-container">
-                            <div class="avatar-card">
-                                <div class="avatar-carousel">
-                                    <div class="avatar-slide active" data-avatar="us">
-                                        <div class="avatar-image-wrapper">
-                                            <img src="/Logo And Recording/US.jpeg" alt="Emma - US Avatar" class="avatar-image">
-                                            <div class="avatar-glow"></div>
-                                            <div class="industry-badge general">General Business</div>
-                                        </div>
-                                        <div class="speech-bubble" id="speech-bubble">
-                                            <p id="speech-text">Emma - Enterprise AI Solution</p>
-                                        </div>
-                                        <div class="speaking-indicator">
-                                            <div class="processing-text">
-                                                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                                                </svg>
-                                                <span>Processing...</span>
-                                            </div>
-                                            <div class="sound-waves">
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="avatar-slide" data-avatar="saudi">
-                                        <div class="avatar-image-wrapper">
-                                            <img src="/Logo And Recording/Saudi.jpeg" alt="Emma - Saudi Avatar" class="avatar-image">
-                                            <div class="avatar-glow"></div>
-                                            <div class="industry-badge arabic">العربية</div>
-                                        </div>
-                                        <div class="speech-bubble">
-                                            <p>أنا إيما، حل الذكاء الاصطناعي المتقدم لتحويل الأعمال.</p>
-                                        </div>
-                                        <div class="speaking-indicator">
-                                            <div class="processing-text">
-                                                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                                                </svg>
-                                                <span>معالجة...</span>
-                                            </div>
-                                            <div class="sound-waves">
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="avatar-slide" data-avatar="india">
-                                        <div class="avatar-image-wrapper">
-                                            <img src="/Logo And Recording/India.jpeg" alt="Emma - India Avatar" class="avatar-image">
-                                            <div class="avatar-glow"></div>
-                                            <div class="industry-badge hindi">हिन्दी</div>
-                                        </div>
-                                        <div class="speech-bubble">
-                                            <p>मैं एम्मा हूं, व्यावसायिक परिवर्तन के लिए उन्नत AI समाधान।</p>
-                                        </div>
-                                        <div class="speaking-indicator">
-                                            <div class="processing-text">
-                                                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                                                </svg>
-                                                <span>प्रसंस्करण...</span>
-                                            </div>
-                                            <div class="sound-waves">
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="avatar-slide" data-avatar="avatar1">
-                                        <div class="avatar-image-wrapper">
-                                            <img src="/Logo And Recording/image (3).jpeg" alt="Emma - Avatar 1" class="avatar-image">
-                                            <div class="avatar-glow"></div>
-                                            <div class="industry-badge healthcare">🏥 Healthcare</div>
-                                        </div>
-                                        <div class="speech-bubble">
-                                            <p>Healthcare AI Specialist</p>
-                                        </div>
-                                        <div class="speaking-indicator">
-                                            <div class="processing-text">
-                                                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                                                </svg>
-                                                <span>Processing...</span>
-                                            </div>
-                                            <div class="sound-waves">
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="avatar-slide" data-avatar="avatar2">
-                                        <div class="avatar-image-wrapper">
-                                            <img src="/Logo And Recording/image (4).jpeg" alt="Emma - Avatar 2" class="avatar-image">
-                                            <div class="avatar-glow"></div>
-                                            <div class="industry-badge banking">🏦 Banking</div>
-                                        </div>
-                                        <div class="speech-bubble">
-                                            <p>Banking AI Specialist</p>
-                                        </div>
-                                        <div class="speaking-indicator">
-                                            <div class="processing-text">
-                                                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                                                </svg>
-                                                <span>Processing...</span>
-                                            </div>
-                                            <div class="sound-waves">
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="avatar-slide" data-avatar="avatar3">
-                                        <div class="avatar-image-wrapper">
-                                            <img src="/Logo And Recording/image (5).jpeg" alt="Emma - Avatar 3" class="avatar-image">
-                                            <div class="avatar-glow"></div>
-                                            <div class="industry-badge education">🎓 Education</div>
-                                        </div>
-                                        <div class="speech-bubble">
-                                            <p>Education AI Specialist</p>
-                                        </div>
-                                        <div class="speaking-indicator">
-                                            <div class="processing-text">
-                                                <svg class="speaker-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-                                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                                                    <line x1="12" y1="19" x2="12" y2="23"></line>
-                                                    <line x1="8" y1="23" x2="16" y2="23"></line>
-                                                </svg>
-                                                <span>Processing...</span>
-                                            </div>
-                                            <div class="sound-waves">
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                                <div class="wave"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Avatar Navigation Dots -->
-                                <div class="avatar-dots">
-                                    <button class="dot active" data-avatar="us"></button>
-                                    <button class="dot" data-avatar="saudi"></button>
-                                    <button class="dot" data-avatar="india"></button>
-                                    <button class="dot" data-avatar="avatar1"></button>
-                                    <button class="dot" data-avatar="avatar2"></button>
-                                    <button class="dot" data-avatar="avatar3"></button>
-                                </div>
-                                
-                                <!-- Auto-cycle Indicator -->
-                                <div class="auto-cycle-indicator">
-                                    <div class="cycle-text">See Emma's versatility</div>
-                                    <div class="cycle-arrow">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M9 18l6-6-6-6"/>
-                                        </svg>
-                                    </div>
-                                </div>
-                                
-
+                        <!-- New Avatar Section -->
+                        <div class="new-avatar-section">
+                            <!-- Comment above the avatar box -->
+                            <div class="avatar-comment">
+                                <p id="avatar-comment-text">Emma - Enterprise AI Solution</p>
                             </div>
-                        </div>
-                        
-                        <!-- Unified Controls Section -->
-                        <div class="unified-controls">
-                            <!-- Audio Controls -->
-                            <div class="audio-controls">
-                                <button class="audio-btn" id="audio-play-btn" aria-label="Play Audio">
-                                    <svg class="play-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polygon points="5,3 19,12 5,21"></polygon>
-                                    </svg>
-                                    <svg class="pause-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: none;">
-                                        <rect x="6" y="4" width="4" height="16"></rect>
-                                        <rect x="14" y="4" width="4" height="16"></rect>
-                                    </svg>
-                                </button>
-                                <div class="audio-info">
-                                    <span class="time-display">00:00</span>
-                                    <div class="audio-progress">
-                                        <div class="progress-bar">
-                                            <div class="progress-fill"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                            
+                            <!-- Avatar Box -->
+                            <div class="avatar-box">
+                                <img id="avatar-image" src="/Logo And Recording/US.jpeg" alt="Emma Avatar" class="avatar-img">
+                                <div class="avatar-glow-effect"></div>
                             </div>
-
-                            <!-- Language Selection -->
-                            <div class="language-controls">
-                                <div class="language-label">Choose Language:</div>
-                                <div class="language-buttons">
-                                    <button class="lang-btn active" data-lang="en" data-avatar="us">
-                                        <span class="lang-flag">🇺🇸</span>
-                                        <span class="lang-text">English</span>
-                                    </button>
-                                    <button class="lang-btn" data-lang="ar" data-avatar="saudi">
-                                        <span class="lang-flag">🇸🇦</span>
-                                        <span class="lang-text">العربية</span>
-                                    </button>
-                                    <button class="lang-btn" data-lang="hi" data-avatar="india">
-                                        <span class="lang-flag">🇮🇳</span>
-                                        <span class="lang-text">हिन्दी</span>
-                                    </button>
+                            
+                            <!-- Audio Options -->
+                            <div class="audio-options">
+                                <div class="audio-language" data-lang="en" data-audio="/Logo And Recording/Emma English Voice .opus">
+                                    <span class="flag">🇺🇸</span>
+                                    <span class="lang-name">English</span>
+                                </div>
+                                <div class="audio-language" data-lang="ar" data-audio="/Logo And Recording/Emma Arabic Audio.opus">
+                                    <span class="flag">🇸🇦</span>
+                                    <span class="lang-name">العربية</span>
+                                </div>
+                                <div class="audio-language" data-lang="hi" data-audio="/Logo And Recording/Emma Hindi Voice.opus">
+                                    <span class="flag">🇮🇳</span>
+                                    <span class="lang-name">हिन्दी</span>
                                 </div>
                             </div>
                         </div>
@@ -397,20 +205,18 @@
                 </div>
                 
                 <div class="hero-text">
-                    <!-- Hero Badge -->
-                    <div class="hero-badge">
-                        <span class="badge-icon">✨</span>
-                        <span class="badge-text">AI-Powered Business Solutions</span>
-                    </div>
                     
                     <!-- Main Hero Title -->
-                    <h1 class="hero-title">
+                    <h1 class="hero-title" id="hero-title">
                         <span class="title-line-1">Meet Emma</span>
                         <span class="title-line-2">Your <span class="highlight-text">Intelligent</span> AI Assistant</span>
                     </h1>
                     
+                    <!-- Hero Subtitle -->
+                    <h2 class="hero-subtitle" id="hero-subtitle">Your Intelligent AI Assistant</h2>
+                    
                     <!-- Hero Description -->
-                    <p class="hero-description">
+                    <p class="hero-description" id="hero-description">
                         Transform your business with AI that understands, learns, and adapts. 
                         From healthcare to banking to education - Emma delivers results across every industry.
                     </p>
@@ -443,38 +249,59 @@
                                 </div>
                             </div>
                             
-                            <div class="use-case-card" data-industry="banking">
-                                <div class="use-case-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                                        <line x1="8" y1="21" x2="16" y2="21"></line>
-                                        <line x1="12" y1="17" x2="12" y2="21"></line>
-                                    </svg>
+                            <div class="second-row-cards">
+                                <div class="use-case-card" data-industry="banking">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Banking</h4>
+                                        <p>Customer service automation, fraud detection, and financial advisory</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">40% faster</span>
+                                        <span class="stat">99.9% accurate</span>
+                                    </div>
                                 </div>
-                                <div class="use-case-content">
-                                    <h4>Banking</h4>
-                                    <p>Customer service automation, fraud detection, and financial advisory</p>
+                                
+                                <div class="use-case-card" data-industry="education">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Education</h4>
+                                        <p>Student support, course management, and personalized learning</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">85% engagement</span>
+                                        <span class="stat">24/7 support</span>
+                                    </div>
                                 </div>
-                                <div class="use-case-stats">
-                                    <span class="stat">40% faster</span>
-                                    <span class="stat">99.9% accurate</span>
-                                </div>
-                            </div>
-                            
-                            <div class="use-case-card" data-industry="education">
-                                <div class="use-case-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                                    </svg>
-                                </div>
-                                <div class="use-case-content">
-                                    <h4>Education</h4>
-                                    <p>Student support, course management, and personalized learning</p>
-                                </div>
-                                <div class="use-case-stats">
-                                    <span class="stat">85% engagement</span>
-                                    <span class="stat">24/7 support</span>
+                                
+                                <div class="use-case-card" data-industry="customer-service">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            <path d="M6 21v-2a4 4 0 0 1 4-4h.5"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Customer Service</h4>
+                                        <p>24/7 support, ticket management, and customer satisfaction</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">95% satisfaction</span>
+                                        <span class="stat">Instant response</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -483,10 +310,6 @@
                     <!-- Additional Stats Section -->
                     <div class="hero-stats-section">
                         <div class="stats-grid">
-                            <div class="stat-item">
-                                <div class="stat-number">10,000+</div>
-                                <div class="stat-label">Daily Transactions</div>
-                            </div>
                             <div class="stat-item">
                                 <div class="stat-number">99.9%</div>
                                 <div class="stat-label">Accuracy Rate</div>
@@ -503,7 +326,8 @@
                     </div>
                     
                     
-                    <div class="hero-cta">
+                    <!-- Hero Actions -->
+                    <div class="hero-actions" id="hero-actions">
                         <button class="cta-primary" id="hero-primary-btn">
                             <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
@@ -519,395 +343,6 @@
         </div>
     </section>
 
-    <!-- About Us Section -->
-    <section id="about" class="about section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">About Us</h2>
-                <p class="section-subtitle">The story behind Emma and the passionate team building the future of AI</p>
-            </div>
-
-            <!-- Our Story Section -->
-            <div class="story-section">
-                <div class="story-content">
-                    <div class="story-text">
-                        <h3 class="story-title">The Basketball Game That Changed Everything</h3>
-                        <div class="story-intro">
-                            <p class="story-lead">Every great innovation begins with a moment of frustration. Ours started on a basketball court.</p>
-                        </div>
-                        <div class="story-timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-icon basketball-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <path d="M8 12h8M12 8v8"></path>
-                                        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"></path>
-                                    </svg>
-                                </div>
-                                <div class="timeline-content">
-                                    <h4>🏀 The Game That Started It All</h4>
-                                    <p>It was a typical Saturday morning pickup game. The court was alive with energy, players calling plays, the sound of sneakers on hardwood, and the satisfying swish of the net. But then it happened—a hard drive to the basket, a collision, and suddenly our founder was on the ground with a dislocated shoulder.</p>
-                                    <div class="story-highlight">
-                                        <em>"The pain was intense, but what came next was even more frustrating..."</em>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-item">
-                                <div class="timeline-icon hospital-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                                    </svg>
-                                </div>
-                                <div class="timeline-content">
-                                    <h4>🏥 The Emergency Room Reality Check</h4>
-                                    <p>What should have been a quick 30-minute visit to the emergency room turned into a 4-hour ordeal. Sitting in that waiting room, watching nurses frantically juggle patient files, seeing elderly patients struggle with complex appointment systems, and witnessing the chaos of manual scheduling—it was a wake-up call.</p>
-                                    <div class="story-stats">
-                                        <div class="stat-item">
-                                            <span class="stat-number">4+</span>
-                                            <span class="stat-label">Hours of waiting</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">15+</span>
-                                            <span class="stat-label">Patients struggling</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <span class="stat-number">1</span>
-                                            <span class="stat-label">Life-changing moment</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-item">
-                                <div class="timeline-icon lightbulb-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                                    </svg>
-                                </div>
-                                <div class="timeline-content">
-                                    <h4>💡 The Vision Takes Shape</h4>
-                                    <p>In that moment of frustration, a simple question emerged: <strong>"What if there was a virtual assistant that could handle all this seamlessly?"</strong> Not just for healthcare, but for banking, education, and every industry where people struggle with complex systems.</p>
-                                    <div class="vision-points">
-                                        <div class="vision-point">📞 <strong>Phone-first approach</strong> - No computer skills required</div>
-                                        <div class="vision-point">🤖 <strong>AI-powered intelligence</strong> - Understands context and learns</div>
-                                        <div class="vision-point">🌍 <strong>Universal accessibility</strong> - Works for everyone, everywhere</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="timeline-item">
-                                <div class="timeline-icon rocket-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
-                                        <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
-                                        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
-                                        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
-                                    </svg>
-                                </div>
-                                <div class="timeline-content">
-                                    <h4>🚀 Emma is Born</h4>
-                                    <p>From that single moment of inspiration on the basketball court, Emma was born. An AI assistant designed to bridge the gap between complex technology and everyday people. Emma doesn't just schedule appointments—she understands, learns, and adapts to make healthcare, banking, and education more accessible to everyone.</p>
-                                    <div class="emma-mission">
-                                        <h5>Our Mission:</h5>
-                                        <p><em>"To democratize AI technology and make it accessible to everyone, regardless of their technical background or digital literacy."</em></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="story-visual">
-                        <div class="story-image-container">
-                            <div class="story-image">
-                                <div class="basketball-court-bg">
-                                    <div class="court-lines"></div>
-                                    <div class="basketball-hoop">
-                                        <div class="hoop-ring"></div>
-                                        <div class="hoop-net"></div>
-                                    </div>
-                                    <div class="floating-basketball">
-                                        <div class="basketball"></div>
-                                    </div>
-                                </div>
-                                <div class="story-overlay">
-                                    <h4>From Court to Code</h4>
-                                    <p>One game, one injury, one moment of clarity that changed everything</p>
-                                    <div class="story-quote">
-                                        <blockquote>
-                                            "Sometimes the best innovations come from the most unexpected places. For us, it was a basketball court."
-                                        </blockquote>
-                                        <cite>- Our Founder</cite>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Leadership Team Section -->
-            <div class="leadership-section">
-                <div class="section-header">
-                    <h3 class="subsection-title">Meet the Leadership Team</h3>
-                    <p class="subsection-subtitle">The visionaries leading Emma's mission to democratize AI</p>
-                </div>
-                
-                <div class="team-grid leadership-grid">
-                    <div class="team-card leadership-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">Alex Johnson</h4>
-                            <p class="team-role">CEO & Founder</p>
-                            <p class="team-bio">Visionary leader with 15+ years in AI and healthcare technology. Former emergency room physician turned tech entrepreneur.</p>
-                        </div>
-                    </div>
-
-                    <div class="team-card leadership-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">Sarah Chen</h4>
-                            <p class="team-role">CTO & Co-Founder</p>
-                            <p class="team-bio">AI research pioneer with expertise in natural language processing and machine learning. PhD from MIT with 20+ patents in AI technology.</p>
-                        </div>
-                    </div>
-
-                    <div class="team-card leadership-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">Michael Rodriguez</h4>
-                            <p class="team-role">Head of Product</p>
-                            <p class="team-bio">Product strategist with a passion for user experience. Former Google product manager with expertise in scaling AI products to millions of users.</p>
-                        </div>
-                    </div>
-
-                    <div class="team-card leadership-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">Dr. Priya Patel</h4>
-                            <p class="team-role">Head of Healthcare</p>
-                            <p class="team-bio">Medical AI specialist with 12+ years in healthcare technology. Former chief medical officer at a leading health tech startup.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Team Section -->
-            <div class="team-section">
-                <div class="section-header">
-                    <h3 class="subsection-title">Meet the Team Behind Emma</h3>
-                    <p class="subsection-subtitle">The brilliant minds building the future of AI assistance</p>
-                </div>
-                
-                <div class="team-grid team-grid">
-                    <div class="team-card team-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">David Kim</h4>
-                            <p class="team-role">Lead AI Engineer</p>
-                            <p class="team-bio">Machine learning expert specializing in natural language understanding and conversational AI systems.</p>
-                        </div>
-                    </div>
-
-                    <div class="team-card team-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">Emma Thompson</h4>
-                            <p class="team-role">UX Designer</p>
-                            <p class="team-bio">User experience designer focused on making AI accessible and intuitive for users of all technical backgrounds.</p>
-                        </div>
-                    </div>
-
-                    <div class="team-card team-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">James Wilson</h4>
-                            <p class="team-role">Backend Developer</p>
-                            <p class="team-bio">Full-stack developer with expertise in scalable cloud architectures and real-time communication systems.</p>
-                        </div>
-                    </div>
-
-                    <div class="team-card team-card">
-                        <div class="team-photo">
-                            <div class="photo-placeholder">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="12" cy="7" r="4"></circle>
-                                </svg>
-                            </div>
-                            <div class="team-overlay">
-                                <div class="social-links">
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                        </svg>
-                                    </a>
-                                    <a href="#" class="social-link">
-                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-                                        </svg>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-info">
-                            <h4 class="team-name">Lisa Zhang</h4>
-                            <p class="team-role">Data Scientist</p>
-                            <p class="team-bio">Data science expert specializing in predictive analytics and user behavior modeling for personalized AI experiences.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Emma Capabilities Section -->
     <section id="capabilities" class="capabilities section">
         <div class="container">
@@ -915,6 +350,7 @@
                 <h2 class="section-title" id="capabilities-title">Emma's Core Capabilities</h2>
                 <p class="section-subtitle" id="capabilities-subtitle">Intelligent automation that adapts, learns, and takes initiative</p>
             </div>
+
         
         <div class="capabilities-grid">
             <div class="capability-card" data-capability="scheduling">
@@ -933,6 +369,7 @@
                     <div class="demo-bubble emma-response">"I've scheduled your meeting and sent confirmations!"</div>
                 </div>
             </div>
+
             
             <div class="capability-card" data-capability="intelligence">
                 <div class="card-icon">
@@ -951,6 +388,7 @@
                     <div class="demo-bubble emma-response">"I'll gather some details and connect you with the right specialist"</div>
                 </div>
             </div>
+
             
             <div class="capability-card" data-capability="personalization">
                 <div class="card-icon">
@@ -981,7 +419,7 @@
         
         <div class="industries-grid">
             <!-- Healthcare Card -->
-            <div class="industry-card" data-industry="healthcare">
+            <div class="industry-card animate" data-industry="healthcare">
                 <div class="card-header">
                     <div class="industry-icon healthcare">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1021,7 +459,7 @@
             </div>
 
             <!-- Banking Card -->
-            <div class="industry-card" data-industry="banking">
+            <div class="industry-card animate" data-industry="banking">
                 <div class="card-header">
                     <div class="industry-icon banking">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1063,7 +501,7 @@
             </div>
 
             <!-- Education Card -->
-            <div class="industry-card" data-industry="education">
+            <div class="industry-card animate" data-industry="education">
                 <div class="card-header">
                     <div class="industry-icon education">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1103,6 +541,164 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Additional Industries Row -->
+        <div class="industries-grid second-row">
+            <!-- Manufacturing Card -->
+            <div class="industry-card animate" data-industry="manufacturing">
+                <div class="card-header">
+                    <div class="industry-icon manufacturing">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Manufacturing</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🏭</div>
+                            <div class="feature-text">
+                                <h4>Smart Production</h4>
+                                <p>AI-driven quality control and optimization</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔧</div>
+                            <div class="feature-text">
+                                <h4>Predictive Maintenance</h4>
+                                <p>Prevent equipment failures before they happen</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <h4>Supply Chain AI</h4>
+                                <p>Intelligent inventory and logistics management</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Retail Card -->
+            <div class="industry-card animate" data-industry="retail">
+                <div class="card-header">
+                    <div class="industry-icon retail">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Retail</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🛒</div>
+                            <div class="feature-text">
+                                <h4>Personalized Shopping</h4>
+                                <p>AI-powered product recommendations</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📱</div>
+                            <div class="feature-text">
+                                <h4>Virtual Assistant</h4>
+                                <p>24/7 customer support and guidance</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📈</div>
+                            <div class="feature-text">
+                                <h4>Demand Forecasting</h4>
+                                <p>Smart inventory and pricing optimization</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Finance Card -->
+            <div class="industry-card animate" data-industry="finance">
+                <div class="card-header">
+                    <div class="industry-icon finance">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Finance</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">💼</div>
+                            <div class="feature-text">
+                                <h4>Risk Assessment</h4>
+                                <p>Advanced fraud detection and compliance</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <h4>Algorithmic Trading</h4>
+                                <p>AI-driven investment strategies</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🤖</div>
+                            <div class="feature-text">
+                                <h4>Financial Advisor</h4>
+                                <p>Personalized wealth management</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Industry Solutions CTA -->
+        <div class="industries-cta">
+            <div class="cta-content">
+                <div class="cta-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <h3>Ready to Transform Your Industry?</h3>
+                <p>Join thousands of organizations already using Emma's AI agents to revolutionize their operations and deliver exceptional results.</p>
+                <div class="cta-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Companies</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Industries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                </div>
+                <div class="cta-actions">
+                    <button class="btn btn-primary btn-large">Start Free Trial</button>
+                    <button class="btn btn-ghost btn-large">Schedule Demo</button>
+                </div>
+            </div>
+        </div>
         </div>
     </section>
 
@@ -1138,10 +734,9 @@
                 </div>
 
                 <!-- Contact Sales Form -->
-                <div class="contact-sales-form" id="contact-sales-form" style="display: none;">
-                    <div class="modal-overlay" onclick="closeContactForm()"></div>
-                    <div class="form-container">
-                        <div class="form-header">
+                <div id="contact-sales-form" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
                             <div class="header-content">
                                 <div class="header-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1149,126 +744,47 @@
                                     </svg>
                                 </div>
                                 <div class="header-text">
-                                    <h3>Get Your Custom AI Solution</h3>
+                                    <h2>Get Your Custom AI Solution</h2>
                                     <p>Let's discuss how Emma can transform your business operations</p>
                                 </div>
                             </div>
-                            <button class="form-close" onclick="closeContactForm()">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
+                            <button class="modal-close" onclick="closeContactForm()">&times;</button>
                         </div>
                         
-                        <div class="form-content">
-                            <form class="sales-form" id="sales-form">
-                                <div class="form-section">
-                                    <h4 class="section-title">Company Information</h4>
+                        <div class="modal-body">
+                            <form class="contact-form" id="sales-form">
+                                <div class="form-row">
                                     <div class="form-group">
-                                        <label for="company-name">Company Name *</label>
-                                        <input type="text" id="company-name" name="companyName" required placeholder="Enter your company name">
+                                        <label for="company-name">Company *</label>
+                                        <input type="text" id="company-name" name="companyName" required placeholder="Company name">
                                     </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="company-size">Company Size *</label>
-                                            <select id="company-size" name="companySize" required>
-                                                <option value="">Select company size</option>
-                                                <option value="1-10">1-10 employees</option>
-                                                <option value="11-50">11-50 employees</option>
-                                                <option value="51-200">51-200 employees</option>
-                                                <option value="201-1000">201-1000 employees</option>
-                                                <option value="1000+">1000+ employees</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="industry">Industry *</label>
-                                            <select id="industry" name="industry" required>
-                                                <option value="">Select industry</option>
-                                                <option value="healthcare">Healthcare</option>
-                                                <option value="banking">Banking & Finance</option>
-                                                <option value="education">Education</option>
-                                                <option value="retail">Retail & E-commerce</option>
-                                                <option value="manufacturing">Manufacturing</option>
-                                                <option value="technology">Technology</option>
-                                                <option value="other">Other</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-section">
-                                    <h4 class="section-title">Contact Information</h4>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="first-name">First Name *</label>
-                                            <input type="text" id="first-name" name="firstName" required placeholder="Enter your first name">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="last-name">Last Name *</label>
-                                            <input type="text" id="last-name" name="lastName" required placeholder="Enter your last name">
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="email">Work Email *</label>
-                                            <input type="email" id="email" name="email" required placeholder="your.email@company.com">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="phone">Phone Number</label>
-                                            <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-section">
-                                    <h4 class="section-title">Project Details</h4>
                                     <div class="form-group">
-                                        <label for="use-case">How do you plan to use Emma? *</label>
-                                        <textarea id="use-case" name="useCase" rows="3" required placeholder="Describe your specific use case and requirements..."></textarea>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group">
-                                            <label for="timeline">Implementation Timeline *</label>
-                                            <select id="timeline" name="timeline" required>
-                                                <option value="">Select timeline</option>
-                                                <option value="immediate">Immediate (within 1 month)</option>
-                                                <option value="short">Short term (1-3 months)</option>
-                                                <option value="medium">Medium term (3-6 months)</option>
-                                                <option value="long">Long term (6+ months)</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="budget">Budget Range</label>
-                                            <select id="budget" name="budget">
-                                                <option value="">Select budget range</option>
-                                                <option value="under-10k">Under $10,000</option>
-                                                <option value="10k-50k">$10,000 - $50,000</option>
-                                                <option value="50k-100k">$50,000 - $100,000</option>
-                                                <option value="100k-500k">$100,000 - $500,000</option>
-                                                <option value="500k-plus">$500,000+</option>
-                                            </select>
-                                        </div>
+                                        <label for="email">Email *</label>
+                                        <input type="email" id="email" name="email" required placeholder="your@company.com">
                                     </div>
                                 </div>
 
-                                <div class="form-actions">
-                                    <button type="button" class="btn btn-outline" onclick="closeContactForm()">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <line x1="18" y1="6" x2="6" y2="18"></line>
-                                            <line x1="6" y1="6" x2="18" y2="18"></line>
-                                        </svg>
-                                        Cancel
-                                    </button>
-                                    <button type="submit" class="btn btn-primary">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M22 2L11 13"></path>
-                                            <polygon points="22,2 15,22 11,13 2,9 22,2"></polygon>
-                                        </svg>
-                                        Send Request
-                                    </button>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="first-name">Name *</label>
+                                        <input type="text" id="first-name" name="firstName" required placeholder="Your name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone">Phone</label>
+                                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 123-4567">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="use-case">Project Details *</label>
+                                    <textarea id="use-case" name="useCase" rows="2" required placeholder="Describe your AI project requirements..."></textarea>
                                 </div>
                             </form>
+                        </div>
+                        
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline" onclick="closeContactForm()">Cancel</button>
+                            <button type="submit" class="btn btn-primary" onclick="document.getElementById('sales-form').submit()">Send Request</button>
                         </div>
                     </div>
                 </div>
@@ -1290,7 +806,6 @@
                 <button class="resource-tab" onclick="showResourceTab('usecases')">Use Cases</button>
                 <button class="resource-tab" onclick="showResourceTab('casestudies')">Case Studies</button>
             </div>
-
                 <!-- Blogs Tab -->
                 <div id="blogs-tab" class="resource-content active">
                     <div class="blogs-header">
@@ -1389,7 +904,376 @@
         </div>
     </section>
 
-    <!-- Labs Section -->
+    <!-- About Us Section -->
+    <section id="about" class="about section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">About Us</h2>
+                <p class="section-subtitle">The story behind Emma and the passionate team building the future of AI</p>
+            </div>
+
+            <!-- Our Story Section -->
+            <div class="story-section">
+                <!-- Top Three Cards Row: Reality, From Court to Code, Emma is Born -->
+                <div class="top-story-cards-row">
+                    <!-- The Reality Card -->
+                    <div class="story-card">
+                        <div class="story-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <h4>🏥 The Reality</h4>
+                        <p>What should have been a 30-minute Clinic visit became a 4-hour ordeal, witnessing the chaos of manual scheduling and complex systems that frustrated patients.</p>
+                    </div>
+
+                    <!-- From Court to Code Card (Basketball Card) -->
+                    <div class="basketball-card">
+                        <div class="basketball-court-bg">
+                            <div class="court-lines"></div>
+                            <div class="basketball-hoop">
+                                <div class="hoop-ring"></div>
+                                <div class="hoop-net"></div>
+                            </div>
+                            <div class="floating-basketball">
+                                <div class="basketball"></div>
+                            </div>
+                        </div>
+                        <div class="basketball-card-overlay">
+                            <h3>From Court to Code</h3>
+                            <p>One game, one injury, one moment of clarity that changed everything</p>
+                            <div class="basketball-quote">
+                                <blockquote>
+                                    "Sometimes the best innovations come from the most unexpected places. For us, it was a basketball court."
+                                </blockquote>
+                                <cite>- Our Founder</cite>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Emma is Born Card -->
+                    <div class="story-card">
+                        <div class="story-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                                <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+                                <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                                <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+                            </svg>
+                        </div>
+                        <h4>🚀 Emma is Born</h4>
+                        <p>From that single moment of inspiration, Emma was born—an AI assistant designed to bridge the gap between complex technology and everyday people.</p>
+                    </div>
+                </div>
+
+                <!-- Bottom Two Cards Row: The Game, The Vision -->
+                <div class="bottom-story-cards-row">
+                    <!-- The Game Card -->
+                    <div class="story-card story-card-featured">
+                        <div class="story-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M8 12h8M12 8v8"></path>
+                                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"></path>
+                            </svg>
+                        </div>
+                        <h4>🏀 The Game</h4>
+                        <p>A typical Saturday morning pickup game turned into a life-changing moment when our founder suffered a dislocated shoulder during a hard drive to the basket.</p>
+                    </div>
+
+                    <!-- The Vision Card -->
+                    <div class="story-card">
+                        <div class="story-card-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                            </svg>
+                        </div>
+                        <h4>💡 The Vision</h4>
+                        <p>A simple question emerged: "What if there was a virtual assistant that could handle all this seamlessly?" Not just for healthcare, but for every industry.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leadership Team Section -->
+            <div class="leadership-section">
+                <div class="section-header">
+                    <h3 class="subsection-title">Meet the Leadership Team</h3>
+                    <p class="subsection-subtitle">The visionaries leading Emma's mission to democratize AI</p>
+                </div>
+                
+                <div class="team-grid leadership-grid">
+                    <!-- First Row - Jay Only -->
+                    <div class="team-card leadership-card leadership-first-row">
+                        <div class="team-photo">
+                            <img src="Team Pics/Jay.webp" alt="Jay Talluri" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="https://www.linkedin.com/in/jay-talluri-4109b81/" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Jay Talluri</h4>
+                            <p class="team-role">Founder & Chairman</p>
+                            <p class="team-bio">Accomplished entrepreneur who founded KodeFast in March 2021, demonstrating his commitment to innovative business solutions. Under his leadership, KodeFast has achieved significant milestones, including winning the hearts of attendees at the ITServe Alliance Conference in Las Vegas.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row - Radha, Suman, Prasad -->
+                <div class="team-grid leadership-grid leadership-second-row">
+                    <div class="team-card leadership-card">
+                        <div class="team-photo">
+                            <img src="Team Pics/Radha.webp" alt="Radha Alla" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="#" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Radha Alla</h4>
+                            <p class="team-role">Founder & CEO</p>
+                            <p class="team-bio">Radha Alla is the Founder and CEO of KodeFast, a company that leverages AI to revolutionize application development, enhancing design and collaboration while empowering teams to build custom applications effortlessly. Under his leadership, KodeFast has introduced a no-code platform that enables both non-technical users and professionals to create scalable applications through an intuitive, drag-and-drop interface.</p>
+                        </div>
+                    </div>
+
+                    <div class="team-card leadership-card">
+                        <div class="team-photo">
+                            <img src="Team Pics/Suman.avif" alt="Suman Tammareddy" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="#" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Suman Tammareddy</h4>
+                            <p class="team-role">Chief Operating Officer</p>
+                            <p class="team-bio">Suman Tammareddy serves as the Chief Operating Officer at KodeFast, bringing extensive experience in managing technology-driven enterprises. In addition to his role at KodeFast, he holds directorial positions in several companies, including Talluri Textiles Private Limited and Hallmark Global Technologies Limited, demonstrating his versatile leadership across various industries.</p>
+                        </div>
+                    </div>
+
+                    <div class="team-card leadership-card">
+                        <div class="team-photo">
+                            <img src="Team Pics/Prasad.webp" alt="Prasad Bandaru" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="#" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Prasad Bandaru</h4>
+                            <p class="team-role">Head Of AI</p>
+                            <p class="team-bio">Prasad Bandaru serves as the Director of Technology at KodeFast, playing a pivotal role in overseeing the company's technological advancements. With a focus on leveraging AI-powered no-code tools, he ensures the development of scalable applications that meet diverse business needs.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Behind Emma Section -->
+            <div class="team-behind-section">
+                <div class="section-header">
+                    <h3 class="subsection-title">Team Behind Emma</h3>
+                    <p class="subsection-subtitle">The dedicated professionals bringing Emma to life</p>
+                </div>
+                
+                <div class="team-grid team-behind-grid">
+                    <!-- First Row - Shree Only -->
+                    <div class="team-card team-behind-card team-behind-first-row">
+                        <div class="team-photo">
+                            <img src="Team Pics/Shree.jpeg" alt="Shree Talluri" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="https://www.linkedin.com/in/shree-talluri-18785523b/" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Shree Talluri</h4>
+                            <p class="team-role">Product Head</p>
+                            <p class="team-bio">An accomplished operations professional who joined Hallmark Global Solutions in 2023 before becoming Operations Manager at Niktor. They now lead a 20+ person team, developing policies, managing budgets, and identifying cross-selling opportunities to foster symbiotic growth.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row - Ravi, Shikha, Mohith -->
+                <div class="team-grid team-behind-grid team-behind-second-row">
+                    <div class="team-card team-behind-card">
+                        <div class="team-photo">
+                            <img src="Team Pics/Ravi.jpeg" alt="Ravi Paleti" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="#" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Ravi Paleti</h4>
+                            <p class="team-role">Head Of Sales</p>
+                            <p class="team-bio">Seasoned executive with 18+ years in tech and business leadership. Vice President at KodeFast, ex-Founder at SyngyMAXIM, and Solutions Architect at TekHubInc. Expert in strategy, innovation, product delivery, and cross-functional team leadership.</p>
+                        </div>
+                    </div>
+
+                    <div class="team-card team-behind-card">
+                        <div class="team-photo">
+                            <img src="Team Pics/Shikha.png" alt="Shikha Bakshi" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="#" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Shikha Bakshi</h4>
+                            <p class="team-role">Head Of Marketing</p>
+                            <p class="team-bio">Client Success Manager at KodeFast (4+ yrs), former Account Manager at Google Operations Center (1 yr), and Payment Specialist at Barclays (4 yrs). Skilled in client relations, account management, and financial operations.</p>
+                        </div>
+                    </div>
+
+                    <div class="team-card team-behind-card">
+                        <div class="team-photo">
+                            <img src="Team Pics/Mohith.png" alt="Mohith" class="team-photo-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="photo-placeholder" style="display:none;">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </div>
+                            <div class="team-overlay">
+                                <div class="social-links">
+                                    <a href="#" class="social-link" target="_blank" rel="noopener noreferrer">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-info">
+                            <h4 class="team-name">Mohith</h4>
+                            <p class="team-role">Head Of AI Development</p>
+                            <p class="team-bio">Results-driven AI and Automation Manager with 18+ years of experience leading digital transformation, process automation, and intelligent systems. Proven expertise in streamlining operations, managing cross-functional teams, and delivering scalable, data-driven solutions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Labs Section -->
     <section id="labs" class="labs section">
         <div class="container">
             <div class="section-header">
@@ -1442,7 +1326,6 @@
             </div>
         </div>
         </div>
-    </section>
 
     <!-- Footer -->
     <footer class="footer">
@@ -1452,37 +1335,49 @@
                     <h4>About Emma</h4>
                     <p id="footer-description">Building the future of autonomous AI agents.</p>
                     <div class="footer-social">
-                        <a href="#" class="social-link" aria-label="LinkedIn">
+                        <a href="https://www.linkedin.com/company/emmaaibykodefast/" class="social-link" aria-label="LinkedIn" target="_blank">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                             </svg>
                         </a>
-                        <a href="#" class="social-link" aria-label="Twitter">
+                        <a href="https://www.instagram.com/emmaaibykodefast/" class="social-link" aria-label="Instagram" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        </a>
+                        <a href="https://x.com/Emma_byKodeFast" class="social-link" aria-label="Twitter" target="_blank">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
                             </svg>
                         </a>
-                        <a href="#" class="social-link" aria-label="GitHub">
+                        <a href="https://www.reddit.com/user/EmmaAIbyKodeFast/" class="social-link" aria-label="Reddit" target="_blank">
                             <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.207-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.49 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .238-.042l2.906.617a1.214 1.214 0 0 1 1.108-.701zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.466 3.99a.327.327 0 0 0-.231.094.33.33 0 0 0 0 .463c.842.842 2.484.913 2.961.913.477 0 2.105-.056 2.961-.913a.361.361 0 0 0 .029-.463.33.33 0 0 0-.464 0c-.547.533-1.684.73-2.512.73-.828 0-1.979-.196-2.512-.73a.326.326 0 0 0-.232-.095z"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.facebook.com/people/EMMA-AI-by-KodeFast/61579880601034/" class="social-link" aria-label="Facebook" target="_blank">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
                             </svg>
                         </a>
                     </div>
                 </div>
                 <div class="footer-section">
                     <h4>Product</h4>
-                    <a href="#features">Features</a>
+                    <a href="#capabilities">Capabilities</a>
                     <a href="#industries">Industries</a>
-                    <a href="#labs">Labs</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#labs">AI Labs</a>
                 </div>
                 <div class="footer-section">
                     <h4>Company</h4>
-                    <a href="#">About</a>
+                    <a href="#about">About Us</a>
                     <a href="#">Careers</a>
                     <a href="#">Contact</a>
                 </div>
                 <div class="footer-section">
                     <h4>Resources</h4>
+                    <a href="#resources">Resources</a>
                     <a href="#">Documentation</a>
                     <a href="#">API Reference</a>
                     <a href="#">Support</a>
@@ -1621,6 +1516,115 @@
     <script src="script.js"></script>
     <script src="script-cms.js"></script>
     <script src="dynamic-content.js"></script>
+    
+    <!-- Particles.js Configuration -->
+    <script>
+        // Initialize particles.js when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": {
+                        "value": 120,
+                        "density": {
+                            "enable": true,
+                            "value_area": 600
+                        }
+                    },
+                    "color": {
+                        "value": ["#8b5cf6", "#06b6d4", "#ec4899", "#f97316"]
+                    },
+                    "shape": {
+                        "type": "circle",
+                        "stroke": {
+                            "width": 0,
+                            "color": "#000000"
+                        }
+                    },
+                    "opacity": {
+                        "value": 0.8,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 1,
+                            "opacity_min": 0.3,
+                            "sync": false
+                        }
+                    },
+                    "size": {
+                        "value": 5,
+                        "random": true,
+                        "anim": {
+                            "enable": true,
+                            "speed": 2,
+                            "size_min": 2,
+                            "sync": false
+                        }
+                    },
+                    "line_linked": {
+                        "enable": true,
+                        "distance": 150,
+                        "color": "#8b5cf6",
+                        "opacity": 0.6,
+                        "width": 1
+                    },
+                    "move": {
+                        "enable": true,
+                        "speed": 2,
+                        "direction": "none",
+                        "random": true,
+                        "straight": false,
+                        "out_mode": "out",
+                        "bounce": false,
+                        "attract": {
+                            "enable": false,
+                            "rotateX": 600,
+                            "rotateY": 1200
+                        }
+                    }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": {
+                        "onhover": {
+                            "enable": true,
+                            "mode": "repulse"
+                        },
+                        "onclick": {
+                            "enable": true,
+                            "mode": "push"
+                        },
+                        "resize": true
+                    },
+                    "modes": {
+                        "grab": {
+                            "distance": 400,
+                            "line_linked": {
+                                "opacity": 1
+                            }
+                        },
+                        "bubble": {
+                            "distance": 400,
+                            "size": 40,
+                            "duration": 2,
+                            "opacity": 8,
+                            "speed": 3
+                        },
+                        "repulse": {
+                            "distance": 200,
+                            "duration": 0.4
+                        },
+                        "push": {
+                            "particles_nb": 4
+                        },
+                        "remove": {
+                            "particles_nb": 2
+                        }
+                    }
+                },
+                "retina_detect": true
+            });
+        });
+    </script>
     
     <!-- Debug panel for testing dynamic content (hidden in production) -->
     <div id="debug-panel" style="position: fixed; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; z-index: 9999; display: none;">                
@@ -1847,3 +1851,5 @@
     </script>
 </body>
 </html>
+
+

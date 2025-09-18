@@ -54,9 +54,15 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         let uploadPath = process.env.UPLOAD_PATH || './uploads';
         
-        // Special handling for logo uploads
+        // Special handling for different content types
         if (file.fieldname === 'logo') {
             uploadPath = path.join(uploadPath, 'logo');
+        } else if (file.fieldname === 'blogImage' || file.fieldname === 'blogAuthorImage') {
+            uploadPath = path.join(uploadPath, 'blogs');
+        } else if (file.fieldname === 'useCaseGallery') {
+            uploadPath = path.join(uploadPath, 'usecases');
+        } else if (file.fieldname === 'caseStudyImage' || file.fieldname === 'caseStudyGallery') {
+            uploadPath = path.join(uploadPath, 'casestudies');
         }
         
         if (!fs.existsSync(uploadPath)) {
@@ -380,6 +386,13 @@ async function initializeDatabase() {
 // API Routes
 
 // Authentication routes
+app.get('/api/content/auth/verify', authenticateToken, (req, res) => {
+    res.json({ 
+        message: 'Token is valid',
+        user: req.user 
+    });
+});
+
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -426,6 +439,82 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // Content management routes
+
+// Hero section endpoint
+app.get('/api/content/hero', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT * FROM content_sections WHERE section_key IN (?, ?, ?) AND is_active = true',
+            ['hero_title', 'hero_subtitle', 'hero_description']
+        );
+        
+        const heroData = {
+            title: '',
+            subtitle: '',
+            description: '',
+            primaryButton: {
+                text: 'See Emma in Action',
+                href: '#demo'
+            },
+            secondaryButton: {
+                text: 'Learn More',
+                href: '#about',
+                show: true
+            }
+        };
+        
+        rows.forEach(row => {
+            switch(row.section_key) {
+                case 'hero_title':
+                    heroData.title = row.content;
+                    break;
+                case 'hero_subtitle':
+                    heroData.subtitle = row.content;
+                    break;
+                case 'hero_description':
+                    heroData.description = row.content;
+                    break;
+            }
+        });
+        
+        res.json(heroData);
+    } catch (error) {
+        console.error('Error fetching hero section:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Navigation endpoint
+app.get('/api/content/navigation', async (req, res) => {
+    try {
+        const navData = {
+            links: [
+                { text: 'Home', href: '#home' },
+                { text: 'About Us', href: '#about' },
+                { text: 'Pricing', href: '#pricing' },
+                { text: 'Resources', href: '#resources' },
+                { text: 'Sign In', href: '#signin' }
+            ]
+        };
+        res.json(navData);
+    } catch (error) {
+        console.error('Error fetching navigation:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Banners endpoint
+app.get('/api/content/banners', async (req, res) => {
+    try {
+        const banners = [];
+        res.json(banners);
+    } catch (error) {
+        console.error('Error fetching banners:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Sections endpoint
 app.get('/api/content/sections', async (req, res) => {
     try {
         const [rows] = await pool.execute(
@@ -700,6 +789,372 @@ app.delete('/api/blogs/:id', authenticateToken, async (req, res) => {
     }
 });
 
+// Test route
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'Server is running updated code', timestamp: new Date().toISOString() });
+});
+
+// Use Cases API routes
+app.get('/api/usecases', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(`
+            SELECT id, title, description, industry, stats, gallery, 
+                   created_at, updated_at, status
+            FROM use_cases 
+            WHERE status = 'published' 
+            ORDER BY created_at DESC
+        `);
+        
+        const useCases = rows.map(useCase => ({
+            ...useCase,
+            stats: useCase.stats ? JSON.parse(useCase.stats) : [],
+            gallery: useCase.gallery ? JSON.parse(useCase.gallery) : [],
+            tags: useCase.tags ? JSON.parse(useCase.tags) : []
+        }));
+        
+        res.json(useCases);
+    } catch (error) {
+        console.error('Error fetching use cases:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/usecases/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await pool.execute(`
+            SELECT id, title, description, industry, stats, gallery, 
+                   created_at, updated_at, status
+            FROM use_cases 
+            WHERE id = ? AND status = 'published'
+        `, [id]);
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Use case not found' });
+        }
+        
+        const useCase = {
+            ...rows[0],
+            stats: rows[0].stats ? JSON.parse(rows[0].stats) : [],
+            gallery: rows[0].gallery ? JSON.parse(rows[0].gallery) : [],
+            tags: rows[0].tags ? JSON.parse(rows[0].tags) : []
+        };
+        
+        res.json(useCase);
+    } catch (error) {
+        console.error('Error fetching use case:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/usecases', authenticateToken, upload.fields([
+    { name: 'useCaseGallery', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const { title, industry, icon, description, tags, stats, detailedContent, gallery } = req.body;
+        
+        if (!title || !industry || !description) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        let galleryArray = [];
+        if (req.files.useCaseGallery) {
+            galleryArray = req.files.useCaseGallery.map(file => `/uploads/usecases/${file.filename}`);
+        } else if (gallery) {
+            galleryArray = gallery.split('\n').filter(url => url.trim());
+        }
+        
+        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+        const statsArray = stats ? JSON.parse(stats) : [];
+        
+        const [result] = await pool.execute(`
+            INSERT INTO use_cases (title, description, industry, stats, gallery, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, 'published', NOW(), NOW())
+        `, [title, description, industry, JSON.stringify(statsArray), JSON.stringify(galleryArray)]);
+        
+        res.json({ 
+            message: 'Use case created successfully', 
+            id: result.insertId 
+        });
+    } catch (error) {
+        console.error('Error creating use case:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/usecases/:id', authenticateToken, upload.fields([
+    { name: 'useCaseGallery', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, industry, icon, description, tags, stats, detailedContent, gallery } = req.body;
+        
+        if (!title || !industry || !description) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        // Get existing use case data
+        const [existingRows] = await pool.execute('SELECT gallery FROM use_cases WHERE id = ?', [id]);
+        if (existingRows.length === 0) {
+            return res.status(404).json({ error: 'Use case not found' });
+        }
+        
+        let galleryArray = existingRows[0].gallery ? JSON.parse(existingRows[0].gallery) : [];
+        
+        if (req.files.useCaseGallery) {
+            galleryArray = req.files.useCaseGallery.map(file => `/uploads/usecases/${file.filename}`);
+        } else if (gallery) {
+            galleryArray = gallery.split('\n').filter(url => url.trim());
+        }
+        
+        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+        const statsArray = stats ? JSON.parse(stats) : [];
+        
+        await pool.execute(`
+            UPDATE use_cases 
+            SET title = ?, description = ?, industry = ?, stats = ?, gallery = ?, updated_at = NOW()
+            WHERE id = ?
+        `, [title, description, industry, JSON.stringify(statsArray), JSON.stringify(galleryArray), id]);
+        
+        res.json({ message: 'Use case updated successfully' });
+    } catch (error) {
+        console.error('Error updating use case:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.delete('/api/usecases/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        await pool.execute('DELETE FROM use_cases WHERE id = ?', [id]);
+        
+        res.json({ message: 'Use case deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting use case:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Case Studies API routes
+app.get('/api/casestudies', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(`
+            SELECT id, title, client, industry, summary, results, tags, 
+                   created_at, updated_at, status
+            FROM case_studies 
+            WHERE status = 'published' 
+            ORDER BY created_at DESC
+        `);
+        
+        const caseStudies = rows.map(caseStudy => ({
+            ...caseStudy,
+            results: caseStudy.results ? JSON.parse(caseStudy.results) : [],
+            tags: caseStudy.tags ? JSON.parse(caseStudy.tags) : [],
+            published: caseStudy.status === 'published',
+            date: caseStudy.created_at
+        }));
+        
+        res.json(caseStudies);
+    } catch (error) {
+        console.error('Error fetching case studies:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.get('/api/casestudies/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const [rows] = await pool.execute(`
+            SELECT id, title, client, industry, summary, results, tags, 
+                   created_at, updated_at, status
+            FROM case_studies 
+            WHERE id = ? AND status = 'published'
+        `, [id]);
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Case study not found' });
+        }
+        
+        const caseStudy = {
+            ...rows[0],
+            results: rows[0].results ? JSON.parse(rows[0].results) : [],
+            tags: rows[0].tags ? JSON.parse(rows[0].tags) : [],
+            published: rows[0].status === 'published',
+            date: rows[0].created_at
+        };
+        
+        res.json(caseStudy);
+    } catch (error) {
+        console.error('Error fetching case study:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/casestudies', authenticateToken, upload.fields([
+    { name: 'caseStudyImage', maxCount: 1 },
+    { name: 'caseStudyGallery', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const { title, client, industry, date, summary, tags, results, content, gallery } = req.body;
+        
+        if (!title || !client || !industry) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        let galleryArray = [];
+        if (req.files.caseStudyGallery) {
+            galleryArray = req.files.caseStudyGallery.map(file => `/uploads/casestudies/${file.filename}`);
+        } else if (gallery) {
+            galleryArray = gallery.split('\n').filter(url => url.trim());
+        }
+        
+        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+        const resultsArray = results ? JSON.parse(results) : [];
+        
+        const [result] = await pool.execute(`
+            INSERT INTO case_studies (title, client, industry, summary, results, tags, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, 'published', NOW(), NOW())
+        `, [title, client, industry, summary, JSON.stringify(resultsArray), JSON.stringify(tagsArray)]);
+        
+        res.json({ 
+            message: 'Case study created successfully', 
+            id: result.insertId 
+        });
+    } catch (error) {
+        console.error('Error creating case study:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.put('/api/casestudies/:id', authenticateToken, upload.fields([
+    { name: 'caseStudyImage', maxCount: 1 },
+    { name: 'caseStudyGallery', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { title, client, industry, date, summary, tags, results, content, gallery } = req.body;
+        
+        if (!title || !client || !industry) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+        
+        // Get existing case study data
+        const [existingRows] = await pool.execute('SELECT tags FROM case_studies WHERE id = ?', [id]);
+        if (existingRows.length === 0) {
+            return res.status(404).json({ error: 'Case study not found' });
+        }
+        
+        let galleryArray = [];
+        if (req.files.caseStudyGallery) {
+            galleryArray = req.files.caseStudyGallery.map(file => `/uploads/casestudies/${file.filename}`);
+        } else if (gallery) {
+            galleryArray = gallery.split('\n').filter(url => url.trim());
+        }
+        
+        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
+        const resultsArray = results ? JSON.parse(results) : [];
+        
+        await pool.execute(`
+            UPDATE case_studies 
+            SET title = ?, client = ?, industry = ?, summary = ?, results = ?, tags = ?, updated_at = NOW()
+            WHERE id = ?
+        `, [title, client, industry, summary, JSON.stringify(resultsArray), JSON.stringify(tagsArray), id]);
+        
+        res.json({ message: 'Case study updated successfully' });
+    } catch (error) {
+        console.error('Error updating case study:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.delete('/api/casestudies/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        await pool.execute('DELETE FROM case_studies WHERE id = ?', [id]);
+        
+        res.json({ message: 'Case study deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting case study:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Pricing content endpoint (for dynamic content system)
+app.get('/api/content/pricing', async (req, res) => {
+    try {
+        // Get pricing section content
+        const [sectionRows] = await pool.execute(
+            'SELECT * FROM content_sections WHERE section_key IN (?, ?) AND is_active = true',
+            ['pricing_title', 'pricing_subtitle']
+        );
+        
+        // Get pricing plans
+        const [planRows] = await pool.execute(`
+            SELECT * FROM pricing_plans 
+            WHERE is_active = true 
+            ORDER BY display_order ASC
+        `);
+        
+        const plans = planRows.map(plan => ({
+            id: plan.plan_type || 'plan',
+            name: plan.plan_name || 'Plan Name',
+            price: plan.price_amount || 'Contact Us',
+            period: plan.price_period || 'per month',
+            featured: plan.is_featured || false,
+            features: plan.features ? JSON.parse(plan.features) : [],
+            buttonText: plan.button_text || 'Contact Sales'
+        }));
+        
+        // Get custom solutions content
+        const [customRows] = await pool.execute(
+            'SELECT * FROM content_sections WHERE section_key IN (?, ?) AND is_active = true',
+            ['custom_solutions_title', 'custom_solutions_description']
+        );
+        
+        const customSolutions = {
+            title: 'Need a Custom Solution?',
+            description: 'Every organization is unique. Let\'s work together to create the perfect AI solution for your specific needs, industry requirements, and scale.',
+            features: [
+                'Tailored AI capabilities',
+                'Industry-specific customization',
+                'Scalable architecture',
+                'Dedicated support team'
+            ]
+        };
+        
+        customRows.forEach(row => {
+            if (row.section_key === 'custom_solutions_title') {
+                customSolutions.title = row.content;
+            } else if (row.section_key === 'custom_solutions_description') {
+                customSolutions.description = row.content;
+            }
+        });
+        
+        const pricingData = {
+            title: 'Custom Pricing Plans',
+            subtitle: 'Tailored solutions for every organization\'s unique needs',
+            plans: plans,
+            customSolutions: customSolutions
+        };
+        
+        // Update title and subtitle from database
+        sectionRows.forEach(row => {
+            if (row.section_key === 'pricing_title') {
+                pricingData.title = row.content;
+            } else if (row.section_key === 'pricing_subtitle') {
+                pricingData.subtitle = row.content;
+            }
+        });
+        
+        res.json(pricingData);
+    } catch (error) {
+        console.error('Error fetching pricing content:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 app.get('/api/pricing/plans', async (req, res) => {
     try {
         const [rows] = await pool.execute(`
@@ -900,6 +1355,53 @@ app.post('/api/upload/logo', authenticateToken, upload.single('logo'), (req, res
         });
     } catch (error) {
         console.error('Error uploading logo:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+// Media API routes
+app.get('/api/content/media', async (req, res) => {
+    try {
+        // This is a simple implementation - in production you'd want to store media metadata in database
+        const mediaFiles = [];
+        res.json(mediaFiles);
+    } catch (error) {
+        console.error('Error fetching media files:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/content/media/upload', authenticateToken, upload.array('files', 10), (req, res) => {
+    try {
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ error: 'No files uploaded' });
+        }
+        
+        const uploadedFiles = req.files.map(file => ({
+            id: Date.now() + Math.random(),
+            name: file.originalname,
+            url: `/uploads/${file.filename}`,
+            size: file.size,
+            type: file.mimetype
+        }));
+        
+        res.json({ 
+            message: 'Files uploaded successfully',
+            files: uploadedFiles
+        });
+    } catch (error) {
+        console.error('Upload error:', error);
+        res.status(500).json({ error: 'Upload failed' });
+    }
+});
+
+app.delete('/api/content/media/:id', authenticateToken, (req, res) => {
+    try {
+        const { id } = req.params;
+        // In production, you'd delete the actual file and remove from database
+        res.json({ message: 'File deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting file:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

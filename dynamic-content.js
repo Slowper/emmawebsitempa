@@ -4,8 +4,11 @@
 class DynamicContentLoader {
     constructor() {
         this.apiBase = '/api/content';
-        this.updateInterval = 1000; // Update every 1 second for faster updates
+        this.updateInterval = 30000; // Update every 30 seconds (much more reasonable)
         this.lastUpdate = 0;
+        this.isLoading = false;
+        this.requestCache = new Map();
+        this.cacheTimeout = 60000; // Cache responses for 1 minute
         this.init();
     }
 
@@ -19,34 +22,33 @@ class DynamicContentLoader {
     }
 
     async loadAllContent() {
+        if (this.isLoading) {
+            return;
+        }
+        
+        this.isLoading = true;
         try {
-            console.log('Loading all content...');
+            // Load content in parallel instead of sequentially
+            const promises = [
+                this.loadNavigation(),
+                this.loadHeroSection(),
+                this.loadBanners(),
+                this.loadSections(),
+                this.loadPricingData()
+            ];
             
-            // Load navigation
-            await this.loadNavigation();
-            
-            // Load hero section
-            await this.loadHeroSection();
-            
-            // Load banners
-            await this.loadBanners();
-            
-            // Load other sections
-            await this.loadSections();
-            
-            // Load pricing data
-            await this.loadPricingData();
-            
-            console.log('All content loaded successfully');
+            await Promise.allSettled(promises);
         } catch (error) {
             console.error('Error loading content:', error);
+        } finally {
+            this.isLoading = false;
         }
     }
 
     async loadNavigation() {
         try {
-            const response = await fetch(`${this.apiBase}/navigation`);
-            if (response.ok) {
+            const response = await this.cachedFetch(`${this.apiBase}/navigation`);
+            if (response && response.ok) {
                 const navData = await response.json();
                 this.updateNavigation(navData);
             }
@@ -57,15 +59,13 @@ class DynamicContentLoader {
 
     async loadHeroSection() {
         try {
-            // Add timestamp to prevent caching
-            const timestamp = Date.now();
-            const response = await fetch(`${this.apiBase}/hero?t=${timestamp}`);
-            if (response.ok) {
+            const response = await this.cachedFetch(`${this.apiBase}/hero`);
+            if (response && response.ok) {
                 const heroData = await response.json();
                 this.updateHeroSection(heroData);
                 console.log('Hero section loaded:', heroData);
             } else {
-                console.error('Failed to load hero section:', response.status);
+                console.error('Failed to load hero section:', response?.status);
             }
         } catch (error) {
             console.error('Error loading hero section:', error);
@@ -74,8 +74,8 @@ class DynamicContentLoader {
 
     async loadBanners() {
         try {
-            const response = await fetch(`${this.apiBase}/banners`);
-            if (response.ok) {
+            const response = await this.cachedFetch(`${this.apiBase}/banners`);
+            if (response && response.ok) {
                 const banners = await response.json();
                 this.updateBanners(banners);
             }
@@ -86,8 +86,8 @@ class DynamicContentLoader {
 
     async loadSections() {
         try {
-            const response = await fetch(`${this.apiBase}/sections`);
-            if (response.ok) {
+            const response = await this.cachedFetch(`${this.apiBase}/sections`);
+            if (response && response.ok) {
                 const sections = await response.json();
                 this.updateSections(sections);
             }
@@ -98,16 +98,12 @@ class DynamicContentLoader {
 
     async loadPricingData() {
         try {
-            console.log('Loading pricing data from:', `${this.apiBase}/pricing`);
-            // Load pricing content
-            const response = await fetch(`${this.apiBase}/pricing`);
-            console.log('Pricing API response status:', response.status);
-            if (response.ok) {
+            const response = await this.cachedFetch(`${this.apiBase}/pricing`);
+            if (response && response.ok) {
                 const pricingData = await response.json();
-                console.log('Pricing data loaded:', pricingData);
                 this.updatePricingContent(pricingData);
             } else {
-                console.error('Failed to load pricing data:', response.status, response.statusText);
+                console.error('Failed to load pricing data:', response?.status, response?.statusText);
             }
         } catch (error) {
             console.error('Error loading pricing data:', error);
@@ -129,8 +125,6 @@ class DynamicContentLoader {
     }
 
     updateHeroSection(heroData) {
-        console.log('Updating hero section with:', heroData);
-        
         // Check if elements exist
         const heroTitle = document.getElementById('hero-title');
         const heroSubtitle = document.getElementById('hero-subtitle');
@@ -150,25 +144,16 @@ class DynamicContentLoader {
         // Update hero title
         if (heroTitle && heroData.title) {
             heroTitle.textContent = heroData.title;
-            console.log('Updated hero title to:', heroData.title);
-        } else {
-            console.log('Hero title element not found or no title data');
         }
 
         // Update hero subtitle
         if (heroSubtitle && heroData.subtitle) {
             heroSubtitle.textContent = heroData.subtitle;
-            console.log('Updated hero subtitle to:', heroData.subtitle);
-        } else {
-            console.log('Hero subtitle element not found or no subtitle data');
         }
 
         // Update hero description
         if (heroDescription && heroData.description) {
             heroDescription.textContent = heroData.description;
-            console.log('Updated hero description to:', heroData.description);
-        } else {
-            console.log('Hero description element not found or no description data');
         }
 
         // Update primary button
@@ -176,13 +161,10 @@ class DynamicContentLoader {
             if (primaryText) {
                 const buttonText = heroData.primaryButton.text || 'See Emma in Action';
                 primaryText.textContent = buttonText;
-                console.log('Updated primary button text to:', buttonText);
             }
             if (heroData.primaryButton.href) {
                 primaryBtn.onclick = () => window.location.href = heroData.primaryButton.href;
             }
-        } else {
-            console.log('Primary button elements not found or no button data');
         }
 
         // Update secondary button
@@ -191,21 +173,16 @@ class DynamicContentLoader {
         if (secondaryBtn && heroData.secondaryButton) {
             if (secondaryText && heroData.secondaryButton.text) {
                 secondaryText.textContent = heroData.secondaryButton.text;
-                console.log('Updated secondary button text to:', heroData.secondaryButton.text);
             }
             if (heroData.secondaryButton.href) {
                 secondaryBtn.onclick = () => window.location.href = heroData.secondaryButton.href;
             }
             secondaryBtn.style.display = heroData.secondaryButton.show ? 'inline-flex' : 'none';
-        } else {
-            console.log('Secondary button elements not found or no button data');
         }
     }
 
     updateBanners(banners) {
         // This will be implemented to show banners in the hero section
-        // For now, we'll just log the banners
-        console.log('Banners loaded:', banners);
     }
 
     updateSections(sections) {
@@ -230,8 +207,6 @@ class DynamicContentLoader {
     }
 
     updatePricingContent(pricingData) {
-        console.log('Updating pricing content:', pricingData);
-        
         // Update pricing section title and subtitle
         const pricingTitle = document.querySelector('.pricing .section-title');
         const pricingSubtitle = document.querySelector('.pricing .section-subtitle');
@@ -245,29 +220,16 @@ class DynamicContentLoader {
 
         // Update pricing cards
         const pricingCards = document.querySelector('.pricing-cards');
-        console.log('Pricing cards container found:', pricingCards);
-        console.log('Plans data:', pricingData.plans);
         
         if (pricingCards && pricingData.plans && pricingData.plans.length > 0) {
             pricingCards.innerHTML = '';
-            console.log('Creating pricing cards...');
-            console.log('Pricing data:', pricingData);
-            
-            // Cards are now properly styled with light theme
             
             pricingData.plans.forEach((plan, index) => {
-                console.log(`Creating card ${index + 1}:`, plan);
                 const card = this.createPricingCard(plan);
                 pricingCards.appendChild(card);
             });
-            
-            console.log('Pricing cards created successfully');
-            console.log('Number of cards created:', pricingCards.children.length);
-            console.log('Cards HTML:', pricingCards.innerHTML.substring(0, 200) + '...');
         } else {
             console.error('Pricing cards container not found or no plans data');
-            console.error('Pricing cards container:', pricingCards);
-            console.error('Plans data:', pricingData.plans);
         }
 
         // Update custom solutions section
@@ -275,7 +237,6 @@ class DynamicContentLoader {
     }
 
     createPricingCard(plan) {
-        console.log('Creating pricing card for plan:', plan);
         const card = document.createElement('div');
         card.className = `pricing-card ${plan.featured ? 'featured' : ''}`;
         
@@ -316,8 +277,6 @@ class DynamicContentLoader {
                 </svg>
             `;
         }
-
-        console.log('Plan price:', plan.price, 'Plan period:', plan.period);
         
         card.innerHTML = `
             ${plan.featured ? '<div class="popular-badge">Most Popular</div>' : ''}
@@ -326,6 +285,7 @@ class DynamicContentLoader {
                     ${iconSvg}
                 </div>
                 <h3 class="plan-name">${plan.name}</h3>
+                ${plan.description && plan.description.trim() ? `<p class="plan-description">${plan.description}</p>` : ''}
             </div>
             <div class="plan-features">
                 ${featuresHtml}
@@ -342,8 +302,6 @@ class DynamicContentLoader {
 
     updateCustomSolutions(customSolutions) {
         if (!customSolutions) return;
-        
-        console.log('Updating custom solutions:', customSolutions);
         
         // Update custom solutions title
         const customTitle = document.querySelector('.custom-solutions h3');
@@ -379,26 +337,26 @@ class DynamicContentLoader {
         // Load content immediately
         this.loadAllContent();
         
-        // Set up interval for regular updates
+        // Set up interval for regular updates (much less frequent)
         setInterval(() => {
             this.checkForUpdates();
         }, this.updateInterval);
-        
-        // Also set up a more frequent check for immediate updates
-        setInterval(() => {
-            this.loadHeroSection();
-        }, 500); // Check hero section every 500ms
     }
     
     async checkForUpdates() {
+        if (this.isLoading) {
+            console.log('Update check skipped - content already loading');
+            return;
+        }
+        
         try {
-            const response = await fetch(`${this.apiBase}/hero`);
-            if (response.ok) {
+            const response = await this.cachedFetch(`${this.apiBase}/hero`);
+            if (response && response.ok) {
                 const heroData = await response.json();
                 const currentTime = Date.now();
                 
                 // Only update if we have new data or it's been a while
-                if (currentTime - this.lastUpdate > 2000) {
+                if (currentTime - this.lastUpdate > 10000) { // 10 seconds minimum between updates
                     this.updateHeroSection(heroData);
                     this.lastUpdate = currentTime;
                 }
@@ -425,13 +383,47 @@ class DynamicContentLoader {
         console.log('Testing pricing cards...');
         await this.loadPricingData();
     }
+
+    // Cached fetch method to prevent duplicate requests
+    async cachedFetch(url) {
+        const now = Date.now();
+        const cacheKey = url;
+        
+        // Check if we have a cached response that's still valid
+        if (this.requestCache.has(cacheKey)) {
+            const cached = this.requestCache.get(cacheKey);
+            if (now - cached.timestamp < this.cacheTimeout) {
+                // Clone the response to avoid body stream issues
+                return cached.response.clone();
+            } else {
+                // Cache expired, remove it
+                this.requestCache.delete(cacheKey);
+            }
+        }
+        
+        try {
+            const response = await fetch(url);
+            
+            // Clone the response for caching and immediate use
+            const responseClone = response.clone();
+            
+            // Cache the cloned response
+            this.requestCache.set(cacheKey, {
+                response: responseClone,
+                timestamp: now
+            });
+            
+            return response;
+        } catch (error) {
+            console.error('Fetch error for:', url, error);
+            throw error;
+        }
+    }
 }
 
 // Initialize the dynamic content loader when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Initializing dynamic content loader...');
     window.dynamicContent = new DynamicContentLoader();
-    console.log('Dynamic content loader initialized');
     
     // Test function to check if elements exist
     window.testElements = () => {

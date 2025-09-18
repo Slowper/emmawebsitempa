@@ -522,37 +522,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* Resources Section Styles */
-        .resources-nav-preview {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .resource-tab-preview {
-            padding: 0.5rem 1rem;
-            border: 2px solid #e2e8f0;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .resource-tab-preview.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-color: #667eea;
-        }
-
-        .resource-tab-preview:hover {
-            border-color: #667eea;
-            background: #f7fafc;
-        }
-
-        .resource-tab-preview.active:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
     </style>
 </head>
 <body>
@@ -607,9 +576,6 @@
                     </a>
                     <a href="#" class="nav-item" onclick="showSection('pricing')">
                         <i class="fas fa-dollar-sign"></i> Pricing Plans
-                    </a>
-                    <a href="#" class="nav-item" onclick="showSection('resources')">
-                        <i class="fas fa-book"></i> Resources
                     </a>
                     <a href="#" class="nav-item" onclick="showSection('media')">
                         <i class="fas fa-images"></i> Media Library
@@ -1585,100 +1551,6 @@
                             <button onclick="savePricingSection()" class="btn btn-primary">
                                 <i class="fas fa-save"></i> Save Changes
                             </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Resources Section -->
-                <div id="resources" class="section">
-                    <div class="section-header">
-                        <h1 class="section-title">Resources Management</h1>
-                        <p class="section-subtitle">Manage blog posts, use cases, and case studies for the Resources section</p>
-                    </div>
-
-                    <!-- Resources Overview -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalBlogs">0</div>
-                            <div class="stat-label">Blog Posts</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalUseCases">0</div>
-                            <div class="stat-label">Use Cases</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalCaseStudies">0</div>
-                            <div class="stat-label">Case Studies</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-number" id="totalResources">0</div>
-                            <div class="stat-label">Total Resources</div>
-                        </div>
-                    </div>
-
-                    <!-- Resources Section Content Management -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Resources Section Content</h3>
-                            <div class="status-indicator status-live">
-                                <i class="fas fa-circle"></i> Live
-                            </div>
-                        </div>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="resourcesTitle">Section Title</label>
-                                <input type="text" id="resourcesTitle" placeholder="Enter section title">
-                            </div>
-                            <div class="form-group">
-                                <label for="resourcesSubtitle">Section Subtitle</label>
-                                <input type="text" id="resourcesSubtitle" placeholder="Enter section subtitle">
-                            </div>
-                        </div>
-                        <button onclick="saveResourcesSection()" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Save Resources Section
-                        </button>
-                    </div>
-
-                    <!-- Quick Actions -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Quick Actions</h3>
-                        </div>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <button onclick="showSection('blogs')" class="btn btn-primary" style="width: 100%;">
-                                    <i class="fas fa-blog"></i> Manage Blog Posts
-                                </button>
-                            </div>
-                            <div class="form-group">
-                                <button onclick="showSection('usecases')" class="btn btn-primary" style="width: 100%;">
-                                    <i class="fas fa-briefcase"></i> Manage Use Cases
-                                </button>
-                            </div>
-                            <div class="form-group">
-                                <button onclick="showSection('casestudies')" class="btn btn-primary" style="width: 100%;">
-                                    <i class="fas fa-chart-line"></i> Manage Case Studies
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Resources Preview -->
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">Resources Section Preview</h3>
-                        </div>
-                        <div class="preview-window">
-                            <div class="preview-title">Live Preview</div>
-                            <div id="resourcesPreview">
-                                <h2 id="previewResourcesTitle">Resources</h2>
-                                <p id="previewResourcesSubtitle">Discover insights, use cases, and best practices</p>
-                                <div class="resources-nav-preview">
-                                    <button class="resource-tab-preview active">Blog</button>
-                                    <button class="resource-tab-preview">Use Cases</button>
-                                    <button class="resource-tab-preview">Case Studies</button>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
