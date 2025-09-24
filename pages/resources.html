@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Resources - Emma AI Blog, Case Studies & Use Cases | KodeFast</title>
+    <meta name="title" content="Resources - Emma AI Blog, Case Studies & Use Cases | KodeFast">
+    <meta name="description" content="Explore Emma AI resources including blog posts, case studies, use cases, and industry insights. Learn about AI automation in Healthcare, Banking, and Education.">
+    <meta name="keywords" content="Emma AI resources, AI blog, case studies, use cases, AI automation insights, healthcare AI, banking AI, education AI, KodeFast resources">
+    <meta name="author" content="KodeFast">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://emma.kodefast.com/resources">
+    <meta property="og:title" content="Resources - Emma AI Blog, Case Studies & Use Cases | KodeFast">
+    <meta property="og:description" content="Explore Emma AI resources including blog posts, case studies, use cases, and industry insights. Learn about AI automation in Healthcare, Banking, and Education.">
+    <meta property="og:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    <meta property="og:site_name" content="Emma AI by KodeFast">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://emma.kodefast.com/resources">
+    <meta property="twitter:title" content="Resources - Emma AI Blog, Case Studies & Use Cases | KodeFast">
+    <meta property="twitter:description" content="Explore Emma AI resources including blog posts, case studies, use cases, and industry insights. Learn about AI automation in Healthcare, Banking, and Education.">
+    <meta property="twitter:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://emma.kodefast.com/resources">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="apple-touch-icon" href="/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    
+    <!-- Light theme CSS for enhanced footer -->
+    <style>
+        .light-theme .compact-footer {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: #1e293b;
+        }
+        
+        .light-theme .compact-footer .footer-section {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(59, 130, 246, 0.03));
+            border-color: rgba(139, 92, 246, 0.2);
+        }
+        
+        .light-theme .compact-footer .section-title {
+            color: #1e293b;
+        }
+        
+        .light-theme .compact-footer .footer-links a {
+            color: #475569;
+        }
+        
+        .light-theme .compact-footer .footer-links a:hover {
+            color: #8b5cf6;
+        }
+        
+        .light-theme .compact-footer .section-description {
+            color: #475569;
+        }
+        
+        .light-theme .compact-footer .micro-survey p {
+            color: #475569;
+        }
+        
+        .light-theme .compact-footer .copyright {
+            color: #64748b;
+        }
+        
+        .light-theme .compact-footer .legal-links a {
+            color: #64748b;
+        }
+    </style>
+    
+    <!-- Critical CSS -->
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; }
+        .navbar { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(10px); 
+            z-index: 1000; 
+            padding: 1rem 0; 
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1), 0 0 40px rgba(59, 130, 246, 0.05);
+            position: relative;
+        }
+        
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3b82f6, #8b5cf6, #3b82f6, transparent);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+        
+        .navbar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1), transparent);
+            animation: glow-sweep 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.5; transform: scaleX(1); }
+            50% { opacity: 1; transform: scaleX(1.02); }
+        }
+        
+        @keyframes glow-sweep {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        .nav-logo { display: flex; align-items: center; }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link { color: #f8fafc; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-link:hover { color: #3b82f6; }
+        .nav-link.active { color: #3b82f6; }
+        .hero { padding: 8rem 2rem 4rem; text-align: center; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+        .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.25rem; color: #94a3b8; max-width: 600px; margin: 0 auto; }
+        .content { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
+        .section { margin-bottom: 4rem; }
+        .section h2 { font-size: 2.5rem; margin-bottom: 2rem; color: #3b82f6; }
+        .resources-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; margin: 2rem 0; }
+        .resource-card { background: #1e293b; border-radius: 1rem; overflow: hidden; border: 1px solid #334155; transition: all 0.3s; }
+        .resource-card:hover { transform: translateY(-5px); border-color: #3b82f6; }
+        .resource-image { width: 100%; height: 200px; background: #334155; display: flex; align-items: center; justify-content: center; color: #94a3b8; }
+        .resource-content { padding: 1.5rem; }
+        .resource-category { color: #3b82f6; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem; }
+        .resource-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; color: #f8fafc; }
+        .resource-excerpt { color: #cbd5e1; margin-bottom: 1rem; line-height: 1.6; }
+        .resource-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.875rem; color: #94a3b8; }
+        .resource-link { color: #3b82f6; text-decoration: none; font-weight: 600; }
+        .resource-link:hover { text-decoration: underline; }
+        .filter-tabs { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+        .filter-tab { padding: 0.75rem 1.5rem; background: #334155; color: #cbd5e1; border: none; border-radius: 2rem; cursor: pointer; transition: all 0.3s; }
+        .filter-tab.active { background: #3b82f6; color: white; }
+        .filter-tab:hover { background: #4f46e5; color: white; }
+        .cta-section { background: #1e293b; padding: 3rem; border-radius: 1rem; text-align: center; margin-top: 4rem; }
+        .cta-section h2 { color: #3b82f6; margin-bottom: 1rem; }
+        .cta-section p { color: #cbd5e1; margin-bottom: 2rem; font-size: 1.1rem; }
+        .cta-button { display: inline-block; padding: 1rem 2rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; transition: background 0.3s; }
+        .cta-button:hover { background: #2563eb; }
+    </style>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "CollectionPage",
+        "name": "Emma AI Resources",
+        "description": "Collection of blog posts, case studies, and use cases for Emma AI platform",
+        "url": "https://emma.kodefast.com/resources",
+        "mainEntity": {
+            "@type": "ItemList",
+            "name": "AI Resources",
+            "description": "Educational content about AI automation and intelligent solutions"
+        }
+    }
+    </script>
+</head>
+    <body>
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="loading-content">
+                <!-- Animated Background Particles -->
+                <div class="particles-container">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div>
+
+                <!-- Floating Code Elements -->
+                <div class="floating-code">
+                    <div class="code-snippet">&lt;AI&gt;</div>
+                    <div class="code-snippet">neural_network()</div>
+                    <div class="code-snippet">autonomous_agent()</div>
+                    <div class="code-snippet">machine_learning()</div>
+                    <div class="code-snippet">deep_learning()</div>
+                    <div class="code-snippet">artificial_intelligence()</div>
+                </div>
+
+                <!-- 3D Rotating Logo -->
+                <div class="logo-3d">
+                    <div class="logo-cube">
+                        <div class="cube-face front">E</div>
+                        <div class="cube-face back">M</div>
+                        <div class="cube-face right">M</div>
+                        <div class="cube-face left">A</div>
+                        <div class="cube-face top">AI</div>
+                        <div class="cube-face bottom">AI</div>
+                    </div>
+                </div>
+
+                <!-- Glitch Text Effect -->
+                <div class="glitch-text" data-text="EMMA AI">EMMA AI</div>
+
+                <!-- Typewriter Effect -->
+                <div class="typewriter">Building the future of autonomous AI agents...</div>
+
+                <!-- Loading Spinner -->
+                <div class="loading-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                </div>
+
+                <!-- Loading Text -->
+                <div class="loading-text">Initializing Neural Networks...</div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" style="height: 40px;">
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/resources" class="nav-link active">Resources</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Resources</h1>
+        <p>Explore insights, case studies, and best practices for AI automation</p>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content">
+        <!-- Filter Tabs -->
+        <div class="filter-tabs">
+            <button class="filter-tab active" onclick="filterResources('all')">All Resources</button>
+            <button class="filter-tab" onclick="filterResources('blog')">Blog Posts</button>
+            <button class="filter-tab" onclick="filterResources('case-study')">Case Studies</button>
+            <button class="filter-tab" onclick="filterResources('use-case')">Use Cases</button>
+        </div>
+
+        <!-- Resources Grid -->
+        <div class="section">
+            <h2>Latest Resources</h2>
+            <div class="resources-grid" id="resources-grid">
+                <!-- Blog Posts -->
+                <div class="resource-card" data-category="blog">
+                    <div class="resource-image">📝</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Blog Post</div>
+                        <h3 class="resource-title">The Future of AI in Healthcare Operations</h3>
+                        <p class="resource-excerpt">Discover how AI is transforming healthcare operations, from patient care coordination to administrative automation.</p>
+                        <div class="resource-meta">
+                            <span>By Emma AI Team</span>
+                            <a href="/blog/1" class="resource-link">Read More →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="blog">
+                    <div class="resource-image">🏦</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Blog Post</div>
+                        <h3 class="resource-title">Banking AI: Revolutionizing Customer Experience</h3>
+                        <p class="resource-excerpt">Learn how intelligent automation is reshaping banking operations and improving customer satisfaction.</p>
+                        <div class="resource-meta">
+                            <span>By Emma AI Team</span>
+                            <a href="/blog/2" class="resource-link">Read More →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="blog">
+                    <div class="resource-image">🎓</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Blog Post</div>
+                        <h3 class="resource-title">AI in Education: Personalized Learning at Scale</h3>
+                        <p class="resource-excerpt">Explore how AI is enabling personalized learning experiences and administrative efficiency in education.</p>
+                        <div class="resource-meta">
+                            <span>By Emma AI Team</span>
+                            <a href="/blog/3" class="resource-link">Read More →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="blog">
+                    <div class="resource-image">🚀</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Blog Post</div>
+                        <h3 class="resource-title">The Future of AI: Trends to Watch in 2024</h3>
+                        <p class="resource-excerpt">Discover the latest AI trends and technologies that will shape the future of business automation.</p>
+                        <div class="resource-meta">
+                            <span>By Emma AI Team</span>
+                            <a href="/blog/4" class="resource-link">Read More →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="blog">
+                    <div class="resource-image">🔒</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Blog Post</div>
+                        <h3 class="resource-title">AI Security & Compliance: Best Practices</h3>
+                        <p class="resource-excerpt">Learn about AI security best practices and compliance requirements for enterprise AI implementations.</p>
+                        <div class="resource-meta">
+                            <span>By Emma AI Team</span>
+                            <a href="/blog/5" class="resource-link">Read More →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="blog">
+                    <div class="resource-image">💡</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Blog Post</div>
+                        <h3 class="resource-title">ROI of AI Implementation: Measuring Success</h3>
+                        <p class="resource-excerpt">How to measure and maximize the return on investment from your AI automation initiatives.</p>
+                        <div class="resource-meta">
+                            <span>By Emma AI Team</span>
+                            <a href="/blog/6" class="resource-link">Read More →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Case Studies -->
+                <div class="resource-card" data-category="case-study">
+                    <div class="resource-image">🏥</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Case Study</div>
+                        <h3 class="resource-title">Regional Hospital: 40% Reduction in Admin Time</h3>
+                        <p class="resource-excerpt">How a regional hospital implemented Emma AI to streamline patient scheduling and reduce administrative overhead.</p>
+                        <div class="resource-meta">
+                            <span>Healthcare</span>
+                            <a href="/casestudy/1" class="resource-link">View Case Study →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="case-study">
+                    <div class="resource-image">💳</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Case Study</div>
+                        <h3 class="resource-title">National Bank: 60% Faster Loan Processing</h3>
+                        <p class="resource-excerpt">A major bank's journey to automate loan processing and improve customer experience with AI.</p>
+                        <div class="resource-meta">
+                            <span>Banking</span>
+                            <a href="/casestudy/2" class="resource-link">View Case Study →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="case-study">
+                    <div class="resource-image">🎓</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Case Study</div>
+                        <h3 class="resource-title">University: 90% Reduction in Admin Tasks</h3>
+                        <p class="resource-excerpt">How a leading university automated student services and administrative processes with Emma AI.</p>
+                        <div class="resource-meta">
+                            <span>Education</span>
+                            <a href="/casestudy/3" class="resource-link">View Case Study →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="case-study">
+                    <div class="resource-image">🏭</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Case Study</div>
+                        <h3 class="resource-title">Manufacturing: 50% Cost Reduction</h3>
+                        <p class="resource-excerpt">A manufacturing company's success story with AI-powered supply chain optimization and predictive maintenance.</p>
+                        <div class="resource-meta">
+                            <span>Manufacturing</span>
+                            <a href="/casestudy/4" class="resource-link">View Case Study →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Use Cases -->
+                <div class="resource-card" data-category="use-case">
+                    <div class="resource-image">🤖</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Use Case</div>
+                        <h3 class="resource-title">Intelligent Customer Support Automation</h3>
+                        <p class="resource-excerpt">Learn how to implement AI-powered customer support that handles 80% of inquiries automatically.</p>
+                        <div class="resource-meta">
+                            <span>Multi-Industry</span>
+                            <a href="/usecase/1" class="resource-link">View Use Case →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="use-case">
+                    <div class="resource-image">📊</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Use Case</div>
+                        <h3 class="resource-title">Automated Data Analysis & Reporting</h3>
+                        <p class="resource-excerpt">Discover how AI can automate complex data analysis and generate actionable insights for decision-making.</p>
+                        <div class="resource-meta">
+                            <span>Analytics</span>
+                            <a href="/usecase/2" class="resource-link">View Use Case →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="use-case">
+                    <div class="resource-image">🔄</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Use Case</div>
+                        <h3 class="resource-title">Workflow Automation & Optimization</h3>
+                        <p class="resource-excerpt">See how AI can identify bottlenecks and optimize business processes for maximum efficiency.</p>
+                        <div class="resource-meta">
+                            <span>Operations</span>
+                            <a href="/usecase/3" class="resource-link">View Use Case →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="use-case">
+                    <div class="resource-image">💬</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Use Case</div>
+                        <h3 class="resource-title">Multi-Channel Communication Hub</h3>
+                        <p class="resource-excerpt">Unify WhatsApp, SMS, email, and voice communications through a single AI-powered platform.</p>
+                        <div class="resource-meta">
+                            <span>Communication</span>
+                            <a href="/usecase/4" class="resource-link">View Use Case →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="use-case">
+                    <div class="resource-image">🎯</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Use Case</div>
+                        <h3 class="resource-title">Smart Lead Qualification</h3>
+                        <p class="resource-excerpt">Automatically qualify leads and route them to the right sales team members based on AI analysis.</p>
+                        <div class="resource-meta">
+                            <span>Sales</span>
+                            <a href="/usecase/5" class="resource-link">View Use Case →</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resource-card" data-category="use-case">
+                    <div class="resource-image">📈</div>
+                    <div class="resource-content">
+                        <div class="resource-category">Use Case</div>
+                        <h3 class="resource-title">Predictive Analytics & Forecasting</h3>
+                        <p class="resource-excerpt">Leverage AI to predict trends, forecast demand, and make data-driven business decisions.</p>
+                        <div class="resource-meta">
+                            <span>Predictive Analytics</span>
+                            <a href="/usecase/6" class="resource-link">View Use Case →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2>Ready to Transform Your Operations?</h2>
+            <p>Discover how Emma AI can revolutionize your organization with intelligent automation. Get started with a personalized demo today.</p>
+            <a href="/contact" class="cta-button">Schedule a Demo</a>
+        </div>
+    </div>
+
+    <!-- Beautiful Footer -->
+    <footer class="compact-footer">
+        <!-- Footer Background Effects -->
+        <div class="footer-bg-effects">
+            <div class="purple-light-orb"></div>
+            <div class="purple-light-orb secondary"></div>
+        </div>
+        
+        <div class="footer-container">
+            <!-- Footer Main Content -->
+            <div class="footer-main">
+                <!-- About Emma Section -->
+                <div class="footer-section about-section">
+                    <h3 class="section-title">About Emma</h3>
+                    <p class="section-description">Building the future of autonomous AI agents.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" data-platform="linkedin">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" data-platform="twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" data-platform="github">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Product Section -->
+                <div class="footer-section">
+                    <h3 class="section-title">Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="/features">Features</a></li>
+                        <li><a href="/industries">Industries</a></li>
+                        <li><a href="/labs">Labs</a></li>
+                    </ul>
+                </div>
+
+                <!-- Company Section -->
+                <div class="footer-section">
+                    <h3 class="section-title">Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="/about">About</a></li>
+                        <li><a href="/careers">Careers</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Resources Section -->
+                <div class="footer-section">
+                    <h3 class="section-title">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="/documentation">Documentation</a></li>
+                        <li><a href="/api-reference">API Reference</a></li>
+                        <li><a href="/support">Support</a></li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <!-- Interactive Elements -->
+            <div class="footer-interactive">
+                <div class="theme-toggle">
+                    <button class="theme-btn" id="themeToggle">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                        </svg>
+                        <span>Dark Mode</span>
+                    </button>
+                </div>
+                <div class="micro-survey">
+                    <p>Help us improve:</p>
+                    <div class="survey-buttons">
+                        <button class="survey-btn yes">Yes</button>
+                        <button class="survey-btn no">No</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <div class="copyright">
+                        <p>&copy; <span id="currentYear">2025</span> Emma by KodeFast. All rights reserved.</p>
+                    </div>
+                    <div class="legal-links">
+                        <a href="/privacy">Privacy</a>
+                        <a href="/terms">Terms</a>
+                        <a href="/cookies">Cookies</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="/particles.min.js"></script>
+    
+    <!-- Enhanced Resources Page Scripts -->
+    <script>
+        // Loading Screen Script
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingText = document.querySelector('.loading-text');
+            
+            // Simulate loading progress
+            const loadingMessages = [
+                'Initializing Neural Networks...',
+                'Loading AI Models...',
+                'Connecting to Cloud Services...',
+                'Calibrating Autonomous Systems...',
+                'Preparing Emma AI...',
+                'Almost Ready...'
+            ];
+            
+            let messageIndex = 0;
+            const messageInterval = setInterval(() => {
+                if (messageIndex < loadingMessages.length - 1) {
+                    messageIndex++;
+                    loadingText.textContent = loadingMessages[messageIndex];
+                } else {
+                    clearInterval(messageInterval);
+                }
+            }, 800);
+            
+            // Hide loading screen after 50 milliseconds
+            setTimeout(() => {
+                loadingScreen.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 50);
+            }, 50);
+        });
+
+        // Initialize GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hero section animation
+            gsap.timeline()
+                .from('.hero-content h1', { duration: 1, y: 50, opacity: 0, ease: "power3.out" })
+                .from('.hero-content p', { duration: 0.8, y: 30, opacity: 0, ease: "power2.out" }, "-=0.5");
+
+            // Filter tabs animation
+            gsap.from('.filter-tabs', {
+                duration: 0.8,
+                y: 30,
+                opacity: 0,
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: '.filter-tabs',
+                    start: "top 80%",
+                    end: "bottom 20%",
+                    toggleActions: "play none none reverse"
+                }
+            });
+
+            // Resource cards animation
+            gsap.utils.toArray('.resource-card').forEach((card, index) => {
+                gsap.from(card, {
+                    duration: 0.6,
+                    y: 50,
+                    opacity: 0,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+
+            // Section headers animation
+            gsap.utils.toArray('.section h2').forEach(header => {
+                gsap.from(header, {
+                    duration: 0.8,
+                    x: -50,
+                    opacity: 0,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: header,
+                        start: "top 80%",
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+
+            // Parallax effect for hero
+            gsap.to('.hero-visual', {
+                yPercent: -30,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: '.hero-section',
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+        });
+
+        // Enhanced Filter Functionality
+        function filterResources(category) {
+            const cards = document.querySelectorAll('.resource-card');
+            const tabs = document.querySelectorAll('.filter-tab');
+            
+            // Update active tab with animation
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+                gsap.to(tab, { scale: 1, duration: 0.2, ease: "power2.out" });
+            });
+            
+            const activeTab = event.target;
+            activeTab.classList.add('active');
+            gsap.to(activeTab, { scale: 1.05, duration: 0.2, ease: "power2.out" });
+            gsap.to(activeTab, { scale: 1, duration: 0.2, ease: "power2.out", delay: 0.1 });
+            
+            // Filter cards with animation
+            cards.forEach((card, index) => {
+                if (category === 'all' || card.dataset.category === category) {
+                    gsap.to(card, {
+                        duration: 0.3,
+                        scale: 1,
+                        opacity: 1,
+                        y: 0,
+                        ease: "power2.out",
+                        delay: index * 0.1
+                    });
+                } else {
+                    gsap.to(card, {
+                        duration: 0.3,
+                        scale: 0.8,
+                        opacity: 0,
+                        y: 20,
+                        ease: "power2.in"
+                    });
+                }
+            });
+        }
+
+        // Interactive hover effects
+        document.querySelectorAll('.resource-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                gsap.to(this, { scale: 1.02, duration: 0.3, ease: "power2.out" });
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                gsap.to(this, { scale: 1, duration: 0.3, ease: "power2.out" });
+            });
+        });
+
+        // Filter tab hover effects
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('active')) {
+                    gsap.to(this, { scale: 1.05, duration: 0.2, ease: "power2.out" });
+                }
+            });
+            
+            tab.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('active')) {
+                    gsap.to(this, { scale: 1, duration: 0.2, ease: "power2.out" });
+                }
+            });
+        });
+
+        // Initialize particles.js
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 40, density: { enable: true, value_area: 800 } },
+                    color: { value: "#8b5cf6" },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.3, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
+                    size: { value: 2, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+                    line_linked: { enable: true, distance: 200, color: "#8b5cf6", opacity: 0.2, width: 1 },
+                    move: { enable: true, speed: 4, direction: "none", random: false, straight: false, out_mode: "out", bounce: false }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+                    modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
+                },
+                retina_detect: true
+            });
+        }
+
+        // Enhanced Footer JavaScript Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-update copyright year
+            const currentYearElement = document.getElementById('currentYear');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+
+            // Theme toggle functionality
+            const themeToggle = document.getElementById('themeToggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('light-theme');
+                    const isLight = document.body.classList.contains('light-theme');
+                    this.querySelector('span').textContent = isLight ? 'Light Mode' : 'Dark Mode';
+                    
+                    // Update theme button icon
+                    const icon = this.querySelector('svg');
+                    if (isLight) {
+                        icon.innerHTML = '<path d="M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>';
+                    } else {
+                        icon.innerHTML = '<path d="M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>';
+                    }
+                });
+            }
+
+            // Micro-survey functionality
+            const surveyButtons = document.querySelectorAll('.survey-btn');
+            surveyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const response = this.classList.contains('yes') ? 'yes' : 'no';
+                    
+                    // Visual feedback
+                    this.style.background = this.classList.contains('yes') 
+                        ? 'rgba(34, 197, 94, 0.3)' 
+                        : 'rgba(239, 68, 68, 0.3)';
+                    this.style.borderColor = this.classList.contains('yes') 
+                        ? 'rgba(34, 197, 94, 0.8)' 
+                        : 'rgba(239, 68, 68, 0.8)';
+                    
+                    // Disable other button
+                    surveyButtons.forEach(btn => {
+                        if (btn !== this) {
+                            btn.style.opacity = '0.5';
+                            btn.style.pointerEvents = 'none';
+                        }
+                    });
+                    
+                    // Show thank you message
+                    setTimeout(() => {
+                        const surveyContainer = this.closest('.micro-survey');
+                        surveyContainer.innerHTML = `
+                            <p style="color: #8b5cf6; font-weight: 600;">
+                                Thank you for your feedback! 
+                                ${response === 'yes' ? 'We\'re glad we could help!' : 'We\'ll work to improve your experience.'}
+                            </p>
+                        `;
+                    }, 1000);
+                });
+            });
+
+            // Social link analytics (optional)
+            const socialLinks = document.querySelectorAll('.social-link');
+            socialLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const platform = this.getAttribute('data-platform');
+                    console.log(`Social link clicked: ${platform}`);
+                    // You can add analytics tracking here
+                });
+            });
+        });
+    </script>
+</body>
+</html>

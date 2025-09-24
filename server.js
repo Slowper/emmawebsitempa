@@ -8,13 +8,30 @@ const path = require('path');
 const fs = require('fs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+// SSR handler removed - using MPA instead
 require('dotenv').config({ path: './config.env' });
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://unpkg.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+            imgSrc: ["'self'", "data:", "https:"],
+            connectSrc: ["'self'"],
+            objectSrc: ["'none'"],
+            baseUri: ["'self'"],
+            formAction: ["'self'"],
+            frameAncestors: ["'self'"],
+            upgradeInsecureRequests: []
+        }
+    }
+}));
 app.use(cors({
     origin: ['http://localhost:3000', 'http://localhost:8000'],
     credentials: true
@@ -34,7 +51,9 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 // Serve static files
 app.use('/uploads', express.static('uploads'));
 app.use('/Logo And Recording', express.static('Logo And Recording'));
+app.use('/Team Pics', express.static('Team Pics'));
 app.use(express.static('public'));
+app.use(express.static('.')); // Serve files from root directory (CSS, JS, etc.)
 
 // Database connection
 const dbConfig = {
@@ -1409,10 +1428,84 @@ app.delete('/api/content/media/:id', authenticateToken, (req, res) => {
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve the main website
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+// Serve sitemap.xml
+app.get('/sitemap.xml', (req, res) => {
+    res.setHeader('Content-Type', 'application/xml');
+    res.sendFile(path.join(__dirname, 'sitemap.xml'));
 });
+
+// Serve robots.txt
+app.get('/robots.txt', (req, res) => {
+    res.setHeader('Content-Type', 'text/plain');
+    res.sendFile(path.join(__dirname, 'robots.txt'));
+});
+
+// Serve manifest.json
+app.get('/manifest.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.sendFile(path.join(__dirname, 'manifest.json'));
+});
+
+// SSR Routes removed - using MPA instead
+
+// MPA Routes - Serve individual pages
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'home.html'));
+});
+
+app.get('/about', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'about.html'));
+});
+
+app.get('/pricing', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'pricing.html'));
+});
+
+app.get('/resources', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'resources.html'));
+});
+
+app.get('/contact', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'contact.html'));
+});
+
+// Blog routes
+app.get('/blog/:id', (req, res) => {
+    const blogId = req.params.id;
+    const blogPath = path.join(__dirname, 'pages', 'blog', `${blogId}.html`);
+    
+    if (fs.existsSync(blogPath)) {
+        res.sendFile(blogPath);
+    } else {
+        res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+    }
+});
+
+// Use case routes
+app.get('/usecase/:id', (req, res) => {
+    const useCaseId = req.params.id;
+    const useCasePath = path.join(__dirname, 'pages', 'usecase', `${useCaseId}.html`);
+    
+    if (fs.existsSync(useCasePath)) {
+        res.sendFile(useCasePath);
+    } else {
+        res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+    }
+});
+
+// Case study routes
+app.get('/casestudy/:id', (req, res) => {
+    const caseStudyId = req.params.id;
+    const caseStudyPath = path.join(__dirname, 'pages', 'casestudy', `${caseStudyId}.html`);
+    
+    if (fs.existsSync(caseStudyPath)) {
+        res.sendFile(caseStudyPath);
+    } else {
+        res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+    }
+});
+
+// SPA fallback removed - using MPA only
 
 // Serve admin dashboard
 app.get('/admin', (req, res) => {
@@ -1435,14 +1528,13 @@ app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
 
-// Initialize database and start server
-initializeDatabase().then(() => {
-    app.listen(PORT, () => {
-        console.log(`Emma CMS Server running on port ${PORT}`);
-        console.log(`Admin dashboard: http://localhost:${PORT}/admin`);
-        console.log(`Main website: http://localhost:${PORT}`);
-    });
-}).catch(error => {
-    console.error('Failed to start server:', error);
-    process.exit(1);
+// Start server (database initialization skipped for MPA-only mode)
+app.listen(PORT, () => {
+    console.log(`Emma CMS Server running on port ${PORT}`);
+    console.log(`Admin dashboard: http://localhost:${PORT}/admin`);
+    console.log(`Main website: http://localhost:${PORT}`);
+    console.log(`About: http://localhost:${PORT}/about`);
+    console.log(`Pricing: http://localhost:${PORT}/pricing`);
+    console.log(`Resources: http://localhost:${PORT}/resources`);
+    console.log(`Contact: http://localhost:${PORT}/contact`);
 });

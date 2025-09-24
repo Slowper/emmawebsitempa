@@ -1,0 +1,162 @@
+/* HIPAA & SOC2 Badges Scroller - CSS Only Version */
+
+/* Main container for the badges scroller */
+.badges-scroller-container {
+    position: relative;
+    width: 100%;
+    height: 80px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    margin: 20px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+/* The scrolling container */
+.badges-scroller {
+    display: flex;
+    animation: scroll 20s linear infinite;
+    height: 100%;
+    align-items: center;
+    gap: 40px;
+    width: max-content;
+}
+
+/* Pause animation on hover */
+.badges-scroller:hover {
+    animation-play-state: paused;
+}
+
+/* Individual badge styling */
+.badge-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+    padding: 10px;
+}
+
+.badge-item:hover {
+    transform: scale(1.1);
+}
+
+/* Badge image styling */
+.badge-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.badge-image img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+/* HIPAA specific styling */
+.badge-item.hipaa {
+    background: linear-gradient(135deg, #2196F3, #1976D2);
+}
+
+/* SOC2 specific styling */
+.badge-item.soc2 {
+    background: linear-gradient(135deg, #FF9800, #F57C00);
+}
+
+/* Animation keyframes */
+@keyframes scroll {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .badges-scroller-container {
+        height: 70px;
+        margin: 15px 0;
+    }
+    
+    .badge-item {
+        min-width: 60px;
+        height: 60px;
+        padding: 8px;
+    }
+    
+    .badge-image img {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .badges-scroller {
+        gap: 30px;
+    }
+}
+
+@media (max-width: 480px) {
+    .badges-scroller-container {
+        height: 60px;
+        margin: 10px 0;
+    }
+    
+    .badge-item {
+        min-width: 50px;
+        height: 50px;
+        padding: 6px;
+    }
+    
+    .badge-image img {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .badges-scroller {
+        gap: 20px;
+    }
+}
+
+/* Pause animation on reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+    .badges-scroller {
+        animation: none;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .badge-item {
+        background: rgba(30, 30, 30, 0.95);
+    }
+    
+    .badge-item.hipaa {
+        background: linear-gradient(135deg, #1976D2, #1565C0);
+    }
+    
+    .badge-item.soc2 {
+        background: linear-gradient(135deg, #F57C00, #EF6C00);
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .badge-item {
+        border: 2px solid #000;
+    }
+    
+    .badge-image img {
+        border: 2px solid #000;
+    }
+}

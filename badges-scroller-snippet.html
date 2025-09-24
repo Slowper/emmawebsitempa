@@ -1,0 +1,108 @@
+<!-- HIPAA & SOC2 Badges Scroller - Integration Snippet -->
+<!-- Add this to your hero section where you want the badges to appear -->
+
+<div class="badges-scroller-container">
+    <div class="badges-scroller">
+        <!-- HIPAA Badge -->
+        <div class="badge-item hipaa">
+            <div class="badge-content">
+                <div class="badge-icon">H</div>
+                <div>
+                    <div class="badge-text">HIPAA Compliant</div>
+                    <div class="badge-subtitle">Healthcare Ready</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SOC2 Badge -->
+        <div class="badge-item soc2">
+            <div class="badge-content">
+                <div class="badge-icon">S</div>
+                <div>
+                    <div class="badge-text">SOC2 Certified</div>
+                    <div class="badge-subtitle">Security Assured</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ISO 27001 Badge -->
+        <div class="badge-item iso">
+            <div class="badge-content">
+                <div class="badge-icon">I</div>
+                <div>
+                    <div class="badge-text">ISO 27001</div>
+                    <div class="badge-subtitle">Info Security</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- GDPR Badge -->
+        <div class="badge-item gdpr">
+            <div class="badge-content">
+                <div class="badge-icon">G</div>
+                <div>
+                    <div class="badge-text">GDPR Compliant</div>
+                    <div class="badge-subtitle">Privacy Protected</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Duplicate badges for seamless loop -->
+        <div class="badge-item hipaa">
+            <div class="badge-content">
+                <div class="badge-icon">H</div>
+                <div>
+                    <div class="badge-text">HIPAA Compliant</div>
+                    <div class="badge-subtitle">Healthcare Ready</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="badge-item soc2">
+            <div class="badge-content">
+                <div class="badge-icon">S</div>
+                <div>
+                    <div class="badge-text">SOC2 Certified</div>
+                    <div class="badge-subtitle">Security Assured</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="badge-item iso">
+            <div class="badge-content">
+                <div class="badge-icon">I</div>
+                <div>
+                    <div class="badge-text">ISO 27001</div>
+                    <div class="badge-subtitle">Info Security</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="badge-item gdpr">
+            <div class="badge-content">
+                <div class="badge-icon">G</div>
+                <div>
+                    <div class="badge-text">GDPR Compliant</div>
+                    <div class="badge-subtitle">Privacy Protected</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional: Add this JavaScript for enhanced functionality -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const scroller = document.querySelector('.badges-scroller');
+    if (scroller) {
+        // Pause on hover for better UX
+        scroller.addEventListener('mouseenter', function() {
+            this.style.animationPlayState = 'paused';
+        });
+        
+        scroller.addEventListener('mouseleave', function() {
+            this.style.animationPlayState = 'running';
+        });
+    }
+});
+</script>

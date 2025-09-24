@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIPAA & SOC2 Badges Scroller</title>
+    <style>
+        /* Badges Scroller Styles */
+        .badges-scroller-container {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .badges-scroller {
+            display: flex;
+            animation: scroll 20s linear infinite;
+            height: 100%;
+            align-items: center;
+            gap: 40px;
+        }
+
+        .badges-scroller:hover {
+            animation-play-state: paused;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            padding: 10px;
+        }
+
+        .badge-item:hover {
+            transform: scale(1.1);
+        }
+
+        .badge-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .badge-image img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* HIPAA specific styling */
+        .badge-item.hipaa {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+        }
+
+        /* SOC2 specific styling */
+        .badge-item.soc2 {
+            background: linear-gradient(135deg, #FF9800, #F57C00);
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .badges-scroller-container {
+                height: 70px;
+                margin: 15px 0;
+            }
+            
+            .badge-item {
+                min-width: 60px;
+                height: 60px;
+                padding: 8px;
+            }
+            
+            .badge-image img {
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .badges-scroller-container {
+                height: 60px;
+                margin: 10px 0;
+            }
+            
+            .badge-item {
+                min-width: 50px;
+                height: 50px;
+                padding: 6px;
+            }
+            
+            .badge-image img {
+                width: 40px;
+                height: 40px;
+            }
+        }
+
+        /* Pause animation on reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .badges-scroller {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HIPAA & SOC2 Badges Scroller -->
+    <div class="badges-scroller-container">
+        <div class="badges-scroller">
+            <!-- HIPAA Badge -->
+            <div class="badge-item hipaa">
+                <div class="badge-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiMyMTk2RjMiLz4KPHRleHQgeD0iMzAiIHk9IjM4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+SDwvdGV4dD4KPC9zdmc+" alt="HIPAA Compliant" />
+                </div>
+            </div>
+            
+            <!-- SOC2 Badge -->
+            <div class="badge-item soc2">
+                <div class="badge-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGRjk4MDAiLz4KPHRleHQgeD0iMzAiIHk9IjM4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+UzwvdGV4dD4KPC9zdmc+" alt="SOC2 Certified" />
+                </div>
+            </div>
+            
+            <!-- Duplicate badges for seamless loop -->
+            <div class="badge-item hipaa">
+                <div class="badge-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiMyMTk2RjMiLz4KPHRleHQgeD0iMzAiIHk9IjM4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+SDwvdGV4dD4KPC9zdmc+" alt="HIPAA Compliant" />
+                </div>
+            </div>
+            
+            <div class="badge-item soc2">
+                <div class="badge-image">
+                    <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMzAiIGZpbGw9IiNGRjk4MDAiLz4KPHRleHQgeD0iMzAiIHk9IjM4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmb250LXdlaWdodD0iYm9sZCI+UzwvdGV4dD4KPC9zdmc+" alt="SOC2 Certified" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Optional: Add JavaScript for enhanced functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const scroller = document.querySelector('.badges-scroller');
+            
+            // Pause on hover for better UX
+            scroller.addEventListener('mouseenter', function() {
+                this.style.animationPlayState = 'paused';
+            });
+            
+            scroller.addEventListener('mouseleave', function() {
+                this.style.animationPlayState = 'running';
+            });
+        });
+    </script>
+</body>
+</html>

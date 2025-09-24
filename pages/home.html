@@ -1,0 +1,1897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title>Emma AI - Intelligent AI Assistant Platform | KodeFast</title>
+    <meta name="title" content="Emma AI - Intelligent AI Assistant Platform | KodeFast">
+    <meta name="description" content="Emma AI - Cutting-edge AI platform delivering smart, autonomous AI agents across Healthcare, Banking, and Education industries. Transform your operations with intelligent automation.">
+    <meta name="keywords" content="AI assistant, artificial intelligence, healthcare AI, banking AI, education AI, autonomous agents, intelligent automation, Emma AI, KodeFast">
+    <meta name="author" content="KodeFast">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="7 days">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://emma.kodefast.com/">
+    <meta property="og:title" content="Emma AI - Intelligent AI Assistant Platform | KodeFast">
+    <meta property="og:description" content="Emma AI - Cutting-edge AI platform delivering smart, autonomous AI agents across Healthcare, Banking, and Education industries. Transform your operations with intelligent automation.">
+    <meta property="og:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="Emma AI by KodeFast">
+    <meta property="og:locale" content="en_US">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://emma.kodefast.com/">
+    <meta property="twitter:title" content="Emma AI - Intelligent AI Assistant Platform | KodeFast">
+    <meta property="twitter:description" content="Emma AI - Cutting-edge AI platform delivering smart, autonomous AI agents across Healthcare, Banking, and Education industries. Transform your operations with intelligent automation.">
+    <meta property="twitter:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    <meta property="twitter:creator" content="@KodeFast">
+    <meta property="twitter:site" content="@KodeFast">
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="theme-color" content="#3b82f6">
+    <meta name="msapplication-TileColor" content="#3b82f6">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Emma AI">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://emma.kodefast.com/">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="apple-touch-icon" href="/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Web App Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+    
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; }
+        .navbar { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            background: rgba(15, 23, 42, 0.95); 
+            backdrop-filter: blur(10px); 
+            z-index: 1000; 
+            padding: 1rem 0; 
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1), 0 0 40px rgba(59, 130, 246, 0.05);
+        }
+        
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3b82f6, #8b5cf6, #3b82f6, transparent);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+        
+        .navbar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1), transparent);
+            animation: glow-sweep 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { opacity: 0.5; transform: scaleX(1); }
+            50% { opacity: 1; transform: scaleX(1.02); }
+        }
+        
+        @keyframes glow-sweep {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Badges Scroller Styles */
+        .badges-scroller-container {
+            position: relative;
+            width: 100%;
+            height: 80px;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .badges-scroller {
+            display: flex;
+            animation: scroll 15s linear infinite;
+            height: 100%;
+            align-items: center;
+            gap: 60px;
+            justify-content: center;
+        }
+
+        .badges-scroller:hover {
+            animation-play-state: paused;
+        }
+
+        .badge-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+            height: 100px;
+            transition: transform 0.3s ease;
+        }
+
+        .badge-item:hover {
+            transform: scale(1.05);
+        }
+
+        .badge-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .badge-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            background: transparent;
+        }
+
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        /* Responsive Design for Badges */
+        @media (max-width: 768px) {
+            .badges-scroller-container {
+                height: 80px;
+                margin: 15px 0;
+            }
+            
+            .badge-item {
+                min-width: 120px;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .badges-scroller-container {
+                height: 70px;
+                margin: 10px 0;
+            }
+            
+            .badge-item {
+                min-width: 100px;
+                height: 70px;
+            }
+        }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
+        
+        .nav-logo { 
+            display: flex; 
+            align-items: center; 
+            position: relative;
+            margin-left: -1rem;
+        }
+        
+        .logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .logo-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .nav-logo:hover .logo-container {
+            transform: scale(1.05);
+        }
+        
+        .nav-logo:hover .logo-image {
+            transform: scale(1.05);
+        }
+        
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-link { color: #f8fafc; text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-link:hover { color: #3b82f6; }
+        .nav-link.active { color: #3b82f6; }
+        .hero-section { 
+            min-height: 85vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            text-align: center; 
+            padding: 120px 2rem 60px 2rem; 
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+            position: relative;
+            overflow: hidden;
+            contain: layout style paint;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+        
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .particles-container canvas {
+            pointer-events: auto;
+        }
+        
+        /* Lottie Animation Styles */
+        .lottie-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            -moz-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            -o-transform: translateZ(0);
+        }
+        
+        .lottie-animation {
+            width: 100%;
+            height: 100%;
+            opacity: 0.6;
+            filter: blur(1px);
+            transform: scale(1.8) rotate(90deg);
+            transform-origin: center center;
+            object-fit: cover;
+            will-change: transform;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            -moz-backface-visibility: hidden;
+        }
+        
+        /* Responsive adjustments for landscape mode */
+        @media (max-width: 768px) {
+            .lottie-animation {
+                transform: scale(2.2) rotate(90deg);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .lottie-animation {
+                transform: scale(1.5) rotate(90deg);
+            }
+        }
+        
+        /* Hero section responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: 75vh;
+                padding: 100px 1rem 40px 1rem;
+            }
+            .hero-content h1 {
+                font-size: 2.2rem;
+            }
+            .hero-content p {
+                font-size: 1rem;
+                max-width: 90%;
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .hero-section {
+                min-height: 80vh;
+            }
+        }
+        
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            .hero-section {
+                padding: 90px 1rem 30px 1rem;
+            }
+            .hero-content h1 {
+                font-size: 2rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+        
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .lottie-animation {
+                animation: none !important;
+                transform: scale(1.8) rotate(90deg) !important;
+            }
+            .lottie-container {
+                transform: translateZ(0) !important;
+            }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        .hero-section .container {
+            position: relative;
+            z-index: 10;
+        }
+        .hero-content h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 0.8rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Ensure proper spacing for sections below navbar */
+        .capabilities.section {
+            margin-top: 0;
+            padding-top: 4rem;
+        }
+        
+        .industries.section {
+            margin-top: 0;
+            padding-top: 4rem;
+        }
+        .hero-content p { font-size: 1.1rem; margin-bottom: 1.5rem; color: #94a3b8; max-width: 550px; margin-left: auto; margin-right: auto; }
+        .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 1rem 2rem; border-radius: 0.5rem; text-decoration: none; font-weight: 600; transition: all 0.3s; display: inline-block; }
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; transform: translateY(-2px); }
+        .btn-secondary { background: transparent; color: #f8fafc; border: 2px solid #3b82f6; }
+        .btn-secondary:hover { background: #3b82f6; }
+        
+        /* CSS Particles Animation */
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) rotate(0deg); 
+                opacity: 0.3; 
+            }
+            25% { 
+                transform: translateY(-20px) translateX(10px) rotate(90deg); 
+                opacity: 0.8; 
+            }
+            50% { 
+                transform: translateY(-10px) translateX(-15px) rotate(180deg); 
+                opacity: 0.6; 
+            }
+            75% { 
+                transform: translateY(-30px) translateX(5px) rotate(270deg); 
+                opacity: 0.9; 
+            }
+        }
+    </style>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Emma AI",
+        "description": "Cutting-edge AI platform delivering smart, autonomous AI agents across Healthcare, Banking, and Education industries. Transform your operations with intelligent automation.",
+        "url": "https://emma.kodefast.com",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Web",
+        "offers": {
+            "@type": "Offer",
+            "price": "Custom",
+            "priceCurrency": "USD",
+            "availability": "https://schema.org/InStock"
+        },
+        "provider": {
+            "@type": "Organization",
+            "name": "KodeFast",
+            "url": "https://kodefast.com",
+            "logo": "https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png",
+            "sameAs": [
+                "https://twitter.com/KodeFast",
+                "https://linkedin.com/company/kodefast"
+            ]
+        },
+        "featureList": [
+            "Intelligent AI Agents",
+            "Healthcare AI Solutions",
+            "Banking AI Automation",
+            "Education AI Tools",
+            "Autonomous Operations",
+            "Custom AI Development"
+        ],
+        "screenshot": "https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png",
+        "softwareVersion": "1.0.0",
+        "datePublished": "2024-01-01",
+        "dateModified": "2024-01-01"
+    }
+    </script>
+    
+    <!-- Organization Schema -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "KodeFast",
+        "url": "https://kodefast.com",
+        "logo": "https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png",
+        "description": "Digital transformation partner specializing in AI solutions and intelligent automation",
+        "foundingDate": "2024",
+        "sameAs": [
+            "https://twitter.com/KodeFast",
+            "https://linkedin.com/company/kodefast"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "Customer Service",
+            "availableLanguage": "English"
+        }
+    }
+    </script>
+</head>
+    <body>
+        <!-- Loading Screen -->
+        <div class="loading-screen" id="loadingScreen">
+            <div class="loading-content">
+                <!-- Animated Background Particles - COMMENTED OUT -->
+                <!-- <div class="particles-container">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                </div> -->
+
+                <!-- Floating Code Elements -->
+                <div class="floating-code">
+                    <div class="code-snippet">&lt;AI&gt;</div>
+                    <div class="code-snippet">neural_network()</div>
+                    <div class="code-snippet">autonomous_agent()</div>
+                    <div class="code-snippet">machine_learning()</div>
+                    <div class="code-snippet">deep_learning()</div>
+                    <div class="code-snippet">artificial_intelligence()</div>
+                </div>
+
+                <!-- 3D Rotating Logo -->
+                <div class="logo-3d">
+                    <div class="logo-cube">
+                        <div class="cube-face front">E</div>
+                        <div class="cube-face back">M</div>
+                        <div class="cube-face right">M</div>
+                        <div class="cube-face left">A</div>
+                        <div class="cube-face top">AI</div>
+                        <div class="cube-face bottom">AI</div>
+                    </div>
+                </div>
+
+                <!-- Glitch Text Effect -->
+                <div class="glitch-text" data-text="EMMA AI">EMMA AI</div>
+
+                <!-- Typewriter Effect -->
+                <div class="typewriter">Building the future of autonomous AI agents...</div>
+
+                <!-- Loading Spinner -->
+                <div class="loading-spinner">
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                    <div class="spinner-ring"></div>
+                </div>
+
+                <!-- Loading Text -->
+                <div class="loading-text">Initializing Neural Networks...</div>
+                
+                <!-- Skip Loading Button -->
+                <button id="skipLoading" style="
+                    margin-top: 2rem;
+                    padding: 0.5rem 1rem;
+                    background: rgba(255, 255, 255, 0.1);
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    color: white;
+                    border-radius: 0.5rem;
+                    cursor: pointer;
+                    font-size: 0.9rem;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'">
+                    Skip Loading
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <!-- Particles.js Background - COMMENTED OUT -->
+        <!-- <div id="particles-js" class="particles-container"></div> -->
+        
+        <!-- Lottie Animation Background -->
+        <div class="lottie-container">
+            <lottie-player
+                src="/Logo And Recording/Abstract animation for apps.json"
+                background="transparent"
+                speed="0.3"
+                loop
+                autoplay
+                class="lottie-animation">
+            </lottie-player>
+        </div>
+        <div class="container">
+        <div class="hero-content">
+                <div class="hero-visual">
+                    <!-- Modern AI Assistant Avatar Section -->
+                    <div class="ai-assistant-section">
+                        <!-- Animated Background Particles - COMMENTED OUT -->
+                        <!-- <div class="particles-bg">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div> -->
+                        
+                        <!-- Neural Network Lines -->
+                        <div class="neural-network">
+                            <svg class="neural-svg" viewBox="0 0 400 400">
+                                <defs>
+                                    <linearGradient id="neuralGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:0.3" />
+                                        <stop offset="50%" style="stop-color:#ec4899;stop-opacity:0.2" />
+                                        <stop offset="100%" style="stop-color:#06b6d4;stop-opacity:0.3" />
+                                    </linearGradient>
+                                </defs>
+                                <circle class="neural-node" cx="50" cy="50" r="3" fill="#8b5cf6" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle class="neural-node" cx="150" cy="80" r="3" fill="#ec4899" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.5s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle class="neural-node" cx="250" cy="60" r="3" fill="#06b6d4" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.2;0.8;0.2" dur="3s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle class="neural-node" cx="350" cy="90" r="3" fill="#8b5cf6" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.8s" repeatCount="indefinite"/>
+                                </circle>
+                                <line class="neural-line" x1="50" y1="50" x2="150" y2="80" stroke="url(#neuralGradient)" stroke-width="1" opacity="0.4">
+                                    <animate attributeName="opacity" values="0.1;0.6;0.1" dur="2s" repeatCount="indefinite"/>
+                                </line>
+                                <line class="neural-line" x1="150" y1="80" x2="250" y2="60" stroke="url(#neuralGradient)" stroke-width="1" opacity="0.4">
+                                    <animate attributeName="opacity" values="0.1;0.6;0.1" dur="2.5s" repeatCount="indefinite"/>
+                                </line>
+                                <line class="neural-line" x1="250" y1="60" x2="350" y2="90" stroke="url(#neuralGradient)" stroke-width="1" opacity="0.4">
+                                    <animate attributeName="opacity" values="0.1;0.6;0.1" dur="3s" repeatCount="indefinite"/>
+                                </line>
+                            </svg>
+                        </div>
+                        
+                        <!-- New Avatar Section -->
+                        <div class="new-avatar-section">
+                            <!-- Comment above the avatar box -->
+                            <div class="avatar-comment">
+                                <p id="avatar-comment-text">Emma - Enterprise AI Solution</p>
+                            </div>
+                            
+                            <!-- Avatar Box -->
+                            <div class="avatar-box">
+                                <img loading="lazy" id="avatar-image" src="/Logo And Recording/US.jpeg" alt="Emma Avatar" class="avatar-img">
+                                <div class="avatar-glow-effect"></div>
+                            </div>
+                            
+                            <!-- Audio Options -->
+                            <div class="audio-options">
+                                <div class="audio-language" data-lang="en" data-audio="/Logo And Recording/Emma English Voice .opus">
+                                    <span class="flag">🇺🇸</span>
+                                    <span class="lang-name">English</span>
+                                </div>
+                                <div class="audio-language" data-lang="ar" data-audio="/Logo And Recording/Emma Arabic Audio.opus">
+                                    <span class="flag">🇸🇦</span>
+                                    <span class="lang-name">العربية</span>
+                                </div>
+                                <div class="audio-language" data-lang="hi" data-audio="/Logo And Recording/Emma Hindi Voice.opus">
+                                    <span class="flag">🇮🇳</span>
+                                    <span class="lang-name">हिन्दी</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Talk to Her Now Button -->
+                            <div class="hero-actions" id="hero-actions">
+                                <button class="cta-primary" id="hero-primary-btn">
+                                    <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                                        <line x1="12" y1="19" x2="12" y2="23"></line>
+                                        <line x1="8" y1="23" x2="16" y2="23"></line>
+                                    </svg>
+                                    <span id="hero-primary-text">Talk to Her Now</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Additional Stats Section -->
+                            <div class="hero-stats-section">
+                                <div class="stats-grid">
+                                    <div class="stat-item">
+                                        <div class="stat-number">99.9%</div>
+                                        <div class="stat-label">Accuracy Rate</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-number">24/7</div>
+                                        <div class="stat-label">Availability</div>
+                                    </div>
+                                    <div class="stat-item">
+                                        <div class="stat-number">50+</div>
+                                        <div class="stat-label">Languages</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-text">
+                    <!-- Main Hero Title -->
+                    <h1 class="hero-title" id="hero-title">
+                        <span class="title-line-1">Meet Emma</span>
+                        <span class="title-line-2">Your <span class="highlight-text">Intelligent</span> AI Assistant</span>
+                    </h1>
+                    
+                    
+                    <!-- Hero Description -->
+                    <p class="hero-description" id="hero-description">
+                        Transform your business with AI that understands, learns, and adapts. 
+                        From healthcare to banking to education - Emma delivers results across every industry.
+                    </p>
+                    
+                    <!-- Dynamic Use Case Showcase -->
+                    <div class="use-case-showcase">
+                        <div class="use-case-header">
+                            <h3>Trusted by Industry Leaders</h3>
+                            <p>See how Emma transforms operations across sectors</p>
+                        </div>
+                        
+                        <div class="use-case-cards">
+                            <div class="first-row-cards">
+                                <div class="use-case-card featured active" data-industry="healthcare">
+                                    <div class="featured-badge">Primary Focus</div>
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Healthcare</h4>
+                                        <p>Patient scheduling, medical records, and diagnostic assistance</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">60% efficiency</span>
+                                        <span class="stat">HIPAA compliant</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="use-case-card" data-industry="manufacturing">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Manufacturing</h4>
+                                        <p>Smart production, predictive maintenance, and supply chain optimization</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">45% cost reduction</span>
+                                        <span class="stat">Real-time monitoring</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="use-case-card" data-industry="retail">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Retail</h4>
+                                        <p>Personalized shopping, virtual assistants, and demand forecasting</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">70% conversion</span>
+                                        <span class="stat">Smart inventory</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="second-row-cards">
+                                <div class="use-case-card" data-industry="banking">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Banking</h4>
+                                        <p>Customer service automation, fraud detection, and financial advisory</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">40% faster</span>
+                                        <span class="stat">99.9% accurate</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="use-case-card" data-industry="education">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Education</h4>
+                                        <p>Student support, course management, and personalized learning</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">85% engagement</span>
+                                        <span class="stat">24/7 support</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="use-case-card" data-industry="customer-service">
+                                    <div class="use-case-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="12" cy="7" r="4"></circle>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                            <path d="M6 21v-2a4 4 0 0 1 4-4h.5"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="use-case-content">
+                                        <h4>Customer Service</h4>
+                                        <p>24/7 support, ticket management, and customer satisfaction</p>
+                                    </div>
+                                    <div class="use-case-stats">
+                                        <span class="stat">95% satisfaction</span>
+                                        <span class="stat">Instant response</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emma Capabilities Section -->
+    <section id="capabilities" class="capabilities section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" id="capabilities-title">Emma's Core Capabilities</h2>
+                <p class="section-subtitle" id="capabilities-subtitle">Intelligent automation that adapts, learns, and takes initiative</p>
+            </div>
+
+        
+        <div class="capabilities-grid">
+            <div class="capability-card" data-capability="scheduling">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                        <line x1="16" y1="2" x2="16" y2="6"/>
+                        <line x1="8" y1="2" x2="8" y2="6"/>
+                        <line x1="3" y1="10" x2="21" y2="10"/>
+                    </svg>
+                </div>
+                <h3>Conversational Scheduling</h3>
+                <p>Manages bookings, reschedules, and sends reminders across WhatsApp, SMS, email, and voice</p>
+                <div class="capability-demo">
+                    <div class="demo-bubble">"Schedule a meeting for tomorrow at 2 PM"</div>
+                    <div class="demo-bubble emma-response">"I've scheduled your meeting and sent confirmations!"</div>
+                </div>
+            </div>
+
+            
+            <div class="capability-card" data-capability="intelligence">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 12l2 2 4-4"/>
+                        <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
+                        <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                        <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
+                        <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"/>
+                    </svg>
+                </div>
+                <h3>Smart Pre-Qualification</h3>
+                <p>Gathers input, prioritizes urgent needs, and routes requests to the right place automatically</p>
+                <div class="capability-demo">
+                    <div class="demo-bubble">"I need help with my account"</div>
+                    <div class="demo-bubble emma-response">"I'll gather some details and connect you with the right specialist"</div>
+                </div>
+            </div>
+
+            
+            <div class="capability-card" data-capability="personalization">
+                <div class="card-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+                <h3>Hyper-Personalized Engagement</h3>
+                <p>Delivers relevant nudges and follow-ups in multiple languages and tones</p>
+                <div class="capability-demo">
+                    <div class="demo-bubble">"Follow up with our VIP clients"</div>
+                    <div class="demo-bubble emma-response">"Personalized messages sent in their preferred language!"</div>
+                </div>
+            </div>
+            
+        </div>
+        </div>
+    </section>
+
+    <!-- Industries Section -->
+    <section id="industries" class="industries section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" id="industries-title">Industry Solutions</h2>
+                <p class="section-subtitle" id="industries-subtitle">Tailored AI agents for your specific industry needs</p>
+            </div>
+        
+        <div class="industries-grid">
+            <!-- Healthcare Card -->
+            <div class="industry-card animate" data-industry="healthcare">
+                <div class="card-header">
+                    <div class="industry-icon healthcare">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Healthcare</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🏥</div>
+                            <div class="feature-text">
+                                <h4>Virtual Health Assistant</h4>
+                                <p>24/7 patient support and symptom assessment</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <h4>Patient Management</h4>
+                                <p>Intelligent care coordination and monitoring</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔍</div>
+                            <div class="feature-text">
+                                <h4>Symptom Checker</h4>
+                                <p>AI-powered diagnostic assistance</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Banking Card -->
+            <div class="industry-card animate" data-industry="banking">
+                <div class="card-header">
+                    <div class="industry-icon banking">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Banking</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🛡️</div>
+                            <div class="feature-text">
+                                <h4>Fraud Detection</h4>
+                                <p>Real-time transaction monitoring and protection</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💰</div>
+                            <div class="feature-text">
+                                <h4>Personal Finance Agent</h4>
+                                <p>Intelligent budgeting and investment advice</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💬</div>
+                            <div class="feature-text">
+                                <h4>Chatbot Banker</h4>
+                                <p>24/7 customer service and account management</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Education Card -->
+            <div class="industry-card animate" data-industry="education">
+                <div class="card-header">
+                    <div class="industry-icon education">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Education</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🎓</div>
+                            <div class="feature-text">
+                                <h4>AI Tutor</h4>
+                                <p>Personalized learning experiences and guidance</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📝</div>
+                            <div class="feature-text">
+                                <h4>Adaptive Testing</h4>
+                                <p>Dynamic assessment based on student performance</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📚</div>
+                            <div class="feature-text">
+                                <h4>Curriculum Design</h4>
+                                <p>AI-powered educational content creation</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Additional Industries Row -->
+        <div class="industries-grid second-row">
+            <!-- Manufacturing Card -->
+            <div class="industry-card animate" data-industry="manufacturing">
+                <div class="card-header">
+                    <div class="industry-icon manufacturing">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Manufacturing</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🏭</div>
+                            <div class="feature-text">
+                                <h4>Smart Production</h4>
+                                <p>AI-driven quality control and optimization</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔧</div>
+                            <div class="feature-text">
+                                <h4>Predictive Maintenance</h4>
+                                <p>Prevent equipment failures before they happen</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <h4>Supply Chain AI</h4>
+                                <p>Intelligent inventory and logistics management</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Retail Card -->
+            <div class="industry-card animate" data-industry="retail">
+                <div class="card-header">
+                    <div class="industry-icon retail">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                            <polyline points="9,22 9,12 15,12 15,22"></polyline>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Retail</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🛒</div>
+                            <div class="feature-text">
+                                <h4>Personalized Shopping</h4>
+                                <p>AI-powered product recommendations</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📱</div>
+                            <div class="feature-text">
+                                <h4>Virtual Assistant</h4>
+                                <p>24/7 customer support and guidance</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📈</div>
+                            <div class="feature-text">
+                                <h4>Demand Forecasting</h4>
+                                <p>Smart inventory and pricing optimization</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+
+            <!-- Finance Card -->
+            <div class="industry-card animate" data-industry="finance">
+                <div class="card-header">
+                    <div class="industry-icon finance">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="card-title">Finance</h3>
+                </div>
+                <div class="card-content">
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">💼</div>
+                            <div class="feature-text">
+                                <h4>Risk Assessment</h4>
+                                <p>Advanced fraud detection and compliance</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <h4>Algorithmic Trading</h4>
+                                <p>AI-driven investment strategies</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🤖</div>
+                            <div class="feature-text">
+                                <h4>Financial Advisor</h4>
+                                <p>Personalized wealth management</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline">Learn More</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Industry Solutions CTA -->
+        <div class="industries-cta">
+            <div class="cta-content">
+                <div class="cta-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                </div>
+                <h3>Ready to Transform Your Industry?</h3>
+                <p>Join thousands of organizations already using Emma's AI agents to revolutionize their operations and deliver exceptional results.</p>
+                <div class="cta-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">500+</div>
+                        <div class="stat-label">Companies</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Industries</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                </div>
+                <div class="cta-actions">
+                    <button class="btn btn-primary btn-large">Start Free Trial</button>
+                    <button class="btn btn-ghost btn-large">Schedule Demo</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security & Compliance Badges Section -->
+    <section class="badges-section" style="padding: 3rem 2rem; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <h2 style="font-size: 2.2rem; margin-bottom: 1rem; color: #f8fafc;">Trusted & Certified</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2.5rem; color: #94a3b8; max-width: 600px; margin-left: auto; margin-right: auto;">Our platform meets the highest security and compliance standards to protect your data and ensure regulatory compliance.</p>
+            
+            <!-- HIPAA & SOC2 Badges Scroller -->
+            <div class="badges-scroller-container">
+                <div class="badges-scroller">
+                    <!-- HIPAA Badge -->
+                    <div class="badge-item">
+                        <div class="badge-image">
+                            <img src="/Logo And Recording/HIPPA_Badge-removebg-preview.png" alt="HIPAA Compliant" />
+                        </div>
+                    </div>
+                    
+                    <!-- SOC2 Badge -->
+                    <div class="badge-item">
+                        <div class="badge-image">
+                            <img src="/Logo And Recording/SOC 2 Badge.png" alt="SOC2 Certified" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="padding: 4rem 2rem; background: #0f172a; text-align: center;">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Transform Your Operations?</h2>
+            <p style="font-size: 1.25rem; margin-bottom: 2rem; color: #94a3b8;">Let's work together to create the perfect AI solution for your organization.</p>
+            <a href="/contact" class="btn btn-primary">Get Started Today</a>
+        </div>
+    </section>
+
+    <!-- World-Class Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Footer Top Section -->
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-container">
+                            <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                        </div>
+                        <div class="brand-info">
+                            <h2 class="brand-name">Emma AI</h2>
+                            <p class="brand-tagline">Intelligent AI Assistant Platform</p>
+                        </div>
+                    </div>
+                    <p class="brand-description">
+                        Building the future of autonomous AI agents. Transform your operations with intelligent automation across Healthcare, Banking, Education, and more.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 c0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="GitHub">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-links-grid">
+                    <div class="footer-column">
+                        <h3 class="column-title">Product</h3>
+                        <ul class="footer-links">
+                            <li><a href="/features" class="footer-link">Features</a></li>
+                            <li><a href="/pricing" class="footer-link">Pricing</a></li>
+                            <li><a href="/integrations" class="footer-link">Integrations</a></li>
+                            <li><a href="/api" class="footer-link">API</a></li>
+                            <li><a href="/security" class="footer-link">Security</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3 class="column-title">Industries</h3>
+                        <ul class="footer-links">
+                            <li><a href="/healthcare" class="footer-link">Healthcare</a></li>
+                            <li><a href="/banking" class="footer-link">Banking & Finance</a></li>
+                            <li><a href="/education" class="footer-link">Education</a></li>
+                            <li><a href="/manufacturing" class="footer-link">Manufacturing</a></li>
+                            <li><a href="/retail" class="footer-link">Retail</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3 class="column-title">Company</h3>
+                        <ul class="footer-links">
+                            <li><a href="/about" class="footer-link">About Us</a></li>
+                            <li><a href="/careers" class="footer-link">Careers</a></li>
+                            <li><a href="/blog" class="footer-link">Blog</a></li>
+                            <li><a href="/press" class="footer-link">Press</a></li>
+                            <li><a href="/partners" class="footer-link">Partners</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3 class="column-title">Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="/help" class="footer-link">Help Center</a></li>
+                            <li><a href="/contact" class="footer-link">Contact Us</a></li>
+                            <li><a href="/status" class="footer-link">System Status</a></li>
+                            <li><a href="/documentation" class="footer-link">Documentation</a></li>
+                            <li><a href="/community" class="footer-link">Community</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Newsletter Section -->
+            <div class="footer-newsletter">
+                <div class="newsletter-content">
+                    <div class="newsletter-text">
+                        <h3 class="newsletter-title">Stay Updated</h3>
+                        <p class="newsletter-description">Get the latest AI insights and product updates delivered to your inbox.</p>
+                    </div>
+                    <div class="newsletter-form">
+                        <div class="form-group">
+                            <input type="email" placeholder="Enter your email" class="newsletter-input" required>
+                            <button type="submit" class="newsletter-button">
+                                <span>Subscribe</span>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="newsletter-disclaimer">We respect your privacy. Unsubscribe at any time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom Section -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <div class="copyright">
+                        <p>&copy; <span id="currentYear">2024</span> KodeFast. All rights reserved. Building the future of autonomous AI agents.</p>
+                    </div>
+                    <div class="footer-bottom-links">
+                        <a href="/privacy" class="bottom-link">Privacy Policy</a>
+                        <a href="/terms" class="bottom-link">Terms of Service</a>
+                        <a href="/cookies" class="bottom-link">Cookie Policy</a>
+                        <a href="/accessibility" class="bottom-link">Accessibility</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Background Effects -->
+        <div class="footer-bg-effects">
+            <div class="footer-particles"></div>
+            <div class="footer-gradient"></div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- <script src="/particles.min.js"></script> --> <!-- COMMENTED OUT - particles disabled -->
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    
+    <!-- Enhanced Homepage Scripts -->
+    <script>
+        // Auto-update copyright year
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentYearElement = document.getElementById('currentYear');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+        });
+
+        // Loading Screen Script
+        window.addEventListener('load', function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            const loadingText = document.querySelector('.loading-text');
+            const mainContent = document.querySelector('.hero-section');
+            
+            // Ensure main content is initially hidden
+            if (mainContent) {
+                mainContent.style.opacity = '0';
+                mainContent.style.visibility = 'hidden';
+            }
+            
+            // Simulate loading progress
+            const loadingMessages = [
+                'Initializing Neural Networks...',
+                'Loading AI Models...',
+                'Connecting to Cloud Services...',
+                'Calibrating Autonomous Systems...',
+                'Preparing Emma AI...',
+                'Almost Ready...'
+            ];
+            
+            let messageIndex = 0;
+            const messageInterval = setInterval(() => {
+                if (messageIndex < loadingMessages.length - 1) {
+                    messageIndex++;
+                    if (loadingText) {
+                        loadingText.textContent = loadingMessages[messageIndex];
+                    }
+                } else {
+                    clearInterval(messageInterval);
+                }
+            }, 800);
+            
+            // Hide loading screen after 4 seconds
+            setTimeout(() => {
+                if (loadingScreen) {
+                    loadingScreen.classList.add('fade-out');
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        // Show main content
+                        if (mainContent) {
+                            mainContent.style.opacity = '1';
+                            mainContent.style.visibility = 'visible';
+                            mainContent.style.transition = 'opacity 0.5s ease-in-out, visibility 0.5s ease-in-out';
+                        }
+                    }, 500);
+                }
+            }, 4000);
+        });
+
+        // Skip loading button functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const skipButton = document.getElementById('skipLoading');
+            if (skipButton) {
+                skipButton.addEventListener('click', function() {
+                    const loadingScreen = document.getElementById('loadingScreen');
+                    const mainContent = document.querySelector('.hero-section');
+                    
+                    if (loadingScreen) {
+                        loadingScreen.classList.add('fade-out');
+                        setTimeout(() => {
+                            loadingScreen.style.display = 'none';
+                            // Show main content
+                            if (mainContent) {
+                                mainContent.style.opacity = '1';
+                                mainContent.style.visibility = 'visible';
+                                mainContent.style.transition = 'opacity 0.5s ease-in-out, visibility 0.5s ease-in-out';
+                            }
+                        }, 100);
+                    }
+                });
+            }
+        });
+
+        // Initialize GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Enhanced Hero Animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Hero title animation
+            gsap.timeline()
+                .from('.hero-title', { duration: 1, y: 50, opacity: 0, ease: "power3.out" })
+                .from('.hero-subtitle', { duration: 0.8, y: 30, opacity: 0, ease: "power2.out" }, "-=0.5")
+                .from('.hero-description', { duration: 0.8, y: 30, opacity: 0, ease: "power2.out" }, "-=0.3")
+                .from('.hero-actions', { duration: 0.8, y: 30, opacity: 0, ease: "power2.out" }, "-=0.2");
+
+            // Industry cards animation
+            gsap.utils.toArray('.industry-card').forEach((card, index) => {
+                gsap.from(card, {
+                    duration: 0.8,
+                    y: 50,
+                    opacity: 0,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+
+            // Capability cards animation
+            gsap.utils.toArray('.capability-card').forEach((card, index) => {
+                gsap.from(card, {
+                    duration: 0.8,
+                    x: index % 2 === 0 ? -50 : 50,
+                    opacity: 0,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 80%",
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+
+            // Use case cards animation
+            gsap.utils.toArray('.use-case-card').forEach((card, index) => {
+                gsap.from(card, {
+                    duration: 0.6,
+                    scale: 0.8,
+                    opacity: 0,
+                    ease: "back.out(1.7)",
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                        end: "bottom 15%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+
+            // Stats counter animation
+            gsap.utils.toArray('.stat-number').forEach(stat => {
+                const endValue = parseInt(stat.textContent);
+                gsap.from(stat, {
+                    duration: 2,
+                    innerHTML: 0,
+                    ease: "power2.out",
+                    snap: { innerHTML: 1 },
+                    onUpdate: function() {
+                        stat.textContent = Math.ceil(this.targets()[0].innerHTML);
+                    },
+                    scrollTrigger: {
+                        trigger: stat,
+                        start: "top 80%",
+                        toggleActions: "play none none reverse"
+                    }
+                });
+            });
+
+            // Parallax effect for hero visual
+            gsap.to('.hero-visual', {
+                yPercent: -50,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: '.hero-section',
+                    start: "top top",
+                    end: "bottom top",
+                    scrub: true
+                }
+            });
+
+            // Floating animation for avatar
+            gsap.to('.avatar-box', {
+                y: -10,
+                duration: 2,
+                ease: "power2.inOut",
+                yoyo: true,
+                repeat: -1
+            });
+
+            // Neural network pulse animation
+            gsap.to('.neural-node', {
+                scale: 1.2,
+                duration: 1.5,
+                ease: "power2.inOut",
+                yoyo: true,
+                repeat: -1,
+                stagger: 0.2
+            });
+        });
+
+        // Interactive hover effects
+        document.querySelectorAll('.industry-card, .capability-card, .use-case-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                gsap.to(this, { scale: 1.05, duration: 0.3, ease: "power2.out" });
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                gsap.to(this, { scale: 1, duration: 0.3, ease: "power2.out" });
+            });
+        });
+
+        // Audio language selection
+        document.querySelectorAll('.audio-language').forEach(lang => {
+            lang.addEventListener('click', function() {
+                // Remove active class from all
+                document.querySelectorAll('.audio-language').forEach(l => l.classList.remove('active'));
+                // Add active class to clicked
+                this.classList.add('active');
+                
+                // Update avatar comment
+                const langName = this.querySelector('.lang-name').textContent;
+                document.getElementById('avatar-comment-text').textContent = `Emma - ${langName} AI Assistant`;
+                
+                // Update avatar image based on language
+                const flag = this.querySelector('.flag').textContent;
+                const avatarImg = document.getElementById('avatar-image');
+                if (flag === '🇺🇸') {
+                    avatarImg.src = '/Logo And Recording/US.jpeg';
+                } else if (flag === '🇸🇦') {
+                    avatarImg.src = '/Logo And Recording/Saudi.jpeg';
+                } else if (flag === '🇮🇳') {
+                    avatarImg.src = '/Logo And Recording/India.jpeg';
+                }
+            });
+        });
+
+        // Initialize particles.js with improved settings - COMMENTED OUT
+        /*
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('particles-js', {
+                particles: {
+                    number: { value: 80, density: { enable: true, value_area: 800 } },
+                    color: { 
+                        value: "#ffffff"
+                    },
+                    shape: { 
+                        type: "circle"
+                    },
+                    opacity: { 
+                        value: 0.8, 
+                        random: true, 
+                        anim: { 
+                            enable: true, 
+                            speed: 1, 
+                            opacity_min: 0.3, 
+                            sync: false 
+                        } 
+                    },
+                    size: { 
+                        value: 4, 
+                        random: true, 
+                        anim: { 
+                            enable: true, 
+                            speed: 2, 
+                            size_min: 2, 
+                            sync: false 
+                        } 
+                    },
+                    line_linked: { 
+                        enable: true, 
+                        distance: 150, 
+                        color: "#ffffff", 
+                        opacity: 0.6, 
+                        width: 1 
+                    },
+                    move: { 
+                        enable: true, 
+                        speed: 2, 
+                        direction: "none", 
+                        random: true, 
+                        straight: false, 
+                        out_mode: "bounce", 
+                        bounce: true
+                    }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: { 
+                        onhover: { enable: true, mode: "repulse" }, 
+                        onclick: { enable: true, mode: "push" }, 
+                        resize: true 
+                    },
+                    modes: { 
+                        grab: { distance: 400, line_linked: { opacity: 1 } }, 
+                        bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, 
+                        repulse: { distance: 200, duration: 0.4 }, 
+                        push: { particles_nb: 8 }, 
+                        remove: { particles_nb: 2 } 
+                    }
+                },
+                retina_detect: true
+            });
+            
+            // Ensure canvas is clickable and add debugging
+            setTimeout(() => {
+                const canvas = document.querySelector('#particles-js canvas');
+                if (canvas) {
+                    canvas.style.pointerEvents = 'auto';
+                    canvas.style.cursor = 'pointer';
+                    
+                    // Add click event for debugging
+                    canvas.addEventListener('click', function(e) {
+                        console.log('Particles canvas clicked!', e);
+                    });
+                }
+            }, 1000);
+        } else {
+            // Fallback: Create simple CSS particles if particles.js fails to load
+            console.log('Particles.js not loaded, creating CSS fallback');
+            createCSSParticles();
+        }
+        */
+
+        // CSS Particles Fallback - COMMENTED OUT
+        /*
+        function createCSSParticles() {
+            const particlesContainer = document.getElementById('particles-js');
+            if (!particlesContainer) return;
+            
+            particlesContainer.innerHTML = '';
+            particlesContainer.style.position = 'absolute';
+            particlesContainer.style.top = '0';
+            particlesContainer.style.left = '0';
+            particlesContainer.style.width = '100%';
+            particlesContainer.style.height = '100%';
+            particlesContainer.style.pointerEvents = 'none';
+            particlesContainer.style.zIndex = '0';
+            
+            // Ensure canvas has pointer events for interaction
+            const canvas = particlesContainer.querySelector('canvas');
+            if (canvas) {
+                canvas.style.pointerEvents = 'auto';
+            }
+            
+            const colors = ['#ffffff'];
+            
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.style.position = 'absolute';
+                particle.style.width = Math.random() * 4 + 3 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[0];
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.opacity = Math.random() * 0.6 + 0.4;
+                particle.style.animation = `float ${Math.random() * 10 + 10}s linear infinite`;
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        */
+
+        // Lottie Animation Enhancement with Performance Optimizations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Wait for Lottie player to load
+            const lottiePlayer = document.querySelector('lottie-player');
+            const heroSection = document.querySelector('.hero-section');
+            
+            if (lottiePlayer) {
+                // Performance optimizations
+                lottiePlayer.setAttribute('renderer', 'svg');
+                lottiePlayer.setAttribute('renderer-settings', '{"preserveAspectRatio":"xMidYMid slice"}');
+                
+                lottiePlayer.addEventListener('ready', function() {
+                    console.log('Lottie animation loaded successfully');
+                    
+                    // Intersection Observer for performance
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                // Animation is visible, ensure it's playing
+                                if (lottiePlayer.getLottie()) {
+                                    lottiePlayer.play();
+                                }
+                            } else {
+                                // Animation is not visible, pause it to save resources
+                                if (lottiePlayer.getLottie()) {
+                                    lottiePlayer.pause();
+                                }
+                            }
+                        });
+                    }, {
+                        threshold: 0.1,
+                        rootMargin: '50px'
+                    });
+                    
+                    observer.observe(heroSection);
+                    
+                    // Add hover effect to speed up animation
+                    if (heroSection) {
+                        heroSection.addEventListener('mouseenter', function() {
+                            if (lottiePlayer.getLottie()) {
+                                lottiePlayer.setSpeed(0.6);
+                            }
+                        });
+                        
+                        heroSection.addEventListener('mouseleave', function() {
+                            if (lottiePlayer.getLottie()) {
+                                lottiePlayer.setSpeed(0.3);
+                            }
+                        });
+                    }
+                });
+                
+                // Handle animation errors
+                lottiePlayer.addEventListener('error', function(e) {
+                    console.error('Lottie animation error:', e);
+                });
+                
+                // Pause animation when page is not visible
+                document.addEventListener('visibilitychange', function() {
+                    if (document.hidden) {
+                        if (lottiePlayer.getLottie()) {
+                            lottiePlayer.pause();
+                        }
+                    } else {
+                        if (lottiePlayer.getLottie()) {
+                            lottiePlayer.play();
+                        }
+                    }
+                });
+            }
+        });
+
+        // Enhanced Footer Interactions
+        document.addEventListener('DOMContentLoaded', function() {
+            // Newsletter form submission
+            const newsletterForm = document.querySelector('.newsletter-form');
+            const newsletterInput = document.querySelector('.newsletter-input');
+            const newsletterButton = document.querySelector('.newsletter-button');
+            
+            if (newsletterForm && newsletterInput && newsletterButton) {
+                newsletterForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const email = newsletterInput.value.trim();
+                    if (email && isValidEmail(email)) {
+                        // Add loading state
+                        newsletterButton.innerHTML = '<span>Subscribing...</span>';
+                        newsletterButton.disabled = true;
+                        
+                        // Simulate API call
+                        setTimeout(() => {
+                            newsletterButton.innerHTML = '<span>Subscribed!</span>';
+                            newsletterInput.value = '';
+                            
+                            // Reset after 2 seconds
+                            setTimeout(() => {
+                                newsletterButton.innerHTML = '<span>Subscribe</span><svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>';
+                                newsletterButton.disabled = false;
+                            }, 2000);
+                        }, 1500);
+                    } else {
+                        // Show error state
+                        newsletterInput.style.borderColor = '#ef4444';
+                        setTimeout(() => {
+                            newsletterInput.style.borderColor = 'rgba(59, 130, 246, 0.2)';
+                        }, 3000);
+                    }
+                });
+            }
+            
+            // Smooth scroll for footer links
+            document.querySelectorAll('.footer-link[href^="#"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Add hover effects to social links
+            document.querySelectorAll('.social-link').forEach(link => {
+                link.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateY(-3px) scale(1.05)';
+                });
+                
+                link.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateY(0) scale(1)';
+                });
+            });
+            
+            // Add intersection observer for footer animations
+            const footer = document.querySelector('.footer');
+            if (footer) {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.animation = 'footer-slide-up 0.8s ease-out';
+                        }
+                    });
+                }, { threshold: 0.1 });
+                
+                observer.observe(footer);
+            }
+        });
+        
+        // Email validation helper
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "Emma AI - Intelligent AI Assistant Platform",
+  "short_name": "Emma AI",
+  "description": "Cutting-edge AI platform delivering smart, autonomous AI agents",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/Logo And Recording/cropped_circle_image.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Logo And Recording/cropped_circle_image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
+  "lang": "en",
+  "dir": "ltr"
+}

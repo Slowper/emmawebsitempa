@@ -5,14 +5,16 @@
   "main": "server.js",
   "scripts": {
     "setup": "node setup.js",
-    "start": "node server-sqlite.js",
+    "start": "node server.js",
     "start:mysql": "node server.js",
-    "start:working": "node working-hero-server.js",
-    "dev": "nodemon server-sqlite.js",
+    "dev": "nodemon server.js",
     "dev:mysql": "nodemon server.js",
     "migrate": "node migrate-to-mysql.js",
     "build": "npm install",
-    "serve": "npx http-server -p 3000"
+    "serve": "npx http-server -p 3000",
+    "seo:generate": "node sitemap-generator-sqlite.js && node seo-optimizer.js",
+    "seo:optimize": "node seo-optimizer.js",
+    "seo:sitemap": "node sitemap-generator-sqlite.js"
   },
   "keywords": [
     "ai",
