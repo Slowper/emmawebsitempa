@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Resource - Emma AI</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" id="meta-description" content="">
+    <meta name="keywords" id="meta-keywords" content="">
+    <meta name="author" id="meta-author" content="">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" id="og-title" content="">
+    <meta property="og:description" id="og-description" content="">
+    <meta property="og:image" id="og-image" content="">
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="og-url" content="">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" id="twitter-title" content="">
+    <meta name="twitter:description" id="twitter-description" content="">
+    <meta name="twitter:image" id="twitter-image" content="">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: #1e293b;
+            background: #ffffff;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Article Header */
+        .article-header {
+            padding: 4rem 0 2rem;
+            text-align: center;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 3rem;
+        }
+
+        .article-category {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .article-title {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #1e293b, #475569);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .article-excerpt {
+            font-size: 1.25rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .article-meta {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            font-size: 0.875rem;
+            color: #64748b;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .reading-time {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .article-date {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Featured Image */
+        .featured-image {
+            margin: 3rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .featured-image img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .featured-image:hover img {
+            transform: scale(1.02);
+        }
+
+        /* Article Content */
+        .article-content {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #374151;
+        }
+
+        .article-content h1,
+        .article-content h2,
+        .article-content h3,
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
+            margin: 2.5rem 0 1rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: #1e293b;
+        }
+
+        .article-content h1 {
+            font-size: 2.5rem;
+        }
+
+        .article-content h2 {
+            font-size: 2rem;
+        }
+
+        .article-content h3 {
+            font-size: 1.5rem;
+        }
+
+        .article-content h4 {
+            font-size: 1.25rem;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+        }
+
+        .article-content ul,
+        .article-content ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #667eea;
+            padding: 1rem 1.5rem;
+            margin: 2rem 0;
+            background: #f8fafc;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #475569;
+        }
+
+        .article-content code {
+            background: #f1f5f9;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.875rem;
+            color: #e11d48;
+        }
+
+        .article-content pre {
+            background: #1e293b;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 2rem 0;
+        }
+
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 2rem 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .article-content a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .article-content a:hover {
+            border-bottom-color: #667eea;
+        }
+
+        /* Tags */
+        .article-tags {
+            margin: 3rem 0;
+            padding: 2rem 0;
+            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .tags-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .tag {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Social Sharing */
+        .social-sharing {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .sharing-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+        }
+
+        .sharing-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .share-btn.twitter {
+            background: #1da1f2;
+            color: white;
+        }
+
+        .share-btn.facebook {
+            background: #4267b2;
+            color: white;
+        }
+
+        .share-btn.linkedin {
+            background: #0077b5;
+            color: white;
+        }
+
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* Related Articles */
+        .related-articles {
+            margin: 4rem 0;
+        }
+
+        .related-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 2rem;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .related-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .related-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .related-card-image {
+            width: 100%;
+            height: 200px;
+            background: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 2rem;
+        }
+
+        .related-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .related-card-content {
+            padding: 1.5rem;
+        }
+
+        .related-card-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .related-card-excerpt {
+            color: #64748b;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1e293b;
+            color: white;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 2rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+        }
+
+        .footer-copyright {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.875rem;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+            color: #64748b;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .error {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+        }
+
+        .error-icon {
+            font-size: 4rem;
+            color: #ef4444;
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+            margin-bottom: 2rem;
+        }
+
+        .error-btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .error-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .article-title {
+                font-size: 2rem;
+            }
+
+            .article-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .sharing-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .related-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .header,
+            .social-sharing,
+            .related-articles,
+            .footer {
+                display: none;
+            }
+
+            .main-content {
+                max-width: none;
+                padding: 0;
+            }
+
+            .article-header {
+                padding: 0 0 2rem;
+            }
+
+            .article-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="/" class="logo">
+                <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI">
+                Emma AI
+            </a>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/pricing">Pricing</a></li>
+                    <li><a href="/resources">Resources</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            Loading resource...
+        </div>
+
+        <!-- Error State -->
+        <div id="error" class="error" style="display: none;">
+            <div class="error-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h2 class="error-title">Resource Not Found</h2>
+            <p class="error-message">The resource you're looking for doesn't exist or has been removed.</p>
+            <a href="/resources" class="error-btn">Back to Resources</a>
+        </div>
+
+        <!-- Article Content -->
+        <article id="article-content" style="display: none;">
+            <!-- Article Header -->
+            <header class="article-header">
+                <div class="article-category" id="article-category">Blog Post</div>
+                <h1 class="article-title" id="article-title">Resource Title</h1>
+                <p class="article-excerpt" id="article-excerpt">Resource excerpt goes here...</p>
+                
+                <div class="article-meta">
+                    <div class="author-info">
+                        <div class="author-avatar" id="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <div id="author-name">Author Name</div>
+                            <div id="author-title">Author Title</div>
+                        </div>
+                    </div>
+                    <div class="reading-time">
+                        <i class="fas fa-clock"></i>
+                        <span id="reading-time">5 min read</span>
+                    </div>
+                    <div class="article-date">
+                        <i class="fas fa-calendar"></i>
+                        <span id="article-date">January 1, 2024</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Featured Image -->
+            <div class="featured-image" id="featured-image" style="display: none;">
+                <img id="featured-image-src" src="" alt="">
+            </div>
+
+            <!-- Article Content -->
+            <div class="article-content" id="article-body">
+                <!-- Content will be loaded here -->
+            </div>
+
+            <!-- Tags -->
+            <div class="article-tags" id="article-tags" style="display: none;">
+                <div class="tags-label">Tags</div>
+                <div class="tags-list" id="tags-list">
+                    <!-- Tags will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Social Sharing -->
+            <div class="social-sharing">
+                <div class="sharing-title">Share this resource</div>
+                <div class="sharing-buttons">
+                    <button class="share-btn twitter" onclick="shareOnTwitter()">
+                        <i class="fab fa-twitter"></i>
+                        Twitter
+                    </button>
+                    <button class="share-btn facebook" onclick="shareOnFacebook()">
+                        <i class="fab fa-facebook-f"></i>
+                        Facebook
+                    </button>
+                    <button class="share-btn linkedin" onclick="shareOnLinkedIn()">
+                        <i class="fab fa-linkedin-in"></i>
+                        LinkedIn
+                    </button>
+                </div>
+            </div>
+
+            <!-- Related Articles -->
+            <div class="related-articles" id="related-articles" style="display: none;">
+                <h3 class="related-title">Related Resources</h3>
+                <div class="related-grid" id="related-grid">
+                    <!-- Related articles will be loaded here -->
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-logo">Emma AI</div>
+            <p class="footer-description">
+                Building the future of autonomous AI agents. Transform your operations with intelligent automation.
+            </p>
+            <div class="footer-links">
+                <a href="/about">About</a>
+                <a href="/pricing">Pricing</a>
+                <a href="/resources">Resources</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2024 KodeFast. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        class ResourceReader {
+            constructor() {
+                this.apiBase = 'http://localhost:3001/api';
+                this.resourceSlug = this.getResourceSlug();
+                this.resource = null;
+                
+                this.init();
+            }
+
+            getResourceSlug() {
+                const path = window.location.pathname;
+                const segments = path.split('/').filter(segment => segment);
+                
+                // Handle different URL patterns: /blog/slug, /casestudy/slug, /usecase/slug
+                if (segments.length >= 2) {
+                    return segments[1];
+                }
+                
+                return null;
+            }
+
+            async init() {
+                if (!this.resourceSlug) {
+                    this.showError();
+                    return;
+                }
+
+                try {
+                    await this.loadResource();
+                    this.updatePageMeta();
+                    this.showContent();
+                } catch (error) {
+                    console.error('Error loading resource:', error);
+                    this.showError();
+                }
+            }
+
+            async loadResource() {
+                const response = await fetch(`${this.apiBase}/resources/${this.resourceSlug}`);
+                
+                if (!response.ok) {
+                    throw new Error('Resource not found');
+                }
+
+                this.resource = await response.json();
+            }
+
+            updatePageMeta() {
+                const resource = this.resource;
+                
+                // Update page title
+                document.title = `${resource.title} - Emma AI`;
+                document.getElementById('page-title').textContent = resource.title;
+                
+                // Update meta tags
+                document.getElementById('meta-description').content = resource.meta_description || resource.excerpt || '';
+                document.getElementById('meta-keywords').content = resource.meta_keywords || '';
+                document.getElementById('meta-author').content = resource.author_name || 'Emma AI Team';
+                
+                // Update Open Graph tags
+                document.getElementById('og-title').content = resource.title;
+                document.getElementById('og-description').content = resource.meta_description || resource.excerpt || '';
+                document.getElementById('og-image').content = resource.featured_image || '';
+                document.getElementById('og-url').content = window.location.href;
+                
+                // Update Twitter Card tags
+                document.getElementById('twitter-title').content = resource.title;
+                document.getElementById('twitter-description').content = resource.meta_description || resource.excerpt || '';
+                document.getElementById('twitter-image').content = resource.featured_image || '';
+            }
+
+            showContent() {
+                const resource = this.resource;
+                
+                // Hide loading, show content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('article-content').style.display = 'block';
+                
+                // Update article header
+                document.getElementById('article-category').textContent = this.getCategoryName(resource.type);
+                document.getElementById('article-title').textContent = resource.title;
+                document.getElementById('article-excerpt').textContent = resource.excerpt || '';
+                
+                // Update author info
+                const authorAvatar = document.getElementById('author-avatar');
+                if (resource.author_image) {
+                    authorAvatar.innerHTML = `<img src="${resource.author_image}" alt="${resource.author_name}">`;
+                } else {
+                    authorAvatar.innerHTML = `<i class="fas fa-user"></i>`;
+                }
+                
+                document.getElementById('author-name').textContent = resource.author_name || 'Unknown Author';
+                document.getElementById('reading-time').textContent = `${resource.read_time || 5} min read`;
+                document.getElementById('article-date').textContent = new Date(resource.published_at || resource.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+                
+                // Update featured image
+                if (resource.featured_image) {
+                    document.getElementById('featured-image').style.display = 'block';
+                    document.getElementById('featured-image-src').src = resource.featured_image;
+                    document.getElementById('featured-image-src').alt = resource.title;
+                }
+                
+                // Update article content
+                document.getElementById('article-body').innerHTML = resource.content;
+                
+                // Update tags
+                if (resource.tags && resource.tags.length > 0) {
+                    const tagsList = document.getElementById('tags-list');
+                    tagsList.innerHTML = resource.tags.map(tag => 
+                        `<a href="/resources?tag=${tag}" class="tag">${tag}</a>`
+                    ).join('');
+                    document.getElementById('article-tags').style.display = 'block';
+                }
+                
+                // Load related articles
+                this.loadRelatedArticles();
+            }
+
+            getCategoryName(type) {
+                const categories = {
+                    'blog': 'Blog Post',
+                    'case-study': 'Case Study',
+                    'use-case': 'Use Case'
+                };
+                return categories[type] || 'Resource';
+            }
+
+            async loadRelatedArticles() {
+                try {
+                    const response = await fetch(`${this.apiBase}/resources?type=${this.resource.type}&limit=3`);
+                    const data = await response.json();
+                    const relatedResources = data.resources.filter(r => r.id !== this.resource.id).slice(0, 3);
+                    
+                    if (relatedResources.length > 0) {
+                        this.displayRelatedArticles(relatedResources);
+                    }
+                } catch (error) {
+                    console.error('Error loading related articles:', error);
+                }
+            }
+
+            displayRelatedArticles(resources) {
+                const relatedGrid = document.getElementById('related-grid');
+                relatedGrid.innerHTML = resources.map(resource => `
+                    <a href="/${resource.type}/${resource.slug}" class="related-card">
+                        <div class="related-card-image">
+                            ${resource.featured_image ? 
+                                `<img src="${resource.featured_image}" alt="${resource.title}">` : 
+                                `<i class="fas fa-file-alt"></i>`
+                            }
+                        </div>
+                        <div class="related-card-content">
+                            <h4 class="related-card-title">${resource.title}</h4>
+                            <p class="related-card-excerpt">${resource.excerpt || ''}</p>
+                        </div>
+                    </a>
+                `).join('');
+                
+                document.getElementById('related-articles').style.display = 'block';
+            }
+
+            showError() {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Social sharing functions
+        function shareOnTwitter() {
+            const url = encodeURIComponent(window.location.href);
+            const text = encodeURIComponent(document.title);
+            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
+        }
+
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function shareOnLinkedIn() {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}&title=${title}`, '_blank');
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new ResourceReader();
+        });
+    </script>
+</body>
+</html>

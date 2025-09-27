@@ -12,18 +12,19 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config({ path: './config.env' });
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Security middleware
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com", "https://unpkg.com"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://cdnjs.cloudflare.com", "https://unpkg.com"],
+            scriptSrcAttr: ["'unsafe-inline'", "'unsafe-hashes'"],
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com", "data:", "https:"],
             imgSrc: ["'self'", "data:", "https:"],
-            connectSrc: ["'self'"],
+            connectSrc: ["'self'", "http://localhost:3001", "http://localhost:3000", "https://unpkg.com"],
             objectSrc: ["'none'"],
             baseUri: ["'self'"],
             formAction: ["'self'"],
@@ -37,12 +38,29 @@ app.use(cors({
     credentials: true
 }));
 
-// Rate limiting
+// Rate limiting - Optimized for development
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    max: 2000, // Increased limit for development
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => {
+        // Skip rate limiting for localhost in development
+        return req.ip === '127.0.0.1' || req.ip === '::1' || req.ip === '::ffff:127.0.0.1';
+    }
 });
 app.use('/api/', limiter);
+
+// More lenient rate limiting for auth endpoints
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 50, // Allow more auth attempts
+    message: 'Too many authentication attempts, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use('/api/auth/', authLimiter);
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));
@@ -55,18 +73,81 @@ app.use('/Team Pics', express.static('Team Pics'));
 app.use(express.static('public'));
 app.use(express.static('.')); // Serve files from root directory (CSS, JS, etc.)
 
-// Database connection
+// Database connection with improved configuration
 const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
     database: process.env.DB_NAME || 'emma_cms',
     waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0
+    connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 20,
+    queueLimit: 0,
+    acquireTimeout: parseInt(process.env.DB_ACQUIRE_TIMEOUT) || 60000,
+    timeout: parseInt(process.env.DB_TIMEOUT) || 60000,
+    reconnect: true,
+    // Connection pool settings
+    idleTimeout: parseInt(process.env.DB_IDLE_TIMEOUT) || 300000,
+    maxReconnects: parseInt(process.env.DB_MAX_RECONNECTS) || 3,
+    reconnectDelay: parseInt(process.env.DB_RECONNECT_DELAY) || 2000,
+    // MySQL specific settings
+    charset: 'utf8mb4',
+    timezone: 'Z',
+    // Connection timeout settings
+    connectTimeout: parseInt(process.env.DB_ACQUIRE_TIMEOUT) || 5000,
+    // Query timeout
+    queryTimeout: parseInt(process.env.DB_QUERY_TIMEOUT) || 10000,
+    // Keep alive settings
+    keepAliveInitialDelay: 0,
+    enableKeepAlive: true
 };
 
 const pool = mysql.createPool(dbConfig);
+
+// Database connection health check
+const checkDatabaseConnection = async () => {
+    try {
+        const connection = await pool.getConnection();
+        await connection.ping();
+        connection.release();
+        console.log('✅ Database connection is healthy');
+        return true;
+    } catch (error) {
+        console.error('❌ Database connection failed:', error.message);
+        return false;
+    }
+};
+
+// Test database connection on startup (non-blocking)
+setTimeout(() => {
+    checkDatabaseConnection().then(isHealthy => {
+        if (!isHealthy) {
+            console.warn('⚠️  Database connection issues detected. Some features may not work properly.');
+        }
+    }).catch(err => {
+        console.warn('⚠️  Database health check failed:', err.message);
+    });
+}, 1000); // Delay by 1 second to allow server to start
+
+// Periodic health check every 15 minutes (reduced frequency)
+setInterval(checkDatabaseConnection, 15 * 60 * 1000);
+
+// Database health check endpoint
+app.get('/api/health/database', async (req, res) => {
+    try {
+        const isHealthy = await checkDatabaseConnection();
+        res.json({
+            status: isHealthy ? 'healthy' : 'unhealthy',
+            timestamp: new Date().toISOString(),
+            message: isHealthy ? 'Database connection is working properly' : 'Database connection issues detected'
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
 
 // File upload configuration
 const storage = multer.diskStorage({
@@ -80,6 +161,8 @@ const storage = multer.diskStorage({
             uploadPath = path.join(uploadPath, 'blogs');
         } else if (file.fieldname === 'useCaseGallery') {
             uploadPath = path.join(uploadPath, 'usecases');
+        } else if (file.fieldname === 'image' && req.url.includes('/resources')) {
+            uploadPath = path.join(uploadPath, 'resources');
         } else if (file.fieldname === 'caseStudyImage' || file.fieldname === 'caseStudyGallery') {
             uploadPath = path.join(uploadPath, 'casestudies');
         }
@@ -172,6 +255,42 @@ async function initializeDatabase() {
                 setting_value LONGTEXT,
                 setting_type ENUM('text', 'number', 'boolean', 'json') DEFAULT 'text',
                 description TEXT,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Create media_files table
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS media_files (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                filename VARCHAR(255) NOT NULL,
+                original_name VARCHAR(255) NOT NULL,
+                mimetype VARCHAR(100),
+                size INT,
+                file_path VARCHAR(500),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+
+        // Create resources table
+        await connection.execute(`
+            CREATE TABLE IF NOT EXISTS resources (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                type ENUM('blog', 'case-study', 'use-case') NOT NULL,
+                title VARCHAR(500) NOT NULL,
+                excerpt TEXT,
+                content LONGTEXT,
+                author VARCHAR(200),
+                authorImage VARCHAR(500),
+                date DATE,
+                tags JSON,
+                industry VARCHAR(100),
+                slug VARCHAR(500),
+                image_url VARCHAR(500),
+                readTime VARCHAR(50),
+                status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
             )
         `);
@@ -395,8 +514,140 @@ async function initializeDatabase() {
             );
         }
 
+        // Insert sample resources data
+        const sampleResources = [
+            {
+                type: 'blog',
+                title: 'The Future of AI in Healthcare Operations',
+                excerpt: 'Discover how AI is transforming healthcare operations, from patient care coordination to administrative automation.',
+                content: 'Full blog content about AI in healthcare...',
+                author: 'Dr. Sarah Johnson',
+                authorImage: '/Team Pics/Shikha.png',
+                date: '2024-01-15',
+                tags: JSON.stringify(['Healthcare', 'AI', 'Automation']),
+                industry: 'healthcare',
+                slug: 'future-ai-healthcare-operations',
+                image_url: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop&crop=center',
+                readTime: '5 min read',
+                status: 'published'
+            },
+            {
+                type: 'blog',
+                title: 'Banking AI: Revolutionizing Customer Experience',
+                excerpt: 'Learn how intelligent automation is reshaping banking operations and improving customer satisfaction.',
+                content: 'Full blog content about banking AI...',
+                author: 'Michael Chen',
+                authorImage: '/Team Pics/Ravi.jpeg',
+                date: '2024-01-10',
+                tags: JSON.stringify(['Banking', 'Customer Experience', 'AI']),
+                industry: 'banking',
+                slug: 'banking-ai-revolutionizing-customer-experience',
+                image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop&crop=center',
+                readTime: '7 min read',
+                status: 'published'
+            },
+            {
+                type: 'case-study',
+                title: 'Regional Hospital: 40% Reduction in Admin Time',
+                excerpt: 'How a regional hospital implemented Emma AI to streamline patient scheduling and reduce administrative overhead.',
+                content: 'Full case study content...',
+                author: 'Healthcare Team',
+                authorImage: '/Team Pics/Radha.webp',
+                date: '2024-01-08',
+                tags: JSON.stringify(['Healthcare', 'Case Study', 'ROI']),
+                industry: 'healthcare',
+                slug: 'regional-hospital-40-percent-reduction-admin-time',
+                image_url: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=400&h=200&fit=crop&crop=center',
+                readTime: '10 min read',
+                status: 'published'
+            },
+            {
+                type: 'use-case',
+                title: 'Intelligent Customer Support Automation',
+                excerpt: 'Learn how to implement AI-powered customer support that handles 80% of inquiries automatically.',
+                content: 'Full use case content...',
+                author: 'Multi-Industry Team',
+                authorImage: '/Team Pics/Jay.webp',
+                date: '2024-01-05',
+                tags: JSON.stringify(['Customer Support', 'Automation', 'AI']),
+                industry: 'retail',
+                slug: 'intelligent-customer-support-automation',
+                image_url: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=200&fit=crop&crop=center',
+                readTime: '8 min read',
+                status: 'published'
+            },
+            {
+                type: 'blog',
+                title: 'AI in Education: Personalized Learning at Scale',
+                excerpt: 'Explore how AI is enabling personalized learning experiences and administrative efficiency in education.',
+                content: 'Full blog content about AI in education...',
+                author: 'Dr. Emily Rodriguez',
+                authorImage: '/Team Pics/Suman.avif',
+                date: '2024-01-12',
+                tags: JSON.stringify(['Education', 'AI', 'Learning']),
+                industry: 'education',
+                slug: 'ai-education-personalized-learning-scale',
+                image_url: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=200&fit=crop&crop=center',
+                readTime: '6 min read',
+                status: 'published'
+            },
+            {
+                type: 'case-study',
+                title: 'National Bank: 60% Faster Loan Processing',
+                excerpt: 'A major bank\'s journey to automate loan processing and improve customer experience with AI.',
+                content: 'Full case study content...',
+                author: 'Banking Team',
+                authorImage: '/Team Pics/Shree.jpeg',
+                date: '2024-01-06',
+                tags: JSON.stringify(['Banking', 'Case Study', 'Automation']),
+                industry: 'banking',
+                slug: 'national-bank-60-percent-faster-loan-processing',
+                image_url: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=400&h=200&fit=crop&crop=center',
+                readTime: '12 min read',
+                status: 'published'
+            },
+            {
+                type: 'use-case',
+                title: 'Manufacturing Quality Control Automation',
+                excerpt: 'Implement AI-powered quality control systems that reduce defects by 85% in manufacturing.',
+                content: 'Full use case content...',
+                author: 'Manufacturing Team',
+                authorImage: '/Team Pics/Mohith.png',
+                date: '2024-01-03',
+                tags: JSON.stringify(['Manufacturing', 'Quality Control', 'AI']),
+                industry: 'manufacturing',
+                slug: 'manufacturing-quality-control-automation',
+                image_url: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400&h=200&fit=crop&crop=center',
+                readTime: '9 min read',
+                status: 'published'
+            },
+            {
+                type: 'blog',
+                title: 'Financial Services: AI-Powered Risk Assessment',
+                excerpt: 'How financial institutions are using AI to improve risk assessment and compliance.',
+                content: 'Full blog content about financial services AI...',
+                author: 'Finance Team',
+                authorImage: '/Team Pics/Prasad.webp',
+                date: '2024-01-01',
+                tags: JSON.stringify(['Finance', 'Risk Assessment', 'AI']),
+                industry: 'finance',
+                slug: 'financial-services-ai-powered-risk-assessment',
+                image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop&crop=center',
+                readTime: '11 min read',
+                status: 'published'
+            }
+        ];
+
+        // Insert sample resources
+        for (const resource of sampleResources) {
+            await connection.execute(
+                'INSERT IGNORE INTO resources (type, title, excerpt, content, author, authorImage, date, tags, industry, slug, image_url, readTime, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [resource.type, resource.title, resource.excerpt, resource.content, resource.author, resource.authorImage, resource.date, resource.tags, resource.industry, resource.slug, resource.image_url, resource.readTime, resource.status]
+            );
+        }
+
         connection.release();
-        console.log('Database initialized successfully');
+        console.log('Database initialized successfully with sample resources');
     } catch (error) {
         console.error('Database initialization error:', error);
     }
@@ -404,7 +655,731 @@ async function initializeDatabase() {
 
 // API Routes
 
+// Debug endpoint to check database and users
+app.get('/api/debug/users', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT id, username, email, role, created_at FROM users');
+        res.json({ 
+            success: true, 
+            userCount: rows.length, 
+            users: rows,
+            message: 'Database connection working'
+        });
+    } catch (error) {
+        console.error('Debug users error:', error);
+        res.status(500).json({ error: 'Database error', details: error.message });
+    }
+});
+
+// Reset admin password endpoint
+app.post('/api/debug/reset-password', async (req, res) => {
+    try {
+        const newPassword = 'admin123';
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        
+        await pool.execute(
+            'UPDATE users SET password = ? WHERE username = ?',
+            [hashedPassword, 'admin']
+        );
+        
+        console.log('✅ Admin password reset to: admin123');
+        res.json({ 
+            success: true, 
+            message: 'Admin password reset to: admin123',
+            username: 'admin',
+            password: 'admin123'
+        });
+    } catch (error) {
+        console.error('Password reset error:', error);
+        res.status(500).json({ error: 'Password reset failed', details: error.message });
+    }
+});
+
+// Rate limit reset endpoint for development
+app.post('/api/debug/reset-rate-limit', (req, res) => {
+    // This doesn't actually reset the rate limit, but provides info
+    res.json({ 
+        success: true, 
+        message: 'Rate limit info: 1000 requests per 15 minutes for /api/, 50 for /api/auth/',
+        suggestion: 'Wait a few minutes or restart the server to reset rate limits'
+    });
+});
+
+// Create resources table endpoint
+app.post('/api/debug/create-resources-table', async (req, res) => {
+    try {
+        await pool.execute(`
+            CREATE TABLE IF NOT EXISTS resources (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                type ENUM('blog', 'case-study', 'use-case') NOT NULL,
+                title VARCHAR(500) NOT NULL,
+                excerpt TEXT,
+                content LONGTEXT,
+                author VARCHAR(200),
+                date DATE,
+                tags JSON,
+                status ENUM('draft', 'published', 'archived') DEFAULT 'draft',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+            )
+        `);
+        res.json({ success: true, message: 'Resources table created successfully' });
+    } catch (error) {
+        console.error('Table creation error:', error);
+        res.status(500).json({ error: 'Failed to create resources table', details: error.message });
+    }
+});
+
+// Enhanced API endpoints for the new website structure
+app.get('/api/hero', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM content_sections WHERE section_key = ?', ['hero_title']);
+        const heroData = rows.length > 0 ? (() => {
+            try {
+                return JSON.parse(rows[0].content || '{}');
+            } catch (e) {
+                return { title: rows[0].content || "Meet Emma", subtitle: "Intelligent AI Assistant" };
+            }
+        })() : {
+            title: "Transform Your Operations with Emma AI",
+            subtitle: "Intelligent automation solutions for Healthcare, Banking, Education, and more",
+            ctaText: "Get Started",
+            ctaLink: "/contact"
+        };
+        res.json(heroData);
+    } catch (error) {
+        console.error('Hero endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load hero data' });
+    }
+});
+
+app.put('/api/hero', async (req, res) => {
+    try {
+        const heroData = req.body;
+        await pool.execute(
+            'INSERT INTO content_sections (section_key, section_name, content, content_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE content = VALUES(content)',
+            ['hero_title', 'Hero Section', JSON.stringify(heroData), 'json']
+        );
+        res.json({ success: true, message: 'Hero data saved successfully' });
+    } catch (error) {
+        console.error('Hero save error:', error);
+        res.status(500).json({ error: 'Failed to save hero data' });
+    }
+});
+
+app.get('/api/navigation', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM content_sections WHERE section_key = ?', ['navigation_links']);
+        const navData = rows.length > 0 ? (() => {
+            try {
+                return JSON.parse(rows[0].content || '{}');
+            } catch (e) {
+                return { links: [] };
+            }
+        })() : { 
+            links: [
+                { name: "Home", url: "/" },
+                { name: "About", url: "/about" },
+                { name: "Pricing", url: "/pricing" },
+                { name: "Resources", url: "/resources" },
+                { name: "Contact", url: "/contact" }
+            ]
+        };
+        res.json(navData);
+    } catch (error) {
+        console.error('Navigation endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load navigation data' });
+    }
+});
+
+app.put('/api/navigation', async (req, res) => {
+    try {
+        const navData = req.body;
+        await pool.execute(
+            'INSERT INTO content_sections (section_key, section_name, content, content_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE content = VALUES(content)',
+            ['navigation_links', 'Navigation Links', JSON.stringify(navData), 'json']
+        );
+        res.json({ success: true, message: 'Navigation data saved successfully' });
+    } catch (error) {
+        console.error('Navigation save error:', error);
+        res.status(500).json({ error: 'Failed to save navigation data' });
+    }
+});
+
+app.get('/api/stats', async (req, res) => {
+    try {
+        // Get actual counts from database
+        const [publishedRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE status = "published"');
+        const [draftRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE status = "draft"');
+        const [blogRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE type = "blog" AND status = "published"');
+        const [caseStudyRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE type = "case_study" AND status = "published"');
+        const [useCaseRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE type = "use_case" AND status = "published"');
+        const [userRows] = await pool.execute('SELECT COUNT(*) as count FROM users');
+        
+        const stats = {
+            totalPublished: publishedRows[0].count,
+            totalDrafts: draftRows[0].count,
+            totalViews: 0, // This would need a views tracking system
+            totalBlogs: blogRows[0].count,
+            totalCaseStudies: caseStudyRows[0].count,
+            totalUseCases: useCaseRows[0].count,
+            totalUsers: userRows[0].count,
+            lastUpdated: new Date().toISOString()
+        };
+        
+        console.log('📊 Stats calculated:', stats);
+        res.json(stats);
+    } catch (error) {
+        console.error('Stats endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load stats' });
+    }
+});
+
+// Media management endpoints
+app.get('/api/media', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM media_files ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (error) {
+        console.error('Media endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load media files' });
+    }
+});
+
+app.post('/api/media/upload', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No file uploaded' });
+        }
+        
+        const fileData = {
+            filename: req.file.filename,
+            originalName: req.file.originalname,
+            mimetype: req.file.mimetype,
+            size: req.file.size,
+            path: req.file.path
+        };
+        
+        await pool.execute(
+            'INSERT INTO media_files (filename, original_name, mimetype, size, file_path) VALUES (?, ?, ?, ?, ?)',
+            [fileData.filename, fileData.originalName, fileData.mimetype, fileData.size, fileData.path]
+        );
+        
+        res.json({ success: true, file: fileData });
+    } catch (error) {
+        console.error('Media upload error:', error);
+        res.status(500).json({ error: 'Failed to upload file' });
+    }
+});
+
+// SEO endpoints
+app.get('/api/seo', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM content_sections WHERE section_key = ?', ['seo_settings']);
+        const seoData = rows.length > 0 ? JSON.parse(rows[0].content || '{}') : {
+            title: "Emma AI - Intelligent Automation Solutions",
+            description: "Transform your operations with Emma AI's intelligent automation platform",
+            keywords: "AI, automation, healthcare, banking, education"
+        };
+        res.json(seoData);
+    } catch (error) {
+        console.error('SEO endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load SEO data' });
+    }
+});
+
+app.put('/api/seo', async (req, res) => {
+    try {
+        const seoData = req.body;
+        await pool.execute(
+            'INSERT INTO content_sections (section_key, section_name, content, content_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE content = VALUES(content)',
+            ['seo_settings', 'SEO Settings', JSON.stringify(seoData), 'json']
+        );
+        res.json({ success: true, message: 'SEO data saved successfully' });
+    } catch (error) {
+        console.error('SEO save error:', error);
+        res.status(500).json({ error: 'Failed to save SEO data' });
+    }
+});
+
+// Theme endpoints
+app.get('/api/theme', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM content_sections WHERE section_key = ?', ['theme_settings']);
+        const themeData = rows.length > 0 ? JSON.parse(rows[0].content || '{}') : {
+            primaryColor: '#3b82f6',
+            secondaryColor: '#8b5cf6',
+            accentColor: '#10b981'
+        };
+        res.json(themeData);
+    } catch (error) {
+        console.error('Theme endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load theme data' });
+    }
+});
+
+app.put('/api/theme', async (req, res) => {
+    try {
+        const themeData = req.body;
+        await pool.execute(
+            'INSERT INTO content_sections (section_key, section_name, content, content_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE content = VALUES(content)',
+            ['theme_settings', 'Theme Settings', JSON.stringify(themeData), 'json']
+        );
+        res.json({ success: true, message: 'Theme data saved successfully' });
+    } catch (error) {
+        console.error('Theme save error:', error);
+        res.status(500).json({ error: 'Failed to save theme data' });
+    }
+});
+
+// Settings endpoints
+app.get('/api/settings', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM website_settings');
+        const settings = {};
+        rows.forEach(row => {
+            settings[row.setting_key] = row.setting_value;
+        });
+        res.json(settings);
+    } catch (error) {
+        console.error('Settings endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load settings' });
+    }
+});
+
+app.put('/api/settings', async (req, res) => {
+    try {
+        const settings = req.body;
+        for (const [key, value] of Object.entries(settings)) {
+            await pool.execute(
+                'INSERT INTO website_settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)',
+                [key, value]
+            );
+        }
+        res.json({ success: true, message: 'Settings saved successfully' });
+    } catch (error) {
+        console.error('Settings save error:', error);
+        res.status(500).json({ error: 'Failed to save settings' });
+    }
+});
+
+// Features endpoints
+app.get('/api/features', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM content_sections WHERE section_key = ?', ['features_list']);
+        const features = rows.length > 0 ? JSON.parse(rows[0].content || '{}') : { features: [] };
+        res.json(features);
+    } catch (error) {
+        console.error('Features endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load features' });
+    }
+});
+
+app.put('/api/features', async (req, res) => {
+    try {
+        const features = req.body;
+        await pool.execute(
+            'INSERT INTO content_sections (section_key, section_name, content, content_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE content = VALUES(content)',
+            ['features_list', 'Features List', JSON.stringify(features), 'json']
+        );
+        res.json({ success: true, message: 'Features saved successfully' });
+    } catch (error) {
+        console.error('Features save error:', error);
+        res.status(500).json({ error: 'Failed to save features' });
+    }
+});
+
+// About endpoints
+app.get('/api/about', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM content_sections WHERE section_key = ?', ['about_content']);
+        const aboutData = rows.length > 0 ? JSON.parse(rows[0].content || '{}') : {
+            title: "About Emma AI",
+            content: "Revolutionizing operations through intelligent automation"
+        };
+        res.json(aboutData);
+    } catch (error) {
+        console.error('About endpoint error:', error);
+        res.status(500).json({ error: 'Failed to load about data' });
+    }
+});
+
+app.put('/api/about', async (req, res) => {
+    try {
+        const aboutData = req.body;
+        await pool.execute(
+            'INSERT INTO content_sections (section_key, section_name, content, content_type) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE content = VALUES(content)',
+            ['about_content', 'About Content', JSON.stringify(aboutData), 'json']
+        );
+        res.json({ success: true, message: 'About data saved successfully' });
+    } catch (error) {
+        console.error('About save error:', error);
+        res.status(500).json({ error: 'Failed to save about data' });
+    }
+});
+
+// Helper function for database queries with retry logic
+const executeWithRetry = async (query, params = [], maxRetries = 3) => {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            const [rows] = await pool.execute(query, params);
+            return rows;
+        } catch (error) {
+            console.error(`Database query attempt ${attempt} failed:`, error.message);
+            
+            if (attempt === maxRetries) {
+                throw error;
+            }
+            
+            // Wait before retry (exponential backoff)
+            const delay = Math.pow(2, attempt) * 1000;
+            await new Promise(resolve => setTimeout(resolve, delay));
+        }
+    }
+};
+
+// Resources endpoints
+app.get('/api/resources', async (req, res) => {
+    try {
+        const rows = await executeWithRetry(`
+            SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
+                   featured_image as image_url, author_image as authorImage, gallery, industry_id,
+                   meta_title, meta_description, meta_keywords, read_time, slug
+            FROM resources 
+            ORDER BY created_at DESC
+        `);
+        res.json(rows);
+    } catch (error) {
+        console.error('Resources endpoint error:', error);
+        res.status(500).json({ 
+            error: 'Failed to load resources',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+// Add image_url column to resources table if it doesn't exist
+app.post('/api/resources/add-image-column', async (req, res) => {
+    try {
+        await pool.execute(`
+            ALTER TABLE resources 
+            ADD COLUMN IF NOT EXISTS image_url VARCHAR(500) NULL
+        `);
+        res.json({ success: true, message: 'Image URL column added to resources table' });
+    } catch (error) {
+        console.error('Column addition error:', error);
+        res.status(500).json({ error: 'Failed to add image column' });
+    }
+});
+
+// Resource image upload endpoint
+app.post('/api/resources/upload-image', authenticateToken, upload.single('image'), (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'No image file provided' });
+        }
+        
+        const imageUrl = `/uploads/resources/${req.file.filename}`;
+        res.json({ 
+            message: 'Resource image uploaded successfully',
+            imageUrl: imageUrl,
+            filename: req.file.filename
+        });
+    } catch (error) {
+        console.error('Resource image upload error:', error);
+        res.status(500).json({ error: 'Failed to upload resource image' });
+    }
+});
+
+app.post('/api/resources', authenticateToken, upload.fields([
+    { name: 'featured_image', maxCount: 1 },
+    { name: 'author_image', maxCount: 1 },
+    { name: 'gallery', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const {
+            title,
+            type,
+            excerpt,
+            content,
+            author,
+            industry_id,
+            tags,
+            meta_title,
+            meta_description,
+            meta_keywords,
+            status = 'draft'
+        } = req.body;
+
+        if (!title || !type || !content) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Title, type, and content are required' 
+            });
+        }
+
+        // Generate slug from title
+        const slug = title.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+
+        // Extract plain text from content for reading time calculation
+        const contentPlain = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+        const readTime = Math.max(1, Math.ceil(contentPlain.split(' ').length / 200));
+
+        // Handle image uploads
+        let featuredImagePath = '';
+        let authorImagePath = '';
+        let galleryArray = [];
+
+        if (req.files.featured_image) {
+            featuredImagePath = `/uploads/resources/${req.files.featured_image[0].filename}`;
+        }
+
+        if (req.files.author_image) {
+            authorImagePath = `/uploads/resources/${req.files.author_image[0].filename}`;
+        }
+
+        if (req.files.gallery) {
+            galleryArray = req.files.gallery.map(file => `/uploads/resources/${file.filename}`);
+        }
+
+        // Parse tags
+        const tagsArray = tags ? JSON.parse(tags) : [];
+
+        // Handle industry_id - convert empty string to NULL
+        const industryId = industry_id && industry_id.trim() !== '' ? parseInt(industry_id) : null;
+
+        const [result] = await pool.execute(`
+            INSERT INTO resources (
+                type, title, slug, excerpt, content, author, industry_id, featured_image, 
+                author_image, gallery, tags, meta_title, meta_description, 
+                meta_keywords, status, read_time, created_at, updated_at
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+        `, [
+            type, title, slug, excerpt, content, author, industryId, featuredImagePath,
+            authorImagePath, JSON.stringify(galleryArray), JSON.stringify(tagsArray),
+            meta_title, meta_description, meta_keywords, status, readTime
+        ]);
+
+        res.json({ 
+            success: true, 
+            message: 'Resource created successfully',
+            id: result.insertId 
+        });
+    } catch (error) {
+        console.error('Resource creation error:', error);
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to create resource', 
+            details: error.message 
+        });
+    }
+});
+
+app.get('/api/resources/:id', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM resources WHERE id = ?', [req.params.id]);
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Resource not found' });
+        }
+        res.json(rows[0]);
+    } catch (error) {
+        console.error('Resource fetch error:', error);
+        res.status(500).json({ error: 'Failed to fetch resource' });
+    }
+});
+
+app.put('/api/resources/:id', authenticateToken, upload.fields([
+    { name: 'featured_image', maxCount: 1 },
+    { name: 'author_image', maxCount: 1 },
+    { name: 'gallery', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            title,
+            type,
+            excerpt,
+            content,
+            author,
+            industry_id,
+            tags,
+            meta_title,
+            meta_description,
+            meta_keywords,
+            status
+        } = req.body;
+
+        if (!title || !type || !content) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Title, type, and content are required' 
+            });
+        }
+
+        // Generate slug from title
+        const slug = title.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+
+        // Extract plain text from content for reading time calculation
+        const contentPlain = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+        const readTime = Math.max(1, Math.ceil(contentPlain.split(' ').length / 200));
+
+        // Get existing resource data
+        const [existingRows] = await pool.execute('SELECT featured_image, author_image, gallery FROM resources WHERE id = ?', [id]);
+        if (existingRows.length === 0) {
+            return res.status(404).json({ success: false, error: 'Resource not found' });
+        }
+
+        const existing = existingRows[0];
+
+        // Handle image uploads - keep existing if no new ones provided
+        let featuredImagePath = existing.featured_image || '';
+        let authorImagePath = existing.author_image || '';
+        let galleryArray = existing.gallery ? JSON.parse(existing.gallery) : [];
+
+        if (req.files.featured_image) {
+            featuredImagePath = `/uploads/resources/${req.files.featured_image[0].filename}`;
+        }
+
+        if (req.files.author_image) {
+            authorImagePath = `/uploads/resources/${req.files.author_image[0].filename}`;
+        }
+
+        if (req.files.gallery) {
+            galleryArray = req.files.gallery.map(file => `/uploads/resources/${file.filename}`);
+        }
+
+        // Parse tags
+        const tagsArray = tags ? JSON.parse(tags) : [];
+
+        // Handle industry_id - convert empty string to NULL
+        const industryId = industry_id && industry_id.trim() !== '' ? parseInt(industry_id) : null;
+
+        await pool.execute(`
+            UPDATE resources SET 
+                type = ?, title = ?, slug = ?, excerpt = ?, content = ?, author = ?, industry_id = ?, 
+                featured_image = ?, author_image = ?, gallery = ?, tags = ?, 
+                meta_title = ?, meta_description = ?, meta_keywords = ?, 
+                status = ?, read_time = ?, updated_at = NOW()
+            WHERE id = ?
+        `, [
+            type, title, slug, excerpt, content, author, industryId,
+            featuredImagePath, authorImagePath, JSON.stringify(galleryArray), JSON.stringify(tagsArray),
+            meta_title, meta_description, meta_keywords, status, readTime, id
+        ]);
+
+        res.json({ 
+            success: true, 
+            message: 'Resource updated successfully' 
+        });
+    } catch (error) {
+        console.error('Resource update error:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to update resource',
+            details: error.message 
+        });
+    }
+});
+
+app.delete('/api/resources/:id', async (req, res) => {
+    try {
+        await pool.execute('DELETE FROM resources WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'Resource deleted successfully' });
+    } catch (error) {
+        console.error('Resource deletion error:', error);
+        res.status(500).json({ error: 'Failed to delete resource' });
+    }
+});
+
+// Industries endpoint
+app.get('/api/industries', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM industries ORDER BY name');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching industries:', error);
+        res.status(500).json({ error: 'Failed to fetch industries' });
+    }
+});
+
+// Tags endpoint
+app.get('/api/tags', async (req, res) => {
+    try {
+        const [rows] = await pool.execute('SELECT * FROM tags ORDER BY name');
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching tags:', error);
+        res.status(500).json({ error: 'Failed to fetch tags' });
+    }
+});
+
+// Blog endpoints
+app.get('/api/blogs', async (req, res) => {
+    try {
+        const rows = await executeWithRetry(`
+            SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
+                   featured_image as image_url, author_image as authorImage, gallery, industry_id,
+                   meta_title, meta_description, meta_keywords, read_time, slug
+            FROM resources 
+            WHERE type = "blog" 
+            ORDER BY created_at DESC
+        `);
+        res.json(rows);
+    } catch (error) {
+        console.error('Blogs endpoint error:', error);
+        res.status(500).json({ 
+            error: 'Failed to load blogs',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+// Use cases endpoints
+app.get('/api/usecases', async (req, res) => {
+    try {
+        const rows = await executeWithRetry('SELECT * FROM resources WHERE type = "use-case" ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (error) {
+        console.error('Use cases endpoint error:', error);
+        res.status(500).json({ 
+            error: 'Failed to load use cases',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+// Case studies endpoints
+app.get('/api/casestudies', async (req, res) => {
+    try {
+        const rows = await executeWithRetry('SELECT * FROM resources WHERE type = "case-study" ORDER BY created_at DESC');
+        res.json(rows);
+    } catch (error) {
+        console.error('Case studies endpoint error:', error);
+        res.status(500).json({ 
+            error: 'Failed to load case studies',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
 // Authentication routes
+app.get('/api/auth/verify', authenticateToken, (req, res) => {
+    res.json({ 
+        message: 'Token is valid',
+        user: req.user 
+    });
+});
+
 app.get('/api/content/auth/verify', authenticateToken, (req, res) => {
     res.json({ 
         message: 'Token is valid',
@@ -412,7 +1387,7 @@ app.get('/api/content/auth/verify', authenticateToken, (req, res) => {
     });
 });
 
-app.post('/api/auth/login', async (req, res) => {
+app.post('/api/content/auth/login', async (req, res) => {
     try {
         const { username, password } = req.body;
         
@@ -433,6 +1408,59 @@ app.post('/api/auth/login', async (req, res) => {
         const isValidPassword = await bcrypt.compare(password, user.password);
 
         if (!isValidPassword) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const token = jwt.sign(
+            { id: user.id, username: user.username, role: user.role },
+            process.env.JWT_SECRET,
+            { expiresIn: '24h' }
+        );
+
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const { username, password } = req.body;
+        
+        console.log('Login attempt:', { username, password: password ? '[PROVIDED]' : '[MISSING]' });
+        
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Username and password are required' });
+        }
+
+        const [rows] = await pool.execute(
+            'SELECT * FROM users WHERE username = ? OR email = ?',
+            [username, username]
+        );
+
+        console.log('Database query result:', { userCount: rows.length, users: rows.map(u => ({ id: u.id, username: u.username, email: u.email, role: u.role })) });
+
+        if (rows.length === 0) {
+            console.log('No user found with username/email:', username);
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const user = rows[0];
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        console.log('Password validation:', { isValid: isValidPassword, hashedPassword: user.password ? '[EXISTS]' : '[MISSING]' });
+
+        if (!isValidPassword) {
+            console.log('Password mismatch for user:', username);
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
@@ -675,7 +1703,13 @@ app.get('/api/blogs', async (req, res) => {
         
         const blogs = rows.map(blog => ({
             ...blog,
-            gallery: blog.gallery ? JSON.parse(blog.gallery) : []
+            gallery: blog.gallery ? (() => {
+                try {
+                    return JSON.parse(blog.gallery);
+                } catch (e) {
+                    return [];
+                }
+            })() : []
         }));
         
         res.json(blogs);
@@ -689,10 +1723,11 @@ app.get('/api/blogs/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const [rows] = await pool.execute(`
-            SELECT id, title, category, author, excerpt, content, image, authorImage, 
-                   gallery, created_at, updated_at, status
-            FROM blogs 
-            WHERE id = ? AND status = 'published'
+            SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
+                   featured_image as image_url, author_image as authorImage, gallery, industry_id,
+                   meta_title, meta_description, meta_keywords, read_time, slug
+            FROM resources 
+            WHERE id = ? AND type = 'blog' AND status = 'published'
         `, [id]);
         
         if (rows.length === 0) {
@@ -701,7 +1736,13 @@ app.get('/api/blogs/:id', async (req, res) => {
         
         const blog = {
             ...rows[0],
-            gallery: rows[0].gallery ? JSON.parse(rows[0].gallery) : []
+            gallery: rows[0].gallery ? (() => {
+                try {
+                    return JSON.parse(rows[0].gallery);
+                } catch (e) {
+                    return [];
+                }
+            })() : []
         };
         
         res.json(blog);
@@ -813,58 +1854,7 @@ app.get('/api/test', (req, res) => {
     res.json({ message: 'Server is running updated code', timestamp: new Date().toISOString() });
 });
 
-// Use Cases API routes
-app.get('/api/usecases', async (req, res) => {
-    try {
-        const [rows] = await pool.execute(`
-            SELECT id, title, description, industry, stats, gallery, 
-                   created_at, updated_at, status
-            FROM use_cases 
-            WHERE status = 'published' 
-            ORDER BY created_at DESC
-        `);
-        
-        const useCases = rows.map(useCase => ({
-            ...useCase,
-            stats: useCase.stats ? JSON.parse(useCase.stats) : [],
-            gallery: useCase.gallery ? JSON.parse(useCase.gallery) : [],
-            tags: useCase.tags ? JSON.parse(useCase.tags) : []
-        }));
-        
-        res.json(useCases);
-    } catch (error) {
-        console.error('Error fetching use cases:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.get('/api/usecases/:id', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const [rows] = await pool.execute(`
-            SELECT id, title, description, industry, stats, gallery, 
-                   created_at, updated_at, status
-            FROM use_cases 
-            WHERE id = ? AND status = 'published'
-        `, [id]);
-        
-        if (rows.length === 0) {
-            return res.status(404).json({ error: 'Use case not found' });
-        }
-        
-        const useCase = {
-            ...rows[0],
-            stats: rows[0].stats ? JSON.parse(rows[0].stats) : [],
-            gallery: rows[0].gallery ? JSON.parse(rows[0].gallery) : [],
-            tags: rows[0].tags ? JSON.parse(rows[0].tags) : []
-        };
-        
-        res.json(useCase);
-    } catch (error) {
-        console.error('Error fetching use case:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+// Use Cases API routes - removed duplicate, using the one above
 
 app.post('/api/usecases', authenticateToken, upload.fields([
     { name: 'useCaseGallery', maxCount: 10 }
@@ -968,8 +1958,20 @@ app.get('/api/casestudies', async (req, res) => {
         
         const caseStudies = rows.map(caseStudy => ({
             ...caseStudy,
-            results: caseStudy.results ? JSON.parse(caseStudy.results) : [],
-            tags: caseStudy.tags ? JSON.parse(caseStudy.tags) : [],
+            results: caseStudy.results ? (() => {
+                try {
+                    return JSON.parse(caseStudy.results);
+                } catch (e) {
+                    return [];
+                }
+            })() : [],
+            tags: caseStudy.tags ? (() => {
+                try {
+                    return JSON.parse(caseStudy.tags);
+                } catch (e) {
+                    return [];
+                }
+            })() : [],
             published: caseStudy.status === 'published',
             date: caseStudy.created_at
         }));
@@ -1122,7 +2124,13 @@ app.get('/api/content/pricing', async (req, res) => {
             price: plan.price_amount || 'Contact Us',
             period: plan.price_period || 'per month',
             featured: plan.is_featured || false,
-            features: plan.features ? JSON.parse(plan.features) : [],
+            features: plan.features ? (() => {
+                try {
+                    return JSON.parse(plan.features);
+                } catch (e) {
+                    return [];
+                }
+            })() : [],
             buttonText: plan.button_text || 'Contact Sales'
         }));
         
@@ -1184,7 +2192,13 @@ app.get('/api/pricing/plans', async (req, res) => {
         
         const plans = rows.map(plan => ({
             ...plan,
-            features: plan.features ? JSON.parse(plan.features) : []
+            features: plan.features ? (() => {
+                try {
+                    return JSON.parse(plan.features);
+                } catch (e) {
+                    return [];
+                }
+            })() : []
         }));
         
         res.json(plans);
@@ -1208,7 +2222,13 @@ app.get('/api/pricing/plan/:id', async (req, res) => {
         
         const plan = {
             ...rows[0],
-            features: rows[0].features ? JSON.parse(rows[0].features) : []
+            features: rows[0].features ? (() => {
+                try {
+                    return JSON.parse(rows[0].features);
+                } catch (e) {
+                    return [];
+                }
+            })() : []
         };
         
         res.json(plan);
@@ -1469,48 +2489,134 @@ app.get('/contact', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages', 'contact.html'));
 });
 
-// Blog routes
-app.get('/blog/:id', (req, res) => {
-    const blogId = req.params.id;
-    const blogPath = path.join(__dirname, 'pages', 'blog', `${blogId}.html`);
-    
-    if (fs.existsSync(blogPath)) {
-        res.sendFile(blogPath);
-    } else {
-        res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+// Enhanced Resource Routes with SEO-friendly URLs
+// SEO-friendly blog URLs
+app.get('/blog/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        console.log('🔍 Blog route hit with slug:', slug);
+        
+        // Try to find by slug first (if column exists)
+        let [rows] = [];
+        try {
+            [rows] = await pool.execute(
+                `SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
+                        featured_image as image_url, author_image as authorImage, gallery, industry_id,
+                        meta_title, meta_description, meta_keywords, read_time, slug
+                 FROM resources 
+                 WHERE slug = ? AND type = "blog" AND status = "published"`,
+                [slug]
+            );
+            console.log('📝 Found by slug:', rows.length);
+        } catch (slugError) {
+            console.log('❌ Slug column not available, trying ID-based lookup');
+            // If slug column doesn't exist, try ID-based lookup
+            [rows] = await pool.execute(
+                `SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
+                        featured_image as image_url, author_image as authorImage, gallery, industry_id,
+                        meta_title, meta_description, meta_keywords, read_time, slug
+                 FROM resources 
+                 WHERE id = ? AND type = "blog" AND status = "published"`,
+                [slug]
+            );
+        }
+        
+        if (rows.length === 0) {
+            console.log('❌ No blog found for slug:', slug);
+            return res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
+        const blog = rows[0];
+        console.log('✅ Blog found:', blog.title);
+        // Serve the static blog detail page instead of generating HTML
+        res.sendFile(path.join(__dirname, 'pages', 'blog-detail.html'));
+    } catch (error) {
+        console.error('Error serving blog:', error);
+        res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
     }
 });
 
-// Use case routes
-app.get('/usecase/:id', (req, res) => {
-    const useCaseId = req.params.id;
-    const useCasePath = path.join(__dirname, 'pages', 'usecase', `${useCaseId}.html`);
-    
-    if (fs.existsSync(useCasePath)) {
-        res.sendFile(useCasePath);
-    } else {
-        res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+// SEO-friendly case study URLs
+app.get('/casestudy/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        
+        // Try to find by ID first (since slug column might not exist yet)
+        let [rows] = await pool.execute(
+            'SELECT * FROM resources WHERE id = ? AND type = "case-study" AND status = "published"',
+            [slug]
+        );
+        
+        // If not found by ID, try to find by slug (if column exists)
+        if (rows.length === 0) {
+            try {
+                [rows] = await pool.execute(
+                    'SELECT * FROM resources WHERE slug = ? AND type = "case-study" AND status = "published"',
+                    [slug]
+                );
+            } catch (slugError) {
+                // If slug column doesn't exist, just continue with empty results
+                console.log('Slug column not available, using ID-based lookup only');
+            }
+        }
+        
+        if (rows.length === 0) {
+            return res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
+        const caseStudy = rows[0];
+        const caseStudyHtml = generateCaseStudyPage(caseStudy);
+        res.send(caseStudyHtml);
+    } catch (error) {
+        console.error('Error serving case study:', error);
+        res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
     }
 });
 
-// Case study routes
-app.get('/casestudy/:id', (req, res) => {
-    const caseStudyId = req.params.id;
-    const caseStudyPath = path.join(__dirname, 'pages', 'casestudy', `${caseStudyId}.html`);
-    
-    if (fs.existsSync(caseStudyPath)) {
-        res.sendFile(caseStudyPath);
-    } else {
-        res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+// SEO-friendly use case URLs
+app.get('/usecase/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        
+        // Try to find by ID first (since slug column might not exist yet)
+        let [rows] = await pool.execute(
+            'SELECT * FROM resources WHERE id = ? AND type = "use-case" AND status = "published"',
+            [slug]
+        );
+        
+        // If not found by ID, try to find by slug (if column exists)
+        if (rows.length === 0) {
+            try {
+                [rows] = await pool.execute(
+                    'SELECT * FROM resources WHERE slug = ? AND type = "use-case" AND status = "published"',
+                    [slug]
+                );
+            } catch (slugError) {
+                // If slug column doesn't exist, just continue with empty results
+                console.log('Slug column not available, using ID-based lookup only');
+            }
+        }
+        
+        if (rows.length === 0) {
+            return res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
+        const useCase = rows[0];
+        const useCaseHtml = generateUseCasePage(useCase);
+        res.send(useCaseHtml);
+    } catch (error) {
+        console.error('Error serving use case:', error);
+        res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
     }
 });
+
+// Legacy routes for backward compatibility - removed duplicate redirect
+
+// Remove duplicate redirects - these were causing infinite loops
 
 // SPA fallback removed - using MPA only
 
-// Serve admin dashboard
-app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'admin', 'index.html'));
-});
+// Old admin dashboard removed - using new CMS at port 3001
 
 // Error handling middleware
 app.use((error, req, res, next) => {
@@ -1528,13 +2634,370 @@ app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
 
+// Helper function to generate SEO-friendly slugs
+function generateSlug(title) {
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-') // Replace spaces with hyphens
+        .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+        .trim('-'); // Remove leading/trailing hyphens
+}
+
+// Function to update existing resources with slugs
+async function updateResourcesWithSlugs() {
+    try {
+        console.log('🔄 Updating resources with SEO-friendly slugs...');
+        
+        // Get all resources without slugs
+        const [rows] = await pool.execute(
+            'SELECT id, title FROM resources WHERE slug IS NULL OR slug = ""'
+        );
+        
+        for (const resource of rows) {
+            const slug = generateSlug(resource.title);
+            await pool.execute(
+                'UPDATE resources SET slug = ? WHERE id = ?',
+                [slug, resource.id]
+            );
+            console.log(`✅ Updated resource ${resource.id}: "${resource.title}" -> "${slug}"`);
+        }
+        
+        console.log(`✅ Updated ${rows.length} resources with slugs`);
+    } catch (error) {
+        console.error('❌ Error updating resources with slugs:', error);
+    }
+}
+
+// Page Generation Functions
+function generateBlogPage(blog) {
+    let tags = [];
+    try {
+        tags = blog.tags && blog.tags !== '' ? JSON.parse(blog.tags) : [];
+    } catch (error) {
+        console.log('⚠️ Error parsing tags, using empty array:', error.message);
+        tags = [];
+    }
+    const formattedDate = new Date(blog.created_at).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${blog.title} - Emma AI Blog</title>
+    <meta name="description" content="${blog.excerpt}">
+    <meta property="og:title" content="${blog.title}">
+    <meta property="og:description" content="${blog.excerpt}">
+    <meta property="og:image" content="${blog.featured_image || '/Logo And Recording/cropped_circle_image.png'}">
+    <link rel="canonical" href="https://emma.kodefast.com/blog/${blog.id}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 1rem 0; border-bottom: 1px solid rgba(59, 130, 246, 0.3); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-container { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; }
+        .logo-image { width: 24px; height: 24px; object-fit: cover; }
+        .nav-links { display: flex; list-style: none; margin: 0; padding: 0; gap: 2rem; }
+        .nav-links a { color: #94a3b8; text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #3b82f6; }
+        .blog-container { max-width: 800px; margin: 0 auto; padding: 8rem 2rem 4rem; }
+        .blog-header { margin-bottom: 3rem; }
+        .blog-title { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; }
+        .blog-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; color: #94a3b8; }
+        .author-info { display: flex; align-items: center; gap: 0.5rem; }
+        .author-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .author-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .blog-image { width: 100%; height: 400px; object-fit: cover; border-radius: 1rem; margin-bottom: 2rem; }
+        .blog-content { font-size: 1.1rem; line-height: 1.8; color: #cbd5e1; }
+        .blog-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+        .tag { background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.9rem; font-weight: 500; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: #3b82f6; text-decoration: none; margin-bottom: 2rem; }
+        .back-link:hover { color: #60a5fa; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                </div>
+                <span style="font-weight: 700; color: #f8fafc;">Emma AI</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="blog-container">
+        <a href="/resources" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Resources
+        </a>
+        
+        <div class="blog-header">
+            <h1 class="blog-title">${blog.title}</h1>
+            <div class="blog-meta">
+                <div class="author-info">
+                    <div class="author-avatar">
+                        ${blog.author_image ? 
+                            `<img src="${blog.author_image}" alt="${blog.author}" onerror="this.parentElement.innerHTML='${blog.author.split(' ').map(n => n[0]).join('').toUpperCase()}'">` : 
+                            blog.author.split(' ').map(n => n[0]).join('').toUpperCase()
+                        }
+                    </div>
+                    <span>${blog.author}</span>
+                </div>
+                <span>•</span>
+                <span>${formattedDate}</span>
+                <span>•</span>
+                <span>${blog.read_time || '5 min read'}</span>
+            </div>
+        </div>
+
+        ${blog.featured_image ? `<img src="${blog.featured_image}" alt="${blog.title}" class="blog-image">` : ''}
+        
+        <div class="blog-content">
+            ${blog.content || blog.excerpt}
+        </div>
+
+        <div class="blog-tags">
+            ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+function generateCaseStudyPage(caseStudy) {
+    const tags = caseStudy.tags ? JSON.parse(caseStudy.tags) : [];
+    const formattedDate = new Date(caseStudy.date).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${caseStudy.title} - Emma AI Case Study</title>
+    <meta name="description" content="${caseStudy.excerpt}">
+    <meta property="og:title" content="${caseStudy.title}">
+    <meta property="og:description" content="${caseStudy.excerpt}">
+    <meta property="og:image" content="${caseStudy.image_url || '/Logo And Recording/cropped_circle_image.png'}">
+    <link rel="canonical" href="https://emma.kodefast.com/casestudy/${caseStudy.id}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 1rem 0; border-bottom: 1px solid rgba(59, 130, 246, 0.3); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-container { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; }
+        .logo-image { width: 24px; height: 24px; object-fit: cover; }
+        .nav-links { display: flex; list-style: none; margin: 0; padding: 0; gap: 2rem; }
+        .nav-links a { color: #94a3b8; text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #3b82f6; }
+        .case-study-container { max-width: 800px; margin: 0 auto; padding: 8rem 2rem 4rem; }
+        .case-study-header { margin-bottom: 3rem; }
+        .case-study-title { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; }
+        .case-study-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; color: #94a3b8; }
+        .author-info { display: flex; align-items: center; gap: 0.5rem; }
+        .author-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .author-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .case-study-image { width: 100%; height: 400px; object-fit: cover; border-radius: 1rem; margin-bottom: 2rem; }
+        .case-study-content { font-size: 1.1rem; line-height: 1.8; color: #cbd5e1; }
+        .case-study-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+        .tag { background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.9rem; font-weight: 500; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: #3b82f6; text-decoration: none; margin-bottom: 2rem; }
+        .back-link:hover { color: #60a5fa; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                </div>
+                <span style="font-weight: 700; color: #f8fafc;">Emma AI</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="case-study-container">
+        <a href="/resources" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Resources
+        </a>
+        
+        <div class="case-study-header">
+            <h1 class="case-study-title">${caseStudy.title}</h1>
+            <div class="case-study-meta">
+                <div class="author-info">
+                    <div class="author-avatar">
+                        ${caseStudy.authorImage ? 
+                            `<img src="${caseStudy.authorImage}" alt="${caseStudy.author}" onerror="this.parentElement.innerHTML='${caseStudy.author.split(' ').map(n => n[0]).join('').toUpperCase()}'">` : 
+                            caseStudy.author.split(' ').map(n => n[0]).join('').toUpperCase()
+                        }
+                    </div>
+                    <span>${caseStudy.author}</span>
+                </div>
+                <span>•</span>
+                <span>${formattedDate}</span>
+                <span>•</span>
+                <span>${caseStudy.readTime || '10 min read'}</span>
+            </div>
+        </div>
+
+        ${caseStudy.image_url ? `<img src="${caseStudy.image_url}" alt="${caseStudy.title}" class="case-study-image">` : ''}
+        
+        <div class="case-study-content">
+            ${caseStudy.content || caseStudy.excerpt}
+        </div>
+
+        <div class="case-study-tags">
+            ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+function generateUseCasePage(useCase) {
+    const tags = useCase.tags ? JSON.parse(useCase.tags) : [];
+    const formattedDate = new Date(useCase.date).toLocaleDateString('en-US', { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    });
+    
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${useCase.title} - Emma AI Use Case</title>
+    <meta name="description" content="${useCase.excerpt}">
+    <meta property="og:title" content="${useCase.title}">
+    <meta property="og:description" content="${useCase.excerpt}">
+    <meta property="og:image" content="${useCase.image_url || '/Logo And Recording/cropped_circle_image.png'}">
+    <link rel="canonical" href="https://emma.kodefast.com/usecase/${useCase.id}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; margin: 0; }
+        .navbar { position: fixed; top: 0; left: 0; width: 100%; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); z-index: 1000; padding: 1rem 0; border-bottom: 1px solid rgba(59, 130, 246, 0.3); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; justify-content: space-between; align-items: center; }
+        .nav-logo { display: flex; align-items: center; gap: 0.75rem; }
+        .logo-container { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; }
+        .logo-image { width: 24px; height: 24px; object-fit: cover; }
+        .nav-links { display: flex; list-style: none; margin: 0; padding: 0; gap: 2rem; }
+        .nav-links a { color: #94a3b8; text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #3b82f6; }
+        .use-case-container { max-width: 800px; margin: 0 auto; padding: 8rem 2rem 4rem; }
+        .use-case-header { margin-bottom: 3rem; }
+        .use-case-title { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; line-height: 1.1; }
+        .use-case-meta { display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; color: #94a3b8; }
+        .author-info { display: flex; align-items: center; gap: 0.5rem; }
+        .author-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .author-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .use-case-image { width: 100%; height: 400px; object-fit: cover; border-radius: 1rem; margin-bottom: 2rem; }
+        .use-case-content { font-size: 1.1rem; line-height: 1.8; color: #cbd5e1; }
+        .use-case-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+        .tag { background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.9rem; font-weight: 500; }
+        .back-link { display: inline-flex; align-items: center; gap: 0.5rem; color: #3b82f6; text-decoration: none; margin-bottom: 2rem; }
+        .back-link:hover { color: #60a5fa; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                </div>
+                <span style="font-weight: 700; color: #f8fafc;">Emma AI</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="use-case-container">
+        <a href="/resources" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Resources
+        </a>
+        
+        <div class="use-case-header">
+            <h1 class="use-case-title">${useCase.title}</h1>
+            <div class="use-case-meta">
+                <div class="author-info">
+                    <div class="author-avatar">
+                        ${useCase.authorImage ? 
+                            `<img src="${useCase.authorImage}" alt="${useCase.author}" onerror="this.parentElement.innerHTML='${useCase.author.split(' ').map(n => n[0]).join('').toUpperCase()}'">` : 
+                            useCase.author.split(' ').map(n => n[0]).join('').toUpperCase()
+                        }
+                    </div>
+                    <span>${useCase.author}</span>
+                </div>
+                <span>•</span>
+                <span>${formattedDate}</span>
+                <span>•</span>
+                <span>${useCase.readTime || '8 min read'}</span>
+            </div>
+        </div>
+
+        ${useCase.image_url ? `<img src="${useCase.image_url}" alt="${useCase.title}" class="use-case-image">` : ''}
+        
+        <div class="use-case-content">
+            ${useCase.content || useCase.excerpt}
+        </div>
+
+        <div class="use-case-tags">
+            ${tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
 // Start server (database initialization skipped for MPA-only mode)
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Emma CMS Server running on port ${PORT}`);
-    console.log(`Admin dashboard: http://localhost:${PORT}/admin`);
     console.log(`Main website: http://localhost:${PORT}`);
     console.log(`About: http://localhost:${PORT}/about`);
     console.log(`Pricing: http://localhost:${PORT}/pricing`);
     console.log(`Resources: http://localhost:${PORT}/resources`);
     console.log(`Contact: http://localhost:${PORT}/contact`);
+    console.log(`New CMS Admin: http://localhost:3001/admin-local`);
 });

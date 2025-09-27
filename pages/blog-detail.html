@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary Meta Tags -->
+    <title id="page-title">Blog Post - Emma AI</title>
+    <meta name="title" id="meta-title" content="Blog Post - Emma AI">
+    <meta name="description" id="meta-description" content="Read our latest insights on AI automation and intelligent workflows.">
+    <meta name="keywords" content="AI blog, automation insights, Emma AI, intelligent workflows">
+    <meta name="author" content="Emma AI Team">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="og-url" content="">
+    <meta property="og:title" id="og-title" content="">
+    <meta property="og:description" id="og-description" content="">
+    <meta property="og:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" id="twitter-url" content="">
+    <meta property="twitter:title" id="twitter-title" content="">
+    <meta property="twitter:description" id="twitter-description" content="">
+    <meta property="twitter:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" id="canonical-url" href="">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="apple-touch-icon" href="/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
+    
+    <style>
+        /* Blog Detail Page Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a !important;
+            color: #f8fafc !important;
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Override any conflicting styles from main stylesheet */
+        .main-content {
+            background: #0f172a !important;
+            color: #f8fafc !important;
+        }
+
+        .main-content * {
+            color: inherit !important;
+        }
+
+        /* Strong overrides for all text elements */
+        .article-content *,
+        .article-content h1,
+        .article-content h2,
+        .article-content h3,
+        .article-content h4,
+        .article-content h5,
+        .article-content h6,
+        .article-content p,
+        .article-content span,
+        .article-content div,
+        .article-content li {
+            color: #ffffff !important;
+        }
+
+        /* Override any inline styles */
+        .article-content [style*="color"] {
+            color: #ffffff !important;
+        }
+
+        /* Navigation Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1), 0 0 40px rgba(59, 130, 246, 0.05);
+        }
+        
+        .nav-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 2rem; 
+        }
+        
+        .nav-logo { 
+            display: flex; 
+            align-items: center; 
+            position: relative;
+        }
+        
+        .logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+            min-height: 48px;
+        }
+        
+        .logo-image {
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4));
+            position: relative;
+            z-index: 2;
+            object-fit: cover;
+            display: block;
+            background: #f0f0f0;
+            border: 2px solid #3b82f6;
+        }
+        
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.025em;
+        }
+        
+        .nav-links { 
+            display: flex; 
+            gap: 0.5rem; 
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link { 
+            color: #94a3b8; 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-link:hover { 
+            color: #f8fafc; 
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+        .nav-link.active { 
+            color: #f8fafc; 
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .article-header {
+            margin-bottom: 3rem;
+        }
+
+        .article-category {
+            color: #3b82f6;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .article-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            color: #f8fafc !important;
+        }
+
+        /* Fallback for browsers that don't support background-clip */
+        @supports not (-webkit-background-clip: text) {
+            .article-title {
+                color: #3b82f6 !important;
+                background: none;
+            }
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .article-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            background: #334155;
+        }
+
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ffffff !important;
+        }
+
+        .article-content h1,
+        .article-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            color: #ffffff !important;
+        }
+
+        .article-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #ffffff !important;
+        }
+
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #ffffff !important;
+        }
+
+        .article-content p {
+            margin-bottom: 1.5rem;
+            color: #ffffff !important;
+        }
+
+        .article-content strong,
+        .article-content b {
+            color: #f8fafc !important;
+            font-weight: 600;
+        }
+
+        .article-content em,
+        .article-content i {
+            color: #cbd5e1 !important;
+        }
+
+        .article-content ul, .article-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+            color: #ffffff !important;
+        }
+
+        .article-content li {
+            margin-bottom: 0.5rem;
+            color: #ffffff !important;
+        }
+
+        .article-content a {
+            color: #60a5fa !important;
+            text-decoration: underline;
+        }
+
+        .article-content a:hover {
+            color: #93c5fd !important;
+        }
+
+        .article-content blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+            color: #cbd5e1 !important;
+            font-style: italic;
+        }
+
+        .article-content code {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa !important;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        .article-content pre {
+            background: rgba(15, 23, 42, 0.8);
+            color: #e2e8f0 !important;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .article-content pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0 !important;
+        }
+
+        .article-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .tag {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #60a5fa;
+            transform: translateX(-5px);
+        }
+
+        /* Loading State */
+        .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(59, 130, 246, 0.3);
+            border-top: 3px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .error-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94a3b8;
+        }
+
+        .error-state h2 {
+            color: #f8fafc;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .article-title {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .main-content {
+                padding: 6rem 1rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                    <span class="logo-text">Emma AI</span>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/resources" class="nav-link">Resources</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading State -->
+        <div class="loading-state" id="loading-state">
+            <div class="loading-spinner"></div>
+            <p>Loading article...</p>
+        </div>
+
+        <!-- Error State -->
+        <div class="error-state" id="error-state" style="display: none;">
+            <h2>Article Not Found</h2>
+            <p>The article you're looking for doesn't exist or has been moved.</p>
+            <a href="/resources" class="back-link">← Back to Resources</a>
+        </div>
+
+        <!-- Article Content -->
+        <div id="article-content" style="display: none;">
+            <a href="/resources" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Resources
+            </a>
+
+            <article class="article-header">
+                <span class="article-category" id="article-category">Blog Post</span>
+                <h1 class="article-title" id="article-title">Loading...</h1>
+                <div class="article-meta" id="article-meta">
+                    <div class="author-info">
+                        <div class="author-avatar" id="author-avatar">E</div>
+                        <span id="author-name">Emma AI Team</span>
+                    </div>
+                    <span id="article-date">Loading...</span>
+                    <span id="read-time">5 min read</span>
+                </div>
+            </article>
+
+            <img class="article-image" id="article-image" src="" alt="" style="display: none;">
+
+            <div class="article-content" id="article-body">
+                Loading content...
+            </div>
+
+            <div class="article-tags" id="article-tags">
+                <!-- Tags will be populated here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- World-Class Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <!-- Footer Top Section -->
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-container">
+                            <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                        </div>
+                        <div class="brand-info">
+                            <h2 class="brand-name">Emma AI</h2>
+                            <p class="brand-tagline">Intelligent AI Assistant Platform</p>
+                        </div>
+                    </div>
+                    <p class="brand-description">
+                        Building the future of autonomous AI agents. Transform your operations with intelligent automation across Healthcare, Banking, Education, and more.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 c0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="GitHub">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
+                            </svg>
+                        </a>
+                        <a href="#" class="social-link" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-links-grid">
+                    <div class="footer-column">
+                        <h3 class="column-title">Product</h3>
+                        <ul class="footer-links">
+                            <li><a href="/features" class="footer-link">Features</a></li>
+                            <li><a href="/pricing" class="footer-link">Pricing</a></li>
+                            <li><a href="/integrations" class="footer-link">Integrations</a></li>
+                            <li><a href="/api" class="footer-link">API</a></li>
+                            <li><a href="/security" class="footer-link">Security</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3 class="column-title">Industries</h3>
+                        <ul class="footer-links">
+                            <li><a href="/healthcare" class="footer-link">Healthcare</a></li>
+                            <li><a href="/banking" class="footer-link">Banking & Finance</a></li>
+                            <li><a href="/education" class="footer-link">Education</a></li>
+                            <li><a href="/manufacturing" class="footer-link">Manufacturing</a></li>
+                            <li><a href="/retail" class="footer-link">Retail</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3 class="column-title">Company</h3>
+                        <ul class="footer-links">
+                            <li><a href="/about" class="footer-link">About Us</a></li>
+                            <li><a href="/careers" class="footer-link">Careers</a></li>
+                            <li><a href="/blog" class="footer-link">Blog</a></li>
+                            <li><a href="/press" class="footer-link">Press</a></li>
+                            <li><a href="/partners" class="footer-link">Partners</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column">
+                        <h3 class="column-title">Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="/help" class="footer-link">Help Center</a></li>
+                            <li><a href="/contact" class="footer-link">Contact Us</a></li>
+                            <li><a href="/status" class="footer-link">System Status</a></li>
+                            <li><a href="/documentation" class="footer-link">Documentation</a></li>
+                            <li><a href="/community" class="footer-link">Community</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Newsletter Section -->
+            <div class="footer-newsletter">
+                <div class="newsletter-content">
+                    <div class="newsletter-text">
+                        <h3 class="newsletter-title">Stay Updated</h3>
+                        <p class="newsletter-description">Get the latest AI insights and product updates delivered to your inbox.</p>
+                    </div>
+                    <div class="newsletter-form">
+                        <div class="form-group">
+                            <input type="email" placeholder="Enter your email" class="newsletter-input" required>
+                            <button type="submit" class="newsletter-button">
+                                <span>Subscribe</span>
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="newsletter-disclaimer">We respect your privacy. Unsubscribe at any time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Bottom Section -->
+            <div class="footer-bottom">
+                <div class="footer-bottom-content">
+                    <div class="copyright">
+                        <p>&copy; <span id="currentYear">2024</span> KodeFast. All rights reserved. Building the future of autonomous AI agents.</p>
+                    </div>
+                    <div class="footer-bottom-links">
+                        <a href="/privacy" class="bottom-link">Privacy Policy</a>
+                        <a href="/terms" class="bottom-link">Terms of Service</a>
+                        <a href="/cookies" class="bottom-link">Cookie Policy</a>
+                        <a href="/accessibility" class="bottom-link">Accessibility</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Background Effects -->
+        <div class="footer-bg-effects">
+            <div class="footer-particles"></div>
+            <div class="footer-gradient"></div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <script>
+        // Get article ID from URL
+        function getArticleId() {
+            const path = window.location.pathname;
+            const segments = path.split('/');
+            return segments[segments.length - 1];
+        }
+
+        // Load article data
+        async function loadArticle() {
+            const articleSlug = getArticleId(); // This is actually a slug
+            console.log('Loading article:', articleSlug);
+            
+            try {
+                // Try to fetch from blogs API first using the slug
+                let response = await fetch(`/api/blogs`);
+                let article = null;
+                
+                if (response.ok) {
+                    const blogs = await response.json();
+                    // Find the blog with matching slug
+                    article = blogs.find(blog => blog.slug === articleSlug);
+                }
+                
+                // If not found in blogs, try resources API
+                if (!article) {
+                    response = await fetch(`/api/resources`);
+                    if (response.ok) {
+                        const resources = await response.json();
+                        article = resources.find(resource => resource.slug === articleSlug && resource.type === 'blog');
+                    }
+                }
+                
+                if (article) {
+                    displayArticle(article);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error loading article:', error);
+                showError();
+            }
+        }
+
+        // Display article content
+        function displayArticle(article) {
+            console.log('Displaying article:', article);
+            
+            // Hide loading state
+            document.getElementById('loading-state').style.display = 'none';
+            
+            // Show article content
+            document.getElementById('article-content').style.display = 'block';
+            
+            // Update page title and meta
+            document.getElementById('page-title').textContent = article.title + ' - Emma AI';
+            document.getElementById('meta-title').content = article.title + ' - Emma AI';
+            document.getElementById('meta-description').content = article.excerpt || article.description || 'Read our latest insights on AI automation.';
+            
+            // Update article content
+            document.getElementById('article-title').textContent = article.title;
+            
+            // Clean up content and remove any malformed HTML
+            let cleanContent = article.content || article.excerpt || 'Content not available.';
+            // Remove any malformed HTML artifacts
+            cleanContent = cleanContent.replace(/'">/g, '');
+            cleanContent = cleanContent.replace(/'/g, "'");
+            
+            document.getElementById('article-body').innerHTML = cleanContent;
+            
+            // Update author info
+            const author = article.author || 'Emma AI Team';
+            const authorAvatar = document.getElementById('author-avatar');
+            if (article.authorImage || article.author_image) {
+                authorAvatar.innerHTML = `<img src="${article.authorImage || article.author_image}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">`;
+            } else {
+                authorAvatar.textContent = author.charAt(0).toUpperCase();
+            }
+            document.getElementById('author-name').textContent = author;
+            
+            // Update date
+            const date = article.date || article.created_at || new Date().toISOString();
+            const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('article-date').textContent = formattedDate;
+            
+            // Update read time
+            const readTime = article.readTime || '5';
+            document.getElementById('read-time').textContent = readTime + ' min read';
+            
+            // Update image
+            if (article.image || article.image_url) {
+                const img = document.getElementById('article-image');
+                img.src = article.image || article.image_url;
+                img.alt = article.title;
+                img.style.display = 'block';
+            }
+            
+            // Update tags
+            const tagsContainer = document.getElementById('article-tags');
+            if (article.tags) {
+                let tags = [];
+                try {
+                    tags = typeof article.tags === 'string' ? JSON.parse(article.tags) : article.tags;
+                } catch (e) {
+                    tags = [article.tags];
+                }
+                
+                tagsContainer.innerHTML = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            }
+            
+            // Update meta tags
+            const currentUrl = window.location.href;
+            document.getElementById('og-url').content = currentUrl;
+            document.getElementById('og-title').content = article.title;
+            document.getElementById('og-description').content = article.excerpt || article.description || '';
+            document.getElementById('twitter-url').content = currentUrl;
+            document.getElementById('twitter-title').content = article.title;
+            document.getElementById('twitter-description').content = article.excerpt || article.description || '';
+            document.getElementById('canonical-url').href = currentUrl;
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+        }
+
+        // Initialize on DOM load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Blog detail page loaded');
+            
+            // Auto-update copyright year
+            const currentYearElement = document.getElementById('currentYear');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+            
+            // Load article
+            loadArticle();
+        });
+    </script>
+</body>
+</html>

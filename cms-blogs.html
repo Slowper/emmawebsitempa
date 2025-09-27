@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Posts - Emma CMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 2rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        .nav-section {
+            margin-bottom: 2rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0 2rem;
+            margin-bottom: 1rem;
+            opacity: 0.7;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 2rem;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #fbbf24;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Card */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Loading */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+
+        .spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 0.75rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.875rem;
+        }
+
+        .table td {
+            font-size: 0.875rem;
+        }
+
+        .table tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-published {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-draft {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 0.5rem;
+        }
+
+        .action-btn.edit {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .action-btn.edit:hover {
+            background: #e5e7eb;
+        }
+
+        .action-btn.delete {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        .action-btn.delete:hover {
+            background: #fee2e2;
+        }
+
+        .resource-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+
+        .resource-excerpt {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .editor-btn {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .editor-btn:hover {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+
+        .simple-editor {
+            min-height: 200px;
+            padding: 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0 0 6px 6px;
+            background: white;
+            outline: none;
+        }
+
+        .simple-editor:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f9fafb;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .image-preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <i class="fas fa-robot"></i>
+                    Emma CMS
+                </div>
+                <div class="sidebar-subtitle">Resources Management</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Content</div>
+                <a href="cms-admin-local.html" class="nav-item">
+                    <i class="fas fa-tachometer-alt"></i>
+                    Dashboard
+                </a>
+                <a href="cms-resources.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    All Resources
+                </a>
+                <a href="cms-blogs.html" class="nav-item active">
+                    <i class="fas fa-blog"></i>
+                    Blog Posts
+                </a>
+                <a href="cms-case-studies.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    Case Studies
+                </a>
+                <a href="cms-use-cases.html" class="nav-item">
+                    <i class="fas fa-cogs"></i>
+                    Use Cases
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-industry"></i>
+                    Industries
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-tags"></i>
+                    Tags
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-images"></i>
+                    Media Library
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    Users
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h1 class="page-title">Blog Posts</h1>
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">A</div>
+                    <span id="user-name">Admin User</span>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Blog Posts</h3>
+                    <button class="btn btn-primary" onclick="openResourceModal('blog')">
+                        <i class="fas fa-plus"></i>
+                        New Blog Post
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="loading" id="blogs-loading">
+                        <div class="spinner"></div>
+                        Loading blog posts...
+                    </div>
+                    <div id="blogs-content" style="display: none;">
+                        <!-- Blog posts will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Resource Modal -->
+    <div class="modal" id="resource-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modal-title">New Resource</h3>
+                <button class="modal-close" onclick="closeResourceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="resource-form">
+                    <div class="form-group">
+                        <label class="form-label">Title *</label>
+                        <input type="text" class="form-input" id="resource-title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Type *</label>
+                        <select class="form-input form-select" id="resource-type" required>
+                            <option value="">Select type</option>
+                            <option value="blog">Blog Post</option>
+                            <option value="case-study">Case Study</option>
+                            <option value="use-case">Use Case</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Excerpt</label>
+                        <textarea class="form-input form-textarea" id="resource-excerpt" placeholder="Brief description of the resource"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Content *</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" onclick="formatText('bold')" title="Bold">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" class="editor-btn" onclick="formatText('italic')" title="Italic">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" class="editor-btn" onclick="formatText('underline')" title="Underline">
+                                <i class="fas fa-underline"></i>
+                            </button>
+                            <button type="button" class="editor-btn" onclick="insertHeading()" title="Heading">
+                                <i class="fas fa-heading"></i>
+                            </button>
+                            <button type="button" class="editor-btn" onclick="insertList()" title="List">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                            <button type="button" class="editor-btn" onclick="insertLink()" title="Link">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                        <div class="simple-editor" id="resource-editor" contenteditable="true" data-placeholder="Start writing your content here..."></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Industry</label>
+                        <select class="form-input form-select" id="resource-industry">
+                            <option value="">Select industry</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tags</label>
+                        <input type="text" class="form-input" id="resource-tags" placeholder="Enter tags separated by commas">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Featured Image</label>
+                        <div class="file-upload-area" onclick="document.getElementById('featured-image-input').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #64748b; margin-bottom: 1rem;"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <p style="font-size: 0.875rem; color: #64748b;">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                        <input type="file" id="featured-image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'featured-image-preview')">
+                        <div id="featured-image-preview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Author Name *</label>
+                        <input type="text" class="form-input" id="resource-author" placeholder="Enter author name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Author Image</label>
+                        <div class="file-upload-area" onclick="document.getElementById('author-image-input').click()">
+                            <i class="fas fa-user-circle" style="font-size: 2rem; color: #64748b; margin-bottom: 1rem;"></i>
+                            <p>Click to upload author image</p>
+                        </div>
+                        <input type="file" id="author-image-input" accept="image/*" style="display: none;" onchange="handleImageUpload(this, 'author-image-preview')">
+                        <div id="author-image-preview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Gallery Images</label>
+                        <div class="file-upload-area" onclick="document.getElementById('gallery-input').click()">
+                            <i class="fas fa-images" style="font-size: 2rem; color: #64748b; margin-bottom: 1rem;"></i>
+                            <p>Click to upload multiple images</p>
+                        </div>
+                        <input type="file" id="gallery-input" accept="image/*" multiple style="display: none;" onchange="handleGalleryUpload(this)">
+                        <div id="gallery-preview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-input form-select" id="resource-status">
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SEO Title</label>
+                        <input type="text" class="form-input" id="resource-meta-title" placeholder="Leave empty to use main title">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SEO Description</label>
+                        <textarea class="form-input form-textarea" id="resource-meta-description" placeholder="Leave empty to use excerpt"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SEO Keywords</label>
+                        <input type="text" class="form-input" id="resource-meta-keywords" placeholder="Enter keywords separated by commas">
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeResourceModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Resource
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="cms-admin.js"></script>
+    <script>
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load blog posts
+            loadBlogPosts();
+        });
+
+        async function loadBlogPosts() {
+            try {
+                console.log('🔄 Loading blog posts...');
+                
+                const response = await fetch('http://localhost:3001/api/resources?type=blog&limit=50');
+                const data = await response.json();
+                const blogs = data.resources || [];
+                
+                console.log('📝 Blog posts loaded:', blogs.length);
+                
+                displayBlogPosts(blogs);
+            } catch (error) {
+                console.error('❌ Error loading blog posts:', error);
+            }
+        }
+
+        function displayBlogPosts(blogs) {
+            const container = document.getElementById('blogs-content');
+            const loading = document.getElementById('blogs-loading');
+            
+            if (blogs.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #64748b;">No blog posts found</p>';
+            } else {
+                container.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Industry</th>
+                                <th>Status</th>
+                                <th>Author</th>
+                                <th>Created</th>
+                                <th>Views</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${blogs.map(blog => `
+                                <tr>
+                                    <td>
+                                        <div class="resource-title">${blog.title}</div>
+                                        <div class="resource-excerpt">${blog.excerpt || ''}</div>
+                                    </td>
+                                    <td>${blog.industry_name || 'Technology'}</td>
+                                    <td>
+                                        <span class="status-badge status-${blog.status}">
+                                            ${blog.status.toUpperCase()}
+                                        </span>
+                                    </td>
+                                    <td>${blog.author_name || 'Emma AI Team'}</td>
+                                    <td>${new Date(blog.created_at).toLocaleDateString()}</td>
+                                    <td>${blog.view_count || 0}</td>
+                                    <td>
+                                        <button class="action-btn edit" onclick="editResource(${blog.id})">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn delete" onclick="deleteResource(${blog.id})">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+            
+            loading.style.display = 'none';
+            container.style.display = 'block';
+        }
+
+        function openResourceModal(type) {
+            // Open the modal on this page
+            const modal = document.getElementById('resource-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const resourceType = document.getElementById('resource-type');
+            
+            if (modal && modalTitle && resourceType) {
+                modalTitle.textContent = 'New ' + (type || 'Resource');
+                if (type) {
+                    resourceType.value = type;
+                }
+                modal.style.display = 'block';
+            } else {
+                alert('Modal not found');
+            }
+        }
+
+        function closeResourceModal() {
+            const modal = document.getElementById('resource-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Simple rich text editor functions (fallback for when Quill is not available)
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            const editor = document.getElementById('resource-editor');
+            if (editor) editor.focus();
+        }
+
+        function insertHeading() {
+            const heading = prompt('Enter heading text:');
+            if (heading) {
+                document.execCommand('insertHTML', false, `<h2>${heading}</h2>`);
+            }
+        }
+
+        function insertList() {
+            document.execCommand('insertUnorderedList', false, null);
+        }
+
+        function insertLink() {
+            const url = prompt('Enter URL:');
+            if (url) {
+                document.execCommand('createLink', false, url);
+            }
+        }
+
+        function handleImageUpload(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    if (preview) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleGalleryUpload(input) {
+            const files = input.files;
+            const preview = document.getElementById('gallery-preview');
+            if (preview) {
+                preview.innerHTML = '';
+                
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Gallery preview';
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        function editResource(id) {
+            // Redirect to main admin page with edit modal
+            window.location.href = 'cms-admin-local.html?action=edit&id=' + id;
+        }
+
+        async function deleteResource(id) {
+            if (confirm('Are you sure you want to delete this blog post?')) {
+                try {
+                    console.log('🗑️ Deleting blog post:', id);
+                    
+                    const response = await fetch(`http://localhost:3001/api/resources/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Blog post deleted successfully');
+                        // Reload the blog posts list
+                        await loadBlogPosts();
+                    } else {
+                        console.error('❌ Failed to delete blog post');
+                        alert('Failed to delete blog post. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('❌ Error deleting blog post:', error);
+                    alert('Error deleting blog post. Please try again.');
+                }
+            }
+        }
+
+        // Form submission handler is handled by cms-admin.js
+        // Removed duplicate event listener to prevent multiple submissions
+
+        function logout() {
+            localStorage.removeItem('cms_token');
+            window.location.href = 'cms-admin-local.html';
+        }
+
+        // Initialize CMS
+        document.addEventListener('DOMContentLoaded', function() {
+            window.cms = new EmmaCMS();
+        });
+    </script>
+</body>
+</html>

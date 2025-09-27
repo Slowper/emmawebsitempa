@@ -89,22 +89,433 @@
             100% { transform: translateX(100%); }
         }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
-        .nav-logo { display: flex; align-items: center; }
-        .nav-links { display: flex; gap: 2rem; }
-        .nav-link { color: #f8fafc; text-decoration: none; font-weight: 500; transition: color 0.3s; }
-        .nav-link:hover { color: #3b82f6; }
-        .nav-link.active { color: #3b82f6; }
-        .hero { padding: 8rem 2rem 4rem; text-align: center; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
-        .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 1.25rem; color: #94a3b8; max-width: 600px; margin: 0 auto; }
-        .content { max-width: 1200px; margin: 0 auto; padding: 4rem 2rem; }
-        .section { margin-bottom: 4rem; }
-        .section h2 { font-size: 2.5rem; margin-bottom: 2rem; color: #3b82f6; }
-        .section p { font-size: 1.1rem; line-height: 1.8; color: #cbd5e1; margin-bottom: 1.5rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem; }
-        .card { background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; }
-        .card h3 { color: #3b82f6; margin-bottom: 1rem; font-size: 1.5rem; }
-        .card p { color: #cbd5e1; margin-bottom: 0; }
+        .nav-logo { 
+            display: flex; 
+            align-items: center; 
+            position: relative;
+        }
+        
+        .logo-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+            min-height: 48px;
+        }
+        
+        .logo-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+            border-radius: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .logo-container:hover::before {
+            opacity: 1;
+        }
+        
+        .logo-container:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+        
+        .logo-image {
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4));
+            position: relative;
+            z-index: 2;
+            object-fit: cover;
+            display: block;
+            background: #f0f0f0;
+            border: 2px solid #3b82f6;
+        }
+        
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.025em;
+        }
+        
+        .logo-container:hover .logo-image {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.6));
+        }
+        
+        .logo-container:hover .logo-text {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links { 
+            display: flex; 
+            gap: 0.5rem; 
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link { 
+            color: #94a3b8; 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .nav-link:hover { 
+            color: #f8fafc; 
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+        .nav-link.active { 
+            color: #f8fafc; 
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
+        }
+        .nav-link.active::before {
+            opacity: 0;
+        }
+        .hero { 
+            padding: 6rem 2rem 3rem; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Lottie Animation Styles */
+        .lottie-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            will-change: transform;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            -moz-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            -o-transform: translateZ(0);
+        }
+        
+        .lottie-animation {
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+            filter: blur(1px);
+            transform: scale(1.8) rotate(90deg);
+            transform-origin: center center;
+            object-fit: cover;
+            will-change: transform;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            -moz-backface-visibility: hidden;
+        }
+        
+        /* Responsive adjustments for landscape mode */
+        @media (max-width: 768px) {
+            .lottie-animation {
+                transform: scale(2.2) rotate(90deg);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .lottie-animation {
+                transform: scale(1.5) rotate(90deg);
+            }
+        }
+        
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .lottie-animation {
+                animation: none !important;
+                transform: scale(1.8) rotate(90deg) !important;
+            }
+            .lottie-container {
+                transform: translateZ(0) !important;
+            }
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-text {
+            text-align: left;
+        }
+        .hero h1 { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            margin-bottom: 1.5rem; 
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+        .hero p { 
+            font-size: 1.25rem; 
+            color: #94a3b8; 
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .hero-stats {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            width: 100%;
+        }
+        .stat-item {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .stat-item:hover::before {
+            transform: scaleX(1);
+        }
+        .stat-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            .hero-text {
+                text-align: center;
+            }
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            .hero-stats {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1rem;
+            }
+            .stat-item {
+                padding: 1.5rem 1rem;
+            }
+            .stat-number {
+                font-size: 1.8rem;
+            }
+        }
+        .content { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; }
+        .section { margin-bottom: 3rem; }
+        .section h2 { 
+            font-size: 2.25rem; 
+            margin-bottom: 1.5rem; 
+            color: #3b82f6; 
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+        .section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+        .section p { 
+            font-size: 1.1rem; 
+            line-height: 1.7; 
+            color: #cbd5e1; 
+            margin-bottom: 1.5rem; 
+        }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 1.5rem; 
+            margin-top: 2rem; 
+        }
+        .card { 
+            background: rgba(30, 41, 59, 0.6); 
+            backdrop-filter: blur(10px);
+            padding: 1.5rem; 
+            border-radius: 0.75rem; 
+            border: 1px solid rgba(59, 130, 246, 0.2); 
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .card:hover::before {
+            transform: scaleX(1);
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.1);
+        }
+        .card h3 { 
+            color: #3b82f6; 
+            margin-bottom: 0.75rem; 
+            font-size: 1.25rem; 
+            font-weight: 600;
+        }
+        .card p { 
+            color: #cbd5e1; 
+            margin-bottom: 0; 
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Timeline Responsive Design */
+        @media (max-width: 768px) {
+            .story-timeline {
+                padding: 0 1rem;
+            }
+            .timeline-item {
+                flex-direction: column;
+                text-align: center;
+                margin-bottom: 2rem !important;
+            }
+            .timeline-icon {
+                margin-right: 0 !important;
+                margin-bottom: 1rem !important;
+            }
+            .timeline-line {
+                display: none;
+            }
+            .timeline-content {
+                width: 100%;
+            }
+        }
+        
+        /* Team Cards Responsive Design */
+        .team-card {
+            flex: 1 !important;
+            min-width: 0 !important;
+            max-width: none !important;
+        }
+        
+        @media (max-width: 768px) {
+            .leadership-grid, .team-behind-grid {
+                flex-direction: column !important;
+                align-items: center !important;
+            }
+            .team-card {
+                flex: none !important;
+                width: 100% !important;
+                max-width: 300px !important;
+            }
+        }
     </style>
     
     <!-- JSON-LD Structured Data -->
@@ -188,7 +599,10 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" style="height: 40px;">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                    <span class="logo-text">Emma AI</span>
+                </div>
             </div>
             <div class="nav-links">
                 <a href="/" class="nav-link">Home</a>
@@ -202,8 +616,39 @@
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>About Emma AI</h1>
-        <p>Revolutionizing operations through intelligent automation and cutting-edge AI technology</p>
+        <!-- Lottie Animation Background -->
+        <div class="lottie-container">
+            <lottie-player
+                src="/Logo And Recording/Abstract animation for apps.json"
+                background="transparent"
+                speed="0.3"
+                loop
+                autoplay
+                class="lottie-animation">
+            </lottie-player>
+        </div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>About Emma AI</h1>
+                <p>Revolutionizing operations through intelligent automation and cutting-edge AI technology</p>
+            </div>
+            <div class="hero-visual">
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">100+</div>
+                        <div class="stat-label">AI Solutions</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Enterprise Clients</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">99.9%</div>
+                        <div class="stat-label">Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Main Content -->
@@ -287,75 +732,54 @@
             <h2>Our Story</h2>
             <p>The story behind Emma and the passionate team building the future of AI</p>
             
-            <!-- Top Three Cards Row: Reality, From Court to Code, Emma is Born -->
-            <div class="top-story-cards-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
-                <!-- The Reality Card -->
-                <div class="story-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155;">
-                    <div class="story-card-icon" style="margin-bottom: 1rem;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 2rem; height: 2rem; color: #3b82f6;">
-                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
+            <!-- Story Timeline -->
+            <div class="story-timeline" style="max-width: 1000px; margin: 0 auto;">
+                <!-- Timeline Item 1: The Reality -->
+                <div class="timeline-item" style="display: flex; align-items: center; margin-bottom: 3rem; position: relative;">
+                    <div class="timeline-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 2rem; flex-shrink: 0; position: relative; z-index: 2;">
+                        <span style="color: white; font-size: 1.5rem;">🏥</span>
                     </div>
-                    <h4 style="color: #3b82f6; margin-bottom: 1rem;">🏥 The Reality</h4>
-                    <p style="color: #cbd5e1; margin: 0;">What should have been a 30-minute Clinic visit became a 4-hour ordeal, witnessing the chaos of manual scheduling and complex systems that frustrated patients.</p>
-                </div>
-
-                <!-- From Court to Code Card (Basketball Card) -->
-                <div class="basketball-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; position: relative; overflow: hidden;">
-                    <div class="basketball-court-bg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #1e293b 0%, #334155 100%); opacity: 0.1;"></div>
-                    <div class="basketball-card-overlay" style="position: relative; z-index: 1;">
-                        <h3 style="color: #3b82f6; margin-bottom: 1rem;">From Court to Code</h3>
-                        <p style="color: #cbd5e1; margin-bottom: 1rem;">One game, one injury, one moment of clarity that changed everything</p>
-                        <div class="basketball-quote" style="background: #334155; padding: 1rem; border-radius: 0.5rem; border-left: 4px solid #3b82f6;">
-                            <blockquote style="color: #cbd5e1; margin: 0; font-style: italic;">
-                                "Sometimes the best innovations come from the most unexpected places. For us, it was a basketball court."
-                            </blockquote>
-                            <cite style="color: #94a3b8; font-size: 0.9rem;">- Our Founder</cite>
-                        </div>
+                    <div class="timeline-content" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); flex: 1;">
+                        <h4 style="color: #3b82f6; margin-bottom: 0.5rem; font-size: 1.25rem;">The Reality</h4>
+                        <p style="color: #cbd5e1; margin: 0; line-height: 1.6;">What should have been a 30-minute clinic visit became a 4-hour ordeal, witnessing the chaos of manual scheduling and complex systems that frustrated patients.</p>
                     </div>
                 </div>
 
-                <!-- Emma is Born Card -->
-                <div class="story-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155;">
-                    <div class="story-card-icon" style="margin-bottom: 1rem;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 2rem; height: 2rem; color: #3b82f6;">
-                            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
-                            <path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
-                            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
-                            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
-                        </svg>
+                <!-- Timeline Item 2: The Game -->
+                <div class="timeline-item" style="display: flex; align-items: center; margin-bottom: 3rem; position: relative;">
+                    <div class="timeline-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 2rem; flex-shrink: 0; position: relative; z-index: 2;">
+                        <span style="color: white; font-size: 1.5rem;">🏀</span>
                     </div>
-                    <h4 style="color: #3b82f6; margin-bottom: 1rem;">🚀 Emma is Born</h4>
-                    <p style="color: #cbd5e1; margin: 0;">From that single moment of inspiration, Emma was born—an AI assistant designed to bridge the gap between complex technology and everyday people.</p>
-                </div>
-            </div>
-
-            <!-- Bottom Two Cards Row: The Game, The Vision -->
-            <div class="bottom-story-cards-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
-                <!-- The Game Card -->
-                <div class="story-card story-card-featured" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); padding: 2rem; border-radius: 1rem; border: 2px solid #3b82f6;">
-                    <div class="story-card-icon" style="margin-bottom: 1rem;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 2rem; height: 2rem; color: #3b82f6;">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M8 12h8M12 8v8"></path>
-                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Z"></path>
-                        </svg>
+                    <div class="timeline-content" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); flex: 1;">
+                        <h4 style="color: #3b82f6; margin-bottom: 0.5rem; font-size: 1.25rem;">The Game</h4>
+                        <p style="color: #cbd5e1; margin: 0; line-height: 1.6;">A typical Saturday morning pickup game turned into a life-changing moment when our founder suffered a dislocated shoulder during a hard drive to the basket.</p>
                     </div>
-                    <h4 style="color: #3b82f6; margin-bottom: 1rem;">🏀 The Game</h4>
-                    <p style="color: #cbd5e1; margin: 0;">A typical Saturday morning pickup game turned into a life-changing moment when our founder suffered a dislocated shoulder during a hard drive to the basket.</p>
                 </div>
 
-                <!-- The Vision Card -->
-                <div class="story-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155;">
-                    <div class="story-card-icon" style="margin-bottom: 1rem;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 2rem; height: 2rem; color: #3b82f6;">
-                            <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
-                        </svg>
+                <!-- Timeline Item 3: The Vision -->
+                <div class="timeline-item" style="display: flex; align-items: center; margin-bottom: 3rem; position: relative;">
+                    <div class="timeline-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 2rem; flex-shrink: 0; position: relative; z-index: 2;">
+                        <span style="color: white; font-size: 1.5rem;">💡</span>
                     </div>
-                    <h4 style="color: #3b82f6; margin-bottom: 1rem;">💡 The Vision</h4>
-                    <p style="color: #cbd5e1; margin: 0;">A simple question emerged: "What if there was a virtual assistant that could handle all this seamlessly?" Not just for healthcare, but for every industry.</p>
+                    <div class="timeline-content" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); flex: 1;">
+                        <h4 style="color: #3b82f6; margin-bottom: 0.5rem; font-size: 1.25rem;">The Vision</h4>
+                        <p style="color: #cbd5e1; margin: 0; line-height: 1.6;">A simple question emerged: "What if there was a virtual assistant that could handle all this seamlessly?" Not just for healthcare, but for every industry.</p>
+                    </div>
                 </div>
+
+                <!-- Timeline Item 4: Emma is Born -->
+                <div class="timeline-item" style="display: flex; align-items: center; margin-bottom: 0; position: relative;">
+                    <div class="timeline-icon" style="width: 60px; height: 60px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 2rem; flex-shrink: 0; position: relative; z-index: 2;">
+                        <span style="color: white; font-size: 1.5rem;">🚀</span>
+                    </div>
+                    <div class="timeline-content" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); flex: 1;">
+                        <h4 style="color: #3b82f6; margin-bottom: 0.5rem; font-size: 1.25rem;">Emma is Born</h4>
+                        <p style="color: #cbd5e1; margin: 0; line-height: 1.6;">From that single moment of inspiration, Emma was born—an AI assistant designed to bridge the gap between complex technology and everyday people.</p>
+                    </div>
+                </div>
+
+                <!-- Timeline Line -->
+                <div class="timeline-line" style="position: absolute; left: 30px; top: 60px; bottom: 60px; width: 2px; background: linear-gradient(180deg, #3b82f6, #8b5cf6); z-index: 1;"></div>
             </div>
         </section>
 
@@ -364,52 +788,52 @@
             <h2>Meet the Leadership Team</h2>
             <p>The visionaries leading Emma's mission to democratize AI</p>
             
-            <div class="team-grid leadership-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+            <div class="team-grid leadership-grid" style="display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 1rem; margin: 2rem 0;">
                 <!-- Jay Talluri -->
-                <div class="team-card leadership-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Jay.webp" alt="Jay Talluri" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card leadership-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Jay.webp" alt="Jay Talluri" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Jay Talluri</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Founder & Chairman</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">Accomplished entrepreneur who founded KodeFast in March 2021, demonstrating his commitment to innovative business solutions. Under his leadership, KodeFast has achieved significant milestones, including winning the hearts of attendees at the ITServe Alliance Conference in Las Vegas.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Jay Talluri</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Founder & Chairman</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Accomplished entrepreneur who founded KodeFast in March 2021, demonstrating his commitment to innovative business solutions.</p>
                     </div>
                 </div>
 
                 <!-- Radha Alla -->
-                <div class="team-card leadership-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Radha.webp" alt="Radha Alla" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card leadership-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Radha.webp" alt="Radha Alla" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Radha Alla</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Founder & CEO</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">Radha Alla is the Founder and CEO of KodeFast, a company that leverages AI to revolutionize application development, enhancing design and collaboration while empowering teams to build custom applications effortlessly.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Radha Alla</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Founder & CEO</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Founder and CEO of KodeFast, leveraging AI to revolutionize application development and empowering teams to build custom applications effortlessly.</p>
                     </div>
                 </div>
 
                 <!-- Suman Tammareddy -->
-                <div class="team-card leadership-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Suman.avif" alt="Suman Tammareddy" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card leadership-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Suman.avif" alt="Suman Tammareddy" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Suman Tammareddy</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Chief Operating Officer</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">Suman Tammareddy serves as the Chief Operating Officer at KodeFast, bringing extensive experience in managing technology-driven enterprises and holding directorial positions in several companies.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Suman Tammareddy</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Chief Operating Officer</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Chief Operating Officer at KodeFast, bringing extensive experience in managing technology-driven enterprises and holding directorial positions.</p>
                     </div>
                 </div>
 
                 <!-- Prasad Bandaru -->
-                <div class="team-card leadership-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Prasad.webp" alt="Prasad Bandaru" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card leadership-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Prasad.webp" alt="Prasad Bandaru" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Prasad Bandaru</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Head Of AI</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">Prasad Bandaru serves as the Director of Technology at KodeFast, playing a pivotal role in overseeing the company's technological advancements with a focus on leveraging AI-powered no-code tools.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Prasad Bandaru</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Head Of AI</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Director of Technology at KodeFast, overseeing technological advancements with a focus on leveraging AI-powered no-code tools.</p>
                     </div>
                 </div>
             </div>
@@ -420,62 +844,62 @@
             <h2>Team Behind Emma</h2>
             <p>The dedicated professionals bringing Emma to life</p>
             
-            <div class="team-grid team-behind-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin: 2rem 0;">
+            <div class="team-grid team-behind-grid" style="display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 1rem; margin: 2rem 0;">
                 <!-- Shree Talluri -->
-                <div class="team-card team-behind-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Shree.jpeg" alt="Shree Talluri" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card team-behind-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Shree.jpeg" alt="Shree Talluri" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Shree Talluri</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Product Head</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">An accomplished operations professional who joined Hallmark Global Solutions in 2023 before becoming Operations Manager at Niktor. They now lead a 20+ person team, developing policies, managing budgets, and identifying cross-selling opportunities.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Shree Talluri</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Product Head</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Accomplished operations professional who leads a 20+ person team, developing policies, managing budgets, and identifying cross-selling opportunities.</p>
                     </div>
                 </div>
 
                 <!-- Ravi Paleti -->
-                <div class="team-card team-behind-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Ravi.jpeg" alt="Ravi Paleti" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card team-behind-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Ravi.jpeg" alt="Ravi Paleti" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Ravi Paleti</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Head Of Sales</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">Seasoned executive with 18+ years in tech and business leadership. Vice President at KodeFast, ex-Founder at SyngyMAXIM, and Solutions Architect at TekHubInc. Expert in strategy, innovation, product delivery, and cross-functional team leadership.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Ravi Paleti</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Head Of Sales</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Seasoned executive with 18+ years in tech and business leadership. Expert in strategy, innovation, product delivery, and cross-functional team leadership.</p>
                     </div>
                 </div>
 
                 <!-- Shikha Bakshi -->
-                <div class="team-card team-behind-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Shikha.png" alt="Shikha Bakshi" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card team-behind-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Shikha.png" alt="Shikha Bakshi" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Shikha Bakshi</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Head Of Marketing</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">Client Success Manager at KodeFast (4+ yrs), former Account Manager at Google Operations Center (1 yr), and Payment Specialist at Barclays (4 yrs). Skilled in client relations, account management, and financial operations.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Shikha Bakshi</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Head Of Marketing</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Client Success Manager at KodeFast with experience at Google Operations Center and Barclays. Skilled in client relations, account management, and financial operations.</p>
                     </div>
                 </div>
 
                 <!-- Mohith -->
-                <div class="team-card team-behind-card" style="background: #1e293b; padding: 2rem; border-radius: 1rem; border: 1px solid #334155; text-align: center;">
-                    <div class="team-photo" style="margin-bottom: 1.5rem;">
-                        <img src="/Team Pics/Mohith.png" alt="Mohith" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block;">
+                <div class="team-card team-behind-card" style="background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2); text-align: center; transition: all 0.3s ease;">
+                    <div class="team-photo" style="margin-bottom: 1rem;">
+                        <img src="/Team Pics/Mohith.png" alt="Mohith" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; display: block; border: 2px solid rgba(59, 130, 246, 0.3);">
                     </div>
                     <div class="team-info">
-                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.5rem;">Mohith</h4>
-                        <p class="team-role" style="color: #94a3b8; margin-bottom: 1rem; font-weight: 600;">Technical Lead</p>
-                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.9rem; line-height: 1.6;">Technical expert leading the development and implementation of Emma's core AI technologies and platform infrastructure.</p>
+                        <h4 class="team-name" style="color: #3b82f6; margin-bottom: 0.25rem; font-size: 1.1rem; font-weight: 600;">Mohith</h4>
+                        <p class="team-role" style="color: #94a3b8; margin-bottom: 0.75rem; font-weight: 500; font-size: 0.85rem;">Technical Lead</p>
+                        <p class="team-bio" style="color: #cbd5e1; margin: 0; font-size: 0.85rem; line-height: 1.5;">Technical expert leading the development and implementation of Emma's core AI technologies and platform infrastructure.</p>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- CTA Section -->
-        <section class="section" style="text-align: center; background: #1e293b; padding: 3rem; border-radius: 1rem;">
-            <h2 style="color: #3b82f6; margin-bottom: 1rem;">Ready to Transform Your Organization?</h2>
-            <p style="font-size: 1.25rem; margin-bottom: 2rem; color: #cbd5e1;">Let's discuss how Emma AI can revolutionize your operations with intelligent automation.</p>
-            <a href="/contact" style="display: inline-block; padding: 1rem 2rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; transition: background 0.3s;">Get Started Today</a>
+        <section class="section" style="text-align: center; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 2.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2);">
+            <h2 style="color: #3b82f6; margin-bottom: 1rem; font-size: 2rem;">Ready to Transform Your Organization?</h2>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; color: #cbd5e1; max-width: 600px; margin-left: auto; margin-right: auto;">Let's discuss how Emma AI can revolutionize your operations with intelligent automation.</p>
+            <a href="/contact" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">Get Started Today</a>
         </section>
     </div>
 
@@ -617,6 +1041,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="/particles.min.js"></script>
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     
     <!-- Enhanced About Page Scripts -->
     <script>
