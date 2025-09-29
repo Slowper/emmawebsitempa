@@ -355,11 +355,11 @@ app.get('/api/stats', async (req, res) => {
 
 // Admin routes
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'cms-admin-standalone.html'));
+    res.sendFile(path.join(__dirname, '../admin/cms-admin-standalone.html'));
 });
 
 app.get('/admin-local', (req, res) => {
-    res.sendFile(path.join(__dirname, 'cms-admin-local.html'));
+    res.sendFile(path.join(__dirname, '../admin/cms-admin-local.html'));
 });
 
 // Separate resource pages

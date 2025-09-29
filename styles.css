@@ -1930,7 +1930,8 @@ section#industries .three-cards-row {
     background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
     border-top: 1px solid rgba(59, 130, 246, 0.2);
     overflow: hidden;
-    margin-top: 4rem;
+    margin-top: 6rem;
+    clear: both;
 }
 
 .footer::before {
@@ -1955,14 +1956,21 @@ section#industries .three-cards-row {
 /* Footer Top Section */
 .footer-top {
     display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 4rem;
+    grid-template-columns: 1.8fr 2.2fr;
+    gap: 8rem;
     padding: 4rem 0 3rem;
     align-items: start;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .footer-brand {
-    max-width: 400px;
+    max-width: 700px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding-right: 3rem;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .footer-logo {
@@ -2033,6 +2041,12 @@ section#industries .three-cards-row {
     line-height: 1.6;
     margin-bottom: 2rem;
     font-size: 0.95rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    max-width: 100%;
+    white-space: normal;
+    overflow: hidden;
 }
 
 .social-links {
@@ -2096,11 +2110,22 @@ section#industries .three-cards-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
+    min-width: 0;
+    overflow: hidden;
+    padding-left: 3rem;
+    margin-left: 2rem;
+    box-sizing: border-box;
 }
 
 .footer-column {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.footer-column:first-child {
+    padding-left: 0;
 }
 
 .column-title {
@@ -2130,6 +2155,8 @@ section#industries .three-cards-row {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .footer-link {
@@ -2403,6 +2430,11 @@ section#industries .three-cards-row {
     .footer-top {
         grid-template-columns: 1fr;
         gap: 3rem;
+    }
+    
+    .footer-brand {
+        max-width: 100%;
+        text-align: center;
     }
     
     .footer-links-grid {
@@ -7885,14 +7917,17 @@ body.demo-open .emma-demo-overlay * {
 }
 
 .blog-image {
-    height: 200px;
+    height: 300px;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .blog-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     transition: transform 0.3s ease;
 }
 
@@ -8883,8 +8918,8 @@ body.demo-open .emma-demo-overlay * {
 
 .blog-detail-image img {
     width: 100%;
-    height: 400px;
-    object-fit: cover;
+    height: 500px;
+    object-fit: contain;
     transition: transform 0.3s ease;
 }
 
@@ -8920,6 +8955,43 @@ body.demo-open .emma-demo-overlay * {
 .blog-detail-content p {
     margin-bottom: 1.5rem;
     font-size: 1.1rem;
+}
+
+/* Ensure proper spacing before footer */
+section:last-of-type {
+    margin-bottom: 6rem;
+}
+
+/* Add clear separation before footer */
+.footer::before {
+    content: '';
+    display: block;
+    height: 4rem;
+    background: transparent;
+}
+
+/* Force clear separation for all content before footer */
+main, .main-content, .resources-section, .hero, .filters-section {
+    margin-bottom: 6rem;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 2rem;
+}
+
+/* Ensure footer has proper positioning */
+.footer {
+    position: relative;
+    z-index: 2;
+    clear: both;
+    margin-top: 2rem;
+}
+
+/* Add a clear separation div before footer */
+.footer-separator {
+    height: 4rem;
+    background: transparent;
+    clear: both;
+    display: block;
 }
 
 .blog-detail-content ul,

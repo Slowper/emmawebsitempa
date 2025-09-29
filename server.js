@@ -67,7 +67,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files
-app.use('/uploads', express.static('uploads'));
+app.use('/cms/uploads', express.static('uploads'));
 app.use('/Logo And Recording', express.static('Logo And Recording'));
 app.use('/Team Pics', express.static('Team Pics'));
 app.use(express.static('public'));
@@ -154,17 +154,51 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         let uploadPath = process.env.UPLOAD_PATH || './uploads';
         
+        console.log('📁 Upload destination check:', {
+            fieldname: file.fieldname,
+            url: req.url,
+            bodyType: req.body.type,
+            contentType: req.body.content_type
+        });
+        
         // Special handling for different content types
         if (file.fieldname === 'logo') {
             uploadPath = path.join(uploadPath, 'logo');
         } else if (file.fieldname === 'blogImage' || file.fieldname === 'blogAuthorImage') {
             uploadPath = path.join(uploadPath, 'blogs');
+            console.log('📁 Routing to blogs folder (direct blog fields)');
         } else if (file.fieldname === 'useCaseGallery') {
             uploadPath = path.join(uploadPath, 'usecases');
-        } else if (file.fieldname === 'image' && req.url.includes('/resources')) {
-            uploadPath = path.join(uploadPath, 'resources');
+            console.log('📁 Routing to usecases folder (direct usecase fields)');
         } else if (file.fieldname === 'caseStudyImage' || file.fieldname === 'caseStudyGallery') {
             uploadPath = path.join(uploadPath, 'casestudies');
+            console.log('📁 Routing to casestudies folder (direct casestudy fields)');
+        } else if (req.url.includes('/resources')) {
+            // For resources endpoint, try to determine content type
+            const contentType = req.body.type || req.body.content_type || req.body.resource_type;
+            
+            if (contentType === 'blog' || contentType === 'Blog Post') {
+                uploadPath = path.join(uploadPath, 'blogs');
+                console.log('📁 Routing to blogs folder (detected blog type)');
+            } else if (contentType === 'use-case' || contentType === 'Use Case') {
+                uploadPath = path.join(uploadPath, 'usecases');
+                console.log('📁 Routing to usecases folder (detected usecase type)');
+            } else if (contentType === 'case-study' || contentType === 'Case Study') {
+                uploadPath = path.join(uploadPath, 'casestudies');
+                console.log('📁 Routing to casestudies folder (detected casestudy type)');
+            } else {
+                // Default to resources folder for unknown types
+                uploadPath = path.join(uploadPath, 'resources');
+                console.log('📁 Routing to resources folder (unknown type, default)');
+            }
+        } else if (file.fieldname === 'featured_image' || file.fieldname === 'author_image' || file.fieldname === 'gallery') {
+            // Fallback for direct image uploads
+            uploadPath = path.join(uploadPath, 'resources');
+            console.log('📁 Routing to resources folder (fallback for image fields)');
+        } else {
+            // Default fallback
+            uploadPath = path.join(uploadPath, 'resources');
+            console.log('📁 Routing to resources folder (default fallback)');
         }
         
         if (!fs.existsSync(uploadPath)) {
@@ -1079,7 +1113,7 @@ app.post('/api/resources/upload-image', authenticateToken, upload.single('image'
             return res.status(400).json({ error: 'No image file provided' });
         }
         
-        const imageUrl = `/uploads/resources/${req.file.filename}`;
+        const imageUrl = `/cms/uploads/resources/${req.file.filename}`;
         res.json({ 
             message: 'Resource image uploaded successfully',
             imageUrl: imageUrl,
@@ -1097,6 +1131,60 @@ app.post('/api/resources', authenticateToken, upload.fields([
     { name: 'gallery', maxCount: 10 }
 ]), async (req, res) => {
     try {
+        // Post-process uploaded files to ensure they're in the correct folder
+        const contentType = req.body.type || req.body.content_type || req.body.resource_type;
+        const files = req.files;
+        
+        console.log('🔍 Post-processing files:', {
+            contentType,
+            hasFiles: !!files,
+            fileFields: files ? Object.keys(files) : []
+        });
+        
+        if (files && contentType) {
+            const correctFolder = contentType === 'blog' || contentType === 'Blog Post' ? 'blogs' :
+                                contentType === 'use-case' || contentType === 'Use Case' ? 'usecases' :
+                                contentType === 'case-study' || contentType === 'Case Study' ? 'casestudies' :
+                                'resources';
+            
+            console.log(`📁 Determined correct folder: ${correctFolder}`);
+            
+            // Move files to correct folder if they're in the wrong place
+            for (const fieldName in files) {
+                const fileList = files[fieldName];
+                for (const file of fileList) {
+                    const currentPath = file.path;
+                    const fileName = path.basename(currentPath);
+                    const correctPath = path.join(process.env.UPLOAD_PATH || './uploads', correctFolder, fileName);
+                    
+                    console.log(`📁 Processing file: ${fileName}`);
+                    console.log(`   Current path: ${currentPath}`);
+                    console.log(`   Correct path: ${correctPath}`);
+                    
+                    if (currentPath !== correctPath) {
+                        try {
+                            // Ensure target directory exists
+                            const targetDir = path.dirname(correctPath);
+                            if (!fs.existsSync(targetDir)) {
+                                fs.mkdirSync(targetDir, { recursive: true });
+                            }
+                            
+                            // Move file
+                            fs.renameSync(currentPath, correctPath);
+                            file.path = correctPath;
+                            console.log(`✅ Moved ${fileName} to ${correctFolder} folder`);
+                        } catch (moveError) {
+                            console.error(`❌ Error moving file ${fileName}:`, moveError);
+                        }
+                    } else {
+                        console.log(`✅ File ${fileName} already in correct location`);
+                    }
+                }
+            }
+        } else {
+            console.log('⚠️  No files or content type to process');
+        }
+        
         const {
             title,
             type,
@@ -1135,15 +1223,22 @@ app.post('/api/resources', authenticateToken, upload.fields([
         let galleryArray = [];
 
         if (req.files.featured_image) {
-            featuredImagePath = `/uploads/resources/${req.files.featured_image[0].filename}`;
+            // Use the actual file path after post-processing
+            const filePath = req.files.featured_image[0].path;
+            featuredImagePath = filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
         }
 
         if (req.files.author_image) {
-            authorImagePath = `/uploads/resources/${req.files.author_image[0].filename}`;
+            // Use the actual file path after post-processing
+            const filePath = req.files.author_image[0].path;
+            authorImagePath = filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
         }
 
         if (req.files.gallery) {
-            galleryArray = req.files.gallery.map(file => `/uploads/resources/${file.filename}`);
+            galleryArray = req.files.gallery.map(file => {
+                const filePath = file.path;
+                return filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
+            });
         }
 
         // Parse tags
@@ -1247,15 +1342,22 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
         let galleryArray = existing.gallery ? JSON.parse(existing.gallery) : [];
 
         if (req.files.featured_image) {
-            featuredImagePath = `/uploads/resources/${req.files.featured_image[0].filename}`;
+            // Use the actual file path after post-processing
+            const filePath = req.files.featured_image[0].path;
+            featuredImagePath = filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
         }
 
         if (req.files.author_image) {
-            authorImagePath = `/uploads/resources/${req.files.author_image[0].filename}`;
+            // Use the actual file path after post-processing
+            const filePath = req.files.author_image[0].path;
+            authorImagePath = filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
         }
 
         if (req.files.gallery) {
-            galleryArray = req.files.gallery.map(file => `/uploads/resources/${file.filename}`);
+            galleryArray = req.files.gallery.map(file => {
+                const filePath = file.path;
+                return filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
+            });
         }
 
         // Parse tags
@@ -1293,8 +1395,55 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
 
 app.delete('/api/resources/:id', async (req, res) => {
     try {
-        await pool.execute('DELETE FROM resources WHERE id = ?', [req.params.id]);
-        res.json({ success: true, message: 'Resource deleted successfully' });
+        const { id } = req.params;
+        
+        // First, get the resource details to clean up files
+        const [resources] = await pool.execute('SELECT featured_image, author_image, gallery FROM resources WHERE id = ?', [id]);
+        
+        if (resources.length > 0) {
+            const resource = resources[0];
+            const uploadPath = process.env.UPLOAD_PATH || './uploads';
+            
+            // Clean up featured image
+            if (resource.featured_image) {
+                const imagePath = path.join(uploadPath, resource.featured_image.replace('/uploads/', ''));
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                    console.log(`🗑️  Deleted featured image: ${imagePath}`);
+                }
+            }
+            
+            // Clean up author image
+            if (resource.author_image) {
+                const imagePath = path.join(uploadPath, resource.author_image.replace('/uploads/', ''));
+                if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+                    console.log(`🗑️  Deleted author image: ${imagePath}`);
+                }
+            }
+            
+            // Clean up gallery images
+            if (resource.gallery) {
+                try {
+                    const galleryImages = JSON.parse(resource.gallery);
+                    if (Array.isArray(galleryImages)) {
+                        galleryImages.forEach(imagePath => {
+                            const fullPath = path.join(uploadPath, imagePath.replace('/uploads/', ''));
+                            if (fs.existsSync(fullPath)) {
+                                fs.unlinkSync(fullPath);
+                                console.log(`🗑️  Deleted gallery image: ${fullPath}`);
+                            }
+                        });
+                    }
+                } catch (parseError) {
+                    console.log('Gallery images not in JSON format, skipping cleanup');
+                }
+            }
+        }
+        
+        // Delete from database
+        await pool.execute('DELETE FROM resources WHERE id = ?', [id]);
+        res.json({ success: true, message: 'Resource and associated files deleted successfully' });
     } catch (error) {
         console.error('Resource deletion error:', error);
         res.status(500).json({ error: 'Failed to delete resource' });
@@ -1648,7 +1797,7 @@ app.post('/api/upload/image', authenticateToken, upload.single('image'), (req, r
             return res.status(400).json({ error: 'No image file provided' });
         }
         
-        const imageUrl = `/uploads/${req.file.filename}`;
+        const imageUrl = `/cms/uploads/${req.file.filename}`;
         res.json({ 
             message: 'Image uploaded successfully',
             imageUrl: imageUrl,
@@ -1669,7 +1818,7 @@ app.put('/api/content/section/:key/image', authenticateToken, upload.single('ima
             return res.status(400).json({ error: 'No image file provided' });
         }
         
-        const imageUrl = `/uploads/${req.file.filename}`;
+        const imageUrl = `/cms/uploads/${req.file.filename}`;
         
         const [result] = await pool.execute(
             'UPDATE content_sections SET image_url = ?, updated_at = CURRENT_TIMESTAMP WHERE section_key = ?',
@@ -1767,11 +1916,11 @@ app.post('/api/blogs', authenticateToken, upload.fields([
         let authorImagePath = '';
         
         if (req.files.blogImage) {
-            imagePath = `/uploads/blogs/${req.files.blogImage[0].filename}`;
+            imagePath = `/cms/uploads/blogs/${req.files.blogImage[0].filename}`;
         }
         
         if (req.files.blogAuthorImage) {
-            authorImagePath = `/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
+            authorImagePath = `/cms/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
         }
         
         const galleryArray = gallery ? gallery.split('\n').filter(url => url.trim()) : [];
@@ -1813,11 +1962,11 @@ app.put('/api/blogs/:id', authenticateToken, upload.fields([
         let authorImagePath = existingRows[0].authorImage;
         
         if (req.files.blogImage) {
-            imagePath = `/uploads/blogs/${req.files.blogImage[0].filename}`;
+            imagePath = `/cms/uploads/blogs/${req.files.blogImage[0].filename}`;
         }
         
         if (req.files.blogAuthorImage) {
-            authorImagePath = `/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
+            authorImagePath = `/cms/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
         }
         
         const galleryArray = gallery ? gallery.split('\n').filter(url => url.trim()) : [];
@@ -1868,7 +2017,7 @@ app.post('/api/usecases', authenticateToken, upload.fields([
         
         let galleryArray = [];
         if (req.files.useCaseGallery) {
-            galleryArray = req.files.useCaseGallery.map(file => `/uploads/usecases/${file.filename}`);
+            galleryArray = req.files.useCaseGallery.map(file => `/cms/uploads/usecases/${file.filename}`);
         } else if (gallery) {
             galleryArray = gallery.split('\n').filter(url => url.trim());
         }
@@ -1911,7 +2060,7 @@ app.put('/api/usecases/:id', authenticateToken, upload.fields([
         let galleryArray = existingRows[0].gallery ? JSON.parse(existingRows[0].gallery) : [];
         
         if (req.files.useCaseGallery) {
-            galleryArray = req.files.useCaseGallery.map(file => `/uploads/usecases/${file.filename}`);
+            galleryArray = req.files.useCaseGallery.map(file => `/cms/uploads/usecases/${file.filename}`);
         } else if (gallery) {
             galleryArray = gallery.split('\n').filter(url => url.trim());
         }
@@ -2025,7 +2174,7 @@ app.post('/api/casestudies', authenticateToken, upload.fields([
         
         let galleryArray = [];
         if (req.files.caseStudyGallery) {
-            galleryArray = req.files.caseStudyGallery.map(file => `/uploads/casestudies/${file.filename}`);
+            galleryArray = req.files.caseStudyGallery.map(file => `/cms/uploads/casestudies/${file.filename}`);
         } else if (gallery) {
             galleryArray = gallery.split('\n').filter(url => url.trim());
         }
@@ -2068,7 +2217,7 @@ app.put('/api/casestudies/:id', authenticateToken, upload.fields([
         
         let galleryArray = [];
         if (req.files.caseStudyGallery) {
-            galleryArray = req.files.caseStudyGallery.map(file => `/uploads/casestudies/${file.filename}`);
+            galleryArray = req.files.caseStudyGallery.map(file => `/cms/uploads/casestudies/${file.filename}`);
         } else if (gallery) {
             galleryArray = gallery.split('\n').filter(url => url.trim());
         }
@@ -2384,7 +2533,7 @@ app.post('/api/upload/logo', authenticateToken, upload.single('logo'), (req, res
             return res.status(400).json({ error: 'No logo file uploaded' });
         }
         
-        const logoUrl = `/uploads/logo/${req.file.filename}`;
+        const logoUrl = `/cms/uploads/logo/${req.file.filename}`;
         console.log('Logo uploaded:', logoUrl);
         
         res.json({ 
@@ -2419,7 +2568,7 @@ app.post('/api/content/media/upload', authenticateToken, upload.array('files', 1
         const uploadedFiles = req.files.map(file => ({
             id: Date.now() + Math.random(),
             name: file.originalname,
-            url: `/uploads/${file.filename}`,
+            url: `/cms/uploads/${file.filename}`,
             size: file.size,
             type: file.mimetype
         }));
@@ -2446,7 +2595,7 @@ app.delete('/api/content/media/:id', authenticateToken, (req, res) => {
 });
 
 // Serve uploaded files
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/cms/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve sitemap.xml
 app.get('/sitemap.xml', (req, res) => {
@@ -2565,8 +2714,8 @@ app.get('/casestudy/:slug', async (req, res) => {
         }
         
         const caseStudy = rows[0];
-        const caseStudyHtml = generateCaseStudyPage(caseStudy);
-        res.send(caseStudyHtml);
+        // Serve the static case study detail page
+        res.sendFile(path.join(__dirname, 'pages', 'case-study-detail.html'));
     } catch (error) {
         console.error('Error serving case study:', error);
         res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
@@ -2602,8 +2751,8 @@ app.get('/usecase/:slug', async (req, res) => {
         }
         
         const useCase = rows[0];
-        const useCaseHtml = generateUseCasePage(useCase);
-        res.send(useCaseHtml);
+        // Serve the static use case detail page
+        res.sendFile(path.join(__dirname, 'pages', 'use-case-detail.html'));
     } catch (error) {
         console.error('Error serving use case:', error);
         res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
@@ -2615,6 +2764,45 @@ app.get('/usecase/:slug', async (req, res) => {
 // Remove duplicate redirects - these were causing infinite loops
 
 // SPA fallback removed - using MPA only
+
+// CMS Admin Routes
+app.get('/cms-admin-local.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-admin-local.html'));
+});
+
+app.get('/cms-admin.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-admin.html'));
+});
+
+app.get('/cms-admin-standalone.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-admin-standalone.html'));
+});
+
+app.get('/cms-blogs.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-blogs.html'));
+});
+
+app.get('/cms-case-studies.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-case-studies.html'));
+});
+
+app.get('/cms-resources.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-resources.html'));
+});
+
+app.get('/cms-use-cases.html', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-use-cases.html'));
+});
+
+// Serve CMS admin JavaScript
+app.get('/cms-admin.js', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/admin/cms-admin.js'));
+});
+
+// Serve Quill editor files
+app.get('/quill/:file', (req, res) => {
+    res.sendFile(path.join(__dirname, 'cms/quill', req.params.file));
+});
 
 // Old admin dashboard removed - using new CMS at port 3001
 
@@ -2715,7 +2903,7 @@ function generateBlogPage(blog) {
         .author-info { display: flex; align-items: center; gap: 0.5rem; }
         .author-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
         .author-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-        .blog-image { width: 100%; height: 400px; object-fit: cover; border-radius: 1rem; margin-bottom: 2rem; }
+        .blog-image { width: 100%; height: 500px; object-fit: contain; border-radius: 1rem; margin-bottom: 2rem; }
         .blog-content { font-size: 1.1rem; line-height: 1.8; color: #cbd5e1; }
         .blog-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
         .tag { background: rgba(59, 130, 246, 0.1); color: #60a5fa; padding: 0.5rem 1rem; border-radius: 2rem; font-size: 0.9rem; font-weight: 500; }
@@ -2999,5 +3187,5 @@ app.listen(PORT, async () => {
     console.log(`Pricing: http://localhost:${PORT}/pricing`);
     console.log(`Resources: http://localhost:${PORT}/resources`);
     console.log(`Contact: http://localhost:${PORT}/contact`);
-    console.log(`New CMS Admin: http://localhost:3001/admin-local`);
+    console.log(`CMS Admin: http://localhost:${PORT}/cms-admin-local.html`);
 });

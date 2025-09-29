@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Use Cases - Emma CMS</title>
+    <title>Case Studies - Emma CMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Quill Editor -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -326,7 +329,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Content</div>
-                <a href="cms-admin-local.html" class="nav-item">
+                <a href="/cms-admin-local.html" class="nav-item">
                     <i class="fas fa-tachometer-alt"></i>
                     Dashboard
                 </a>
@@ -338,11 +341,11 @@
                     <i class="fas fa-blog"></i>
                     Blog Posts
                 </a>
-                <a href="cms-case-studies.html" class="nav-item">
+                <a href="cms-case-studies.html" class="nav-item active">
                     <i class="fas fa-chart-line"></i>
                     Case Studies
                 </a>
-                <a href="cms-use-cases.html" class="nav-item active">
+                <a href="cms-use-cases.html" class="nav-item">
                     <i class="fas fa-cogs"></i>
                     Use Cases
                 </a>
@@ -380,7 +383,7 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="header">
-                <h1 class="page-title">Use Cases</h1>
+                <h1 class="page-title">Case Studies</h1>
                 <div class="user-info">
                     <div class="user-avatar" id="user-avatar">A</div>
                     <span id="user-name">Admin User</span>
@@ -393,55 +396,55 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Use Cases</h3>
-                    <button class="btn btn-primary" onclick="openResourceModal('use-case')">
+                    <h3 class="card-title">Case Studies</h3>
+                    <button class="btn btn-primary" onclick="openResourceModal('case-study')">
                         <i class="fas fa-plus"></i>
-                        New Use Case
+                        New Case Study
                     </button>
                 </div>
                 <div class="card-body">
-                    <div class="loading" id="use-cases-loading">
+                    <div class="loading" id="case-studies-loading">
                         <div class="spinner"></div>
-                        Loading use cases...
+                        Loading case studies...
                     </div>
-                    <div id="use-cases-content" style="display: none;">
-                        <!-- Use cases will be loaded here -->
+                    <div id="case-studies-content" style="display: none;">
+                        <!-- Case studies will be loaded here -->
                     </div>
                 </div>
             </div>
         </main>
     </div>
 
-    <script src="cms-admin.js"></script>
+    <script src="/cms-admin.js"></script>
     <script>
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
-            // Load use cases
-            loadUseCases();
+            // Load case studies
+            loadCaseStudies();
         });
 
-        async function loadUseCases() {
+        async function loadCaseStudies() {
             try {
-                console.log('🔄 Loading use cases...');
+                console.log('🔄 Loading case studies...');
                 
-                const response = await fetch('/api/resources?type=use-case&limit=50');
+                const response = await fetch('/api/resources?type=case-study&limit=50');
                 const data = await response.json();
-                const useCases = data.resources || [];
+                const caseStudies = data.resources || [];
                 
-                console.log('🔧 Use cases loaded:', useCases.length);
+                console.log('📊 Case studies loaded:', caseStudies.length);
                 
-                displayUseCases(useCases);
+                displayCaseStudies(caseStudies);
             } catch (error) {
-                console.error('❌ Error loading use cases:', error);
+                console.error('❌ Error loading case studies:', error);
             }
         }
 
-        function displayUseCases(useCases) {
-            const container = document.getElementById('use-cases-content');
-            const loading = document.getElementById('use-cases-loading');
+        function displayCaseStudies(caseStudies) {
+            const container = document.getElementById('case-studies-content');
+            const loading = document.getElementById('case-studies-loading');
             
-            if (useCases.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #64748b;">No use cases found</p>';
+            if (caseStudies.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #64748b;">No case studies found</p>';
             } else {
                 container.innerHTML = `
                     <table class="table">
@@ -457,26 +460,26 @@
                             </tr>
                         </thead>
                         <tbody>
-                            ${useCases.map(useCase => `
+                            ${caseStudies.map(caseStudy => `
                                 <tr>
                                     <td>
-                                        <div class="resource-title">${useCase.title}</div>
-                                        <div class="resource-excerpt">${useCase.excerpt || ''}</div>
+                                        <div class="resource-title">${caseStudy.title}</div>
+                                        <div class="resource-excerpt">${caseStudy.excerpt || ''}</div>
                                     </td>
-                                    <td>${useCase.industry_name || 'Technology'}</td>
+                                    <td>${caseStudy.industry_name || 'Technology'}</td>
                                     <td>
-                                        <span class="status-badge status-${useCase.status}">
-                                            ${useCase.status.toUpperCase()}
+                                        <span class="status-badge status-${caseStudy.status}">
+                                            ${caseStudy.status.toUpperCase()}
                                         </span>
                                     </td>
-                                    <td>${useCase.author_name || 'Emma AI Team'}</td>
-                                    <td>${new Date(useCase.created_at).toLocaleDateString()}</td>
-                                    <td>${useCase.view_count || 0}</td>
+                                    <td>${caseStudy.author || caseStudy.author_name || 'Emma AI Team'}</td>
+                                    <td>${new Date(caseStudy.created_at).toLocaleDateString()}</td>
+                                    <td>${caseStudy.view_count || 0}</td>
                                     <td>
-                                        <button class="action-btn edit" onclick="editResource(${useCase.id})">
+                                        <button class="action-btn edit" onclick="editResource(${caseStudy.id})">
                                             <i class="fas fa-edit"></i>
                                         </button>
-                                        <button class="action-btn delete" onclick="deleteResource(${useCase.id})">
+                                        <button class="action-btn delete" onclick="deleteResource(${caseStudy.id})">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
@@ -493,24 +496,24 @@
 
         function openResourceModal(type) {
             // Redirect to main admin page with modal
-            window.location.href = 'cms-admin-local.html?action=new&type=' + type;
+            window.location.href = '/cms-admin-local.html?action=new&type=' + type;
         }
 
         function editResource(id) {
             // Redirect to main admin page with edit modal
-            window.location.href = 'cms-admin-local.html?action=edit&id=' + id;
+            window.location.href = '/cms-admin-local.html?action=edit&id=' + id;
         }
 
         function deleteResource(id) {
-            if (confirm('Are you sure you want to delete this use case?')) {
+            if (confirm('Are you sure you want to delete this case study?')) {
                 // Implement delete functionality
-                console.log('Delete use case:', id);
+                console.log('Delete case study:', id);
             }
         }
 
         function logout() {
             localStorage.removeItem('cms_token');
-            window.location.href = 'cms-admin-local.html';
+            window.location.href = '/cms-admin-local.html';
         }
     </script>
 </body>

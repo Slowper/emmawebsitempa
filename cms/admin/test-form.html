@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Form Submission</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background: #007cba; color: white; border: none; cursor: pointer; }
+        .result { margin-top: 20px; padding: 10px; background: #f0f0f0; }
+    </style>
+</head>
+<body>
+    <h1>Test Form Submission</h1>
+    
+    <form id="test-form">
+        <div class="form-group">
+            <label>Title *</label>
+            <input type="text" id="title" value="Test Blog Post" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Type *</label>
+            <select id="type" required>
+                <option value="blog">Blog</option>
+                <option value="case-study">Case Study</option>
+                <option value="use-case">Use Case</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Excerpt</label>
+            <textarea id="excerpt" rows="3">This is a test excerpt for the blog post.</textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Content *</label>
+            <textarea id="content" rows="10" required><h2>Test Content</h2><p>This is test content for the blog post. It should contain some HTML formatting.</p><ul><li>Item 1</li><li>Item 2</li></ul></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label>Author *</label>
+            <input type="text" id="author" value="Test Author" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Industry</label>
+            <select id="industry">
+                <option value="1">Healthcare</option>
+                <option value="2">Banking & Finance</option>
+                <option value="3">Education</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>Status</label>
+            <select id="status">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+            </select>
+        </div>
+        
+        <button type="submit">Test Submit</button>
+    </form>
+    
+    <div id="result" class="result" style="display: none;">
+        <h3>Result:</h3>
+        <div id="result-content"></div>
+    </div>
+
+    <script>
+        document.getElementById('test-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            formData.append('title', document.getElementById('title').value);
+            formData.append('type', document.getElementById('type').value);
+            formData.append('excerpt', document.getElementById('excerpt').value);
+            formData.append('content', document.getElementById('content').value);
+            formData.append('author', document.getElementById('author').value);
+            formData.append('industry_id', document.getElementById('industry').value);
+            formData.append('status', document.getElementById('status').value);
+            
+            console.log('📤 Sending form data:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            
+            try {
+                const response = await fetch('http://localhost:3001/api/resources', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJhZG1pbiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc1OTEzNjk5NCwiZXhwIjoxNzU5MjIzMzk0fQ.mKUMU5rgV3I8WSh70KVyDFHIq5YjRsHZxNABPHGVBag'
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result-content').innerHTML = `
+                    <p><strong>Status:</strong> ${response.status}</p>
+                    <p><strong>Response:</strong></p>
+                    <pre>${JSON.stringify(result, null, 2)}</pre>
+                `;
+                
+                console.log('📥 Response:', result);
+                
+            } catch (error) {
+                console.error('❌ Error:', error);
+                document.getElementById('result').style.display = 'block';
+                document.getElementById('result-content').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

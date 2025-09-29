@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob:; connect-src 'self' http://localhost:* https://localhost:*;">
+    <title>Paste Test - Emma CMS</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .editor-container { margin: 20px 0; }
+        .test-results { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Emma CMS - Paste Functionality Test</h1>
+    
+    <div class="test-results" id="test-results">
+        <h3>Test Results:</h3>
+        <div id="results"></div>
+    </div>
+    
+    <div class="editor-container">
+        <h3>Quill Editor Test:</h3>
+        <div id="quill-editor" style="height: 200px;"></div>
+    </div>
+    
+    <div class="editor-container">
+        <h3>Simple Editor Test:</h3>
+        <div id="simple-editor" contenteditable="true" style="border: 1px solid #ccc; padding: 10px; height: 200px; overflow-y: auto;"></div>
+    </div>
+    
+    <div class="editor-container">
+        <h3>Instructions:</h3>
+        <ol>
+            <li>Copy some text from another application (Word, Notepad, etc.)</li>
+            <li>Click in one of the editors above</li>
+            <li>Press Ctrl+V (or Cmd+V on Mac) to paste</li>
+            <li>Check the test results above for any errors</li>
+        </ol>
+    </div>
+
+    <script>
+        const results = document.getElementById('results');
+        
+        function addResult(message, isSuccess = true) {
+            const div = document.createElement('div');
+            div.className = isSuccess ? 'success' : 'error';
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            results.appendChild(div);
+        }
+        
+        // Test Quill editor
+        try {
+            const quill = new Quill('#quill-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link']
+                    ],
+                    clipboard: {
+                        matchVisual: false,
+                        allowed: {
+                            tags: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a'],
+                            attributes: ['href', 'src', 'alt', 'title']
+                        }
+                    }
+                }
+            });
+            
+            quill.on('text-change', () => {
+                addResult('Quill editor: Text changed');
+            });
+            
+            quill.root.addEventListener('paste', (e) => {
+                addResult('Quill editor: Paste event detected');
+            });
+            
+            addResult('Quill editor initialized successfully');
+        } catch (error) {
+            addResult('Quill editor error: ' + error.message, false);
+        }
+        
+        // Test simple editor
+        const simpleEditor = document.getElementById('simple-editor');
+        
+        simpleEditor.addEventListener('paste', (e) => {
+            addResult('Simple editor: Paste event detected');
+        });
+        
+        simpleEditor.addEventListener('input', () => {
+            addResult('Simple editor: Content changed');
+        });
+        
+        addResult('Simple editor initialized successfully');
+        
+        // Test clipboard API
+        if (navigator.clipboard) {
+            addResult('Clipboard API available');
+        } else {
+            addResult('Clipboard API not available', false);
+        }
+        
+        // Test focus
+        document.addEventListener('click', (e) => {
+            if (e.target.id === 'quill-editor' || e.target.closest('#quill-editor')) {
+                addResult('Quill editor focused');
+            } else if (e.target.id === 'simple-editor') {
+                addResult('Simple editor focused');
+            }
+        });
+    </script>
+</body>
+</html>

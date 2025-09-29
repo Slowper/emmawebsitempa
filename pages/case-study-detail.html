@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Case Study - Emma AI</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" id="meta-title" content="Case Study - Emma AI">
+    <meta name="description" id="meta-description" content="Explore our AI automation case studies and success stories.">
+    <meta name="keywords" content="AI case study, automation success, Emma AI, intelligent workflows">
+    <meta name="author" content="Emma AI Team">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="og-url" content="">
+    <meta property="og:title" id="og-title" content="">
+    <meta property="og:description" id="og-description" content="">
+    <meta property="og:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" id="twitter-url" content="">
+    <meta property="twitter:title" id="twitter-title" content="">
+    <meta property="twitter:description" id="twitter-description" content="">
+    <meta property="twitter:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" id="canonical-url" href="">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="apple-touch-icon" href="/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-image {
+            width: 24px;
+            height: 24px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        .case-study-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .case-study-header {
+            margin-bottom: 3rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #60a5fa;
+        }
+
+        .case-study-category {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .case-study-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .case-study-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            color: #94a3b8;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .case-study-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .case-study-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ffffff !important;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .case-study-content h1,
+        .case-study-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .case-study-content h1::after,
+        .case-study-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 3rem;
+            height: 3px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+
+        .case-study-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #60a5fa !important;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .case-study-content h3::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-size: 0.8rem;
+        }
+
+        .case-study-content h4,
+        .case-study-content h5,
+        .case-study-content h6 {
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #93c5fd !important;
+            position: relative;
+            padding-left: 0.5rem;
+        }
+
+        .case-study-content h4::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .case-study-content p {
+            margin-bottom: 1.5rem;
+            color: #ffffff !important;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .case-study-content strong,
+        .case-study-content b {
+            color: #f8fafc !important;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.25rem;
+        }
+
+        .case-study-content em,
+        .case-study-content i {
+            color: #cbd5e1 !important;
+            font-style: italic;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.1rem 0.2rem;
+            border-radius: 0.2rem;
+        }
+
+        .case-study-content ul, .case-study-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+            color: #ffffff !important;
+        }
+
+        .case-study-content ul {
+            list-style: none;
+        }
+
+        .case-study-content ul li {
+            position: relative;
+            margin-bottom: 0.75rem;
+            color: #ffffff !important;
+            padding-left: 1.5rem;
+        }
+
+        .case-study-content ul li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .case-study-content ol {
+            counter-reset: custom-counter;
+        }
+
+        .case-study-content ol li {
+            counter-increment: custom-counter;
+            position: relative;
+            margin-bottom: 0.75rem;
+            color: #ffffff !important;
+            padding-left: 2rem;
+        }
+
+        .case-study-content ol li::before {
+            content: counter(custom-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .case-study-content a {
+            color: #60a5fa !important;
+            text-decoration: none;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .case-study-content a:hover {
+            color: #93c5fd !important;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .case-study-content blockquote {
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            color: #cbd5e1 !important;
+            font-style: italic;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 0.5rem;
+            position: relative;
+        }
+
+        .case-study-content blockquote::before {
+            content: '"';
+            position: absolute;
+            top: -0.5rem;
+            left: 1rem;
+            font-size: 3rem;
+            color: #3b82f6;
+            opacity: 0.3;
+        }
+
+        .case-study-content code {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa !important;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .case-study-content pre {
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0 !important;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            position: relative;
+        }
+
+        .case-study-content pre::before {
+            content: 'Code';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .case-study-content pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0 !important;
+            border: none;
+        }
+
+        .case-study-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .tag {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .case-study-container {
+                padding: 6rem 1rem 2rem;
+            }
+            
+            .case-study-title {
+                font-size: 2rem;
+            }
+            
+            .nav-content {
+                padding: 0 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-logo">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                    <span class="logo-text">Emma AI</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading case study...</p>
+    </div>
+
+    <!-- Case Study Content -->
+    <div id="case-study-content" style="display: none;">
+        <div class="case-study-container">
+            <a href="/resources" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Resources
+            </a>
+            
+            <article class="case-study-header">
+                <span class="case-study-category" id="case-study-category">Case Study</span>
+                <h1 class="case-study-title" id="case-study-title">Loading...</h1>
+                <div class="case-study-meta" id="case-study-meta">
+                    <div class="author-info">
+                        <div class="author-avatar" id="author-avatar">E</div>
+                        <span id="author-name">Emma AI Team</span>
+                    </div>
+                    <span id="case-study-date">Loading...</span>
+                </div>
+            </article>
+
+            <img class="case-study-image" id="case-study-image" src="" alt="" style="display: none;">
+
+            <div class="case-study-content" id="case-study-body">
+                Loading content...
+            </div>
+
+            <div class="case-study-tags" id="case-study-tags">
+                <!-- Tags will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="error-state" style="display: none;">
+        <h2>Case Study Not Found</h2>
+        <p>The case study you're looking for doesn't exist or has been removed.</p>
+        <a href="/resources" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Resources
+        </a>
+    </div>
+
+    <script>
+        // Get case study ID from URL
+        function getCaseStudyId() {
+            const path = window.location.pathname;
+            const segments = path.split('/');
+            return segments[segments.length - 1];
+        }
+
+        // Load case study data
+        async function loadCaseStudy() {
+            const caseStudySlug = getCaseStudyId();
+            console.log('Loading case study:', caseStudySlug);
+            
+            try {
+                // Try to fetch from case studies API first using the slug
+                let response = await fetch(`/api/casestudies`);
+                let caseStudy = null;
+                
+                if (response.ok) {
+                    const caseStudies = await response.json();
+                    // Find the case study with matching slug
+                    caseStudy = caseStudies.find(cs => cs.slug === caseStudySlug);
+                }
+                
+                // If not found in case studies, try resources API
+                if (!caseStudy) {
+                    response = await fetch(`/api/resources`);
+                    if (response.ok) {
+                        const resources = await response.json();
+                        caseStudy = resources.find(resource => resource.slug === caseStudySlug && resource.type === 'case-study');
+                    }
+                }
+                
+                if (caseStudy) {
+                    displayCaseStudy(caseStudy);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error loading case study:', error);
+                showError();
+            }
+        }
+
+        // Display case study content
+        function displayCaseStudy(caseStudy) {
+            console.log('Displaying case study:', caseStudy);
+            
+            // Hide loading state
+            document.getElementById('loading-state').style.display = 'none';
+            
+            // Show case study content
+            document.getElementById('case-study-content').style.display = 'block';
+            
+            // Update page title and meta
+            document.getElementById('page-title').textContent = caseStudy.title + ' - Emma AI';
+            document.getElementById('meta-title').content = caseStudy.title + ' - Emma AI';
+            document.getElementById('meta-description').content = caseStudy.excerpt || caseStudy.description || 'Explore our AI automation case studies.';
+            
+            // Update case study content
+            document.getElementById('case-study-title').textContent = caseStudy.title;
+            
+            // Clean up content and remove any malformed HTML
+            let cleanContent = caseStudy.content || caseStudy.excerpt || 'Content not available.';
+            // Remove any malformed HTML artifacts
+            cleanContent = cleanContent.replace(/'">/g, '');
+            cleanContent = cleanContent.replace(/'/g, "'");
+            
+            document.getElementById('case-study-body').innerHTML = cleanContent;
+            
+            // Update author info
+            const author = caseStudy.author || caseStudy.author_name || 'Emma AI Team';
+            const authorAvatar = document.getElementById('author-avatar');
+            if (caseStudy.authorImage || caseStudy.author_image) {
+                authorAvatar.innerHTML = `<img src="${caseStudy.authorImage || caseStudy.author_image}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">`;
+            } else {
+                authorAvatar.textContent = author.charAt(0).toUpperCase();
+            }
+            document.getElementById('author-name').textContent = author;
+            
+            // Update date
+            const date = caseStudy.date || caseStudy.created_at || new Date().toISOString();
+            const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('case-study-date').textContent = formattedDate;
+            
+            // Update image
+            console.log('🖼️ Case study image data:', {
+                image: caseStudy.image,
+                image_url: caseStudy.image_url,
+                featured_image: caseStudy.featured_image
+            });
+            
+            const imageUrl = caseStudy.image || caseStudy.image_url || caseStudy.featured_image;
+            if (imageUrl) {
+                const img = document.getElementById('case-study-image');
+                img.src = imageUrl;
+                img.alt = caseStudy.title;
+                img.style.display = 'block';
+                console.log('✅ Image set:', imageUrl);
+            } else {
+                console.log('❌ No image URL found');
+            }
+            
+            // Update tags
+            const tagsContainer = document.getElementById('case-study-tags');
+            if (caseStudy.tags) {
+                let tags = [];
+                try {
+                    tags = typeof caseStudy.tags === 'string' ? JSON.parse(caseStudy.tags) : caseStudy.tags;
+                } catch (e) {
+                    tags = caseStudy.tags.split(',').map(tag => tag.trim());
+                }
+                
+                tagsContainer.innerHTML = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            }
+            
+            // Update meta tags
+            const currentUrl = window.location.href;
+            document.getElementById('og-url').content = currentUrl;
+            document.getElementById('og-title').content = caseStudy.title;
+            document.getElementById('og-description').content = caseStudy.excerpt || caseStudy.description || '';
+            document.getElementById('twitter-url').content = currentUrl;
+            document.getElementById('twitter-title').content = caseStudy.title;
+            document.getElementById('twitter-description').content = caseStudy.excerpt || caseStudy.description || '';
+            document.getElementById('canonical-url').href = currentUrl;
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+        }
+
+        // Load case study when page loads
+        document.addEventListener('DOMContentLoaded', loadCaseStudy);
+    </script>
+</body>
+</html>

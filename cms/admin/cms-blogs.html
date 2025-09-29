@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog Posts - Emma CMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Quill Editor -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -299,6 +302,125 @@
         .action-btn.delete:hover {
             background: #fee2e2;
         }
+        
+        /* Edit Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #1f2937;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            color: #374151;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
 
         .resource-title {
             font-weight: 600;
@@ -506,7 +628,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Content</div>
-                <a href="cms-admin-local.html" class="nav-item">
+                <a href="/cms-admin-local.html" class="nav-item">
                     <i class="fas fa-tachometer-alt"></i>
                     Dashboard
                 </a>
@@ -643,7 +765,7 @@
                                 <i class="fas fa-link"></i>
                             </button>
                         </div>
-                        <div class="simple-editor" id="resource-editor" contenteditable="true" data-placeholder="Start writing your content here..."></div>
+                        <div id="resource-editor" style="height: 300px;"></div>
                     </div>
 
                     <div class="form-group">
@@ -730,7 +852,7 @@
         </div>
     </div>
 
-    <script src="cms-admin.js"></script>
+    <script src="/cms-admin.js"></script>
     <script>
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
@@ -740,23 +862,36 @@
 
         async function loadBlogPosts() {
             try {
-                console.log('🔄 Loading blog posts...');
+                console.log('🔄 Loading blog posts from cms-blogs.html...');
                 
                 const response = await fetch('http://localhost:3001/api/resources?type=blog&limit=50');
                 const data = await response.json();
-                const blogs = data.resources || [];
+                const blogs = data.resources || data || [];
                 
-                console.log('📝 Blog posts loaded:', blogs.length);
+                console.log('📝 Blog posts loaded:', blogs.length, 'blogs:', blogs);
                 
                 displayBlogPosts(blogs);
             } catch (error) {
                 console.error('❌ Error loading blog posts:', error);
             }
         }
+        
+        // Make loadBlogPosts available globally for CMS admin
+        window.loadBlogPosts = loadBlogPosts;
 
         function displayBlogPosts(blogs) {
             const container = document.getElementById('blogs-content');
             const loading = document.getElementById('blogs-loading');
+            
+            // Debug: Log image URLs
+            blogs.forEach(blog => {
+                console.log('🖼️ Blog image data for', blog.title, ':', {
+                    image_url: blog.image_url,
+                    authorImage: blog.authorImage,
+                    featured_image: blog.featured_image,
+                    author_image: blog.author_image
+                });
+            });
             
             if (blogs.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #64748b;">No blog posts found</p>';
@@ -765,6 +900,7 @@
                     <table class="table">
                         <thead>
                             <tr>
+                                <th>Image</th>
                                 <th>Title</th>
                                 <th>Industry</th>
                                 <th>Status</th>
@@ -778,6 +914,14 @@
                             ${blogs.map(blog => `
                                 <tr>
                                     <td>
+                                        <div style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                            ${blog.image_url ? 
+                                                `<img src="${blog.image_url}" alt="${blog.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='<i class=\\"fas fa-image\\" style=\\"color: #9ca3af; font-size: 1.5rem;\\"></i>'">` :
+                                                `<i class="fas fa-image" style="color: #9ca3af; font-size: 1.5rem;"></i>`
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
                                         <div class="resource-title">${blog.title}</div>
                                         <div class="resource-excerpt">${blog.excerpt || ''}</div>
                                     </td>
@@ -787,7 +931,17 @@
                                             ${blog.status.toUpperCase()}
                                         </span>
                                     </td>
-                                    <td>${blog.author_name || 'Emma AI Team'}</td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; overflow: hidden; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
+                                                ${blog.authorImage ? 
+                                                    `<img src="${blog.authorImage}" alt="${blog.author || blog.author_name || 'Emma AI Team'}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='${(blog.author || blog.author_name || 'E').charAt(0).toUpperCase()}'">` :
+                                                    `<span style="color: #6b7280; font-weight: 600; font-size: 0.875rem;">${(blog.author || blog.author_name || 'E').charAt(0).toUpperCase()}</span>`
+                                                }
+                                            </div>
+                                            <span>${blog.author || blog.author_name || 'Emma AI Team'}</span>
+                                        </div>
+                                    </td>
                                     <td>${new Date(blog.created_at).toLocaleDateString()}</td>
                                     <td>${blog.view_count || 0}</td>
                                     <td>
@@ -821,6 +975,14 @@
                     resourceType.value = type;
                 }
                 modal.style.display = 'block';
+                
+                // Initialize Quill editor after modal is shown
+                setTimeout(() => {
+                    if (typeof Quill !== 'undefined' && !window.cms.quillEditor) {
+                        console.log('🔧 Initializing Quill from HTML...');
+                        window.cms.initQuillEditor();
+                    }
+                }, 300);
             } else {
                 alert('Modal not found');
             }
@@ -830,6 +992,27 @@
             const modal = document.getElementById('resource-modal');
             if (modal) {
                 modal.style.display = 'none';
+                modal.classList.remove('active');
+            }
+            
+            // Clean up Quill editor if it exists
+            if (window.cms && window.cms.quillEditor) {
+                console.log('🧹 Cleaning up Quill editor...');
+                const editorElement = document.getElementById('resource-editor');
+                if (editorElement) {
+                    // Remove Quill toolbar and editor
+                    const toolbar = editorElement.querySelector('.ql-toolbar');
+                    const editor = editorElement.querySelector('.ql-editor');
+                    if (toolbar) toolbar.remove();
+                    if (editor) {
+                        // Move content back to the original element
+                        editorElement.innerHTML = editor.innerHTML;
+                    }
+                    // Reset the element
+                    editorElement.className = '';
+                    editorElement.style.height = '300px';
+                }
+                window.cms.quillEditor = null;
             }
         }
 
@@ -891,10 +1074,142 @@
             }
         }
 
-        function editResource(id) {
-            // Redirect to main admin page with edit modal
-            window.location.href = 'cms-admin-local.html?action=edit&id=' + id;
+        async function editResource(id) {
+            try {
+                console.log('✏️ Editing blog post:', id);
+                
+                // Fetch the blog post data
+                const response = await fetch(`http://localhost:3001/api/resources/${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch blog post');
+                }
+                
+                const blog = await response.json();
+                console.log('📝 Blog data:', blog);
+                
+                // Open edit modal
+                openEditModal(blog);
+                
+            } catch (error) {
+                console.error('❌ Error loading blog post:', error);
+                alert('Failed to load blog post for editing. Please try again.');
+            }
         }
+        
+        function openEditModal(blog) {
+            // Create edit modal if it doesn't exist
+            let editModal = document.getElementById('edit-modal');
+            if (!editModal) {
+                editModal = document.createElement('div');
+                editModal.id = 'edit-modal';
+                editModal.className = 'modal';
+                editModal.innerHTML = `
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h2>Edit Blog Post</h2>
+                            <button class="close-btn" onclick="closeEditModal()">&times;</button>
+                        </div>
+                        <form id="edit-form">
+                            <div class="form-group">
+                                <label>Title</label>
+                                <input type="text" id="edit-title" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Status</label>
+                                <select id="edit-status" class="form-input">
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Excerpt</label>
+                                <textarea id="edit-excerpt" class="form-input" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Author</label>
+                                <input type="text" id="edit-author" class="form-input">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </form>
+                    </div>
+                `;
+                document.body.appendChild(editModal);
+            }
+            
+            // Populate form with blog data
+            document.getElementById('edit-title').value = blog.title;
+            document.getElementById('edit-status').value = blog.status;
+            document.getElementById('edit-excerpt').value = blog.excerpt || '';
+            document.getElementById('edit-author').value = blog.author || '';
+            
+            // Store the blog ID for saving
+            editModal.dataset.blogId = blog.id;
+            
+            // Show modal
+            editModal.style.display = 'flex';
+        }
+        
+        function closeEditModal() {
+            const editModal = document.getElementById('edit-modal');
+            if (editModal) {
+                editModal.style.display = 'none';
+            }
+        }
+        
+        // Handle edit form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener for edit form submission
+            document.addEventListener('submit', async function(e) {
+                if (e.target.id === 'edit-form') {
+                    e.preventDefault();
+                    
+                    const editModal = document.getElementById('edit-modal');
+                    const blogId = editModal.dataset.blogId;
+                    
+                    if (!blogId) {
+                        alert('Error: Blog ID not found');
+                        return;
+                    }
+                    
+                    try {
+                        const formData = {
+                            title: document.getElementById('edit-title').value,
+                            status: document.getElementById('edit-status').value,
+                            excerpt: document.getElementById('edit-excerpt').value,
+                            author: document.getElementById('edit-author').value
+                        };
+                        
+                        console.log('💾 Saving blog changes:', formData);
+                        
+                        const response = await fetch(`http://localhost:3001/api/resources/${blogId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        if (response.ok) {
+                            console.log('✅ Blog updated successfully');
+                            closeEditModal();
+                            // Reload the blog posts list
+                            await loadBlogPosts();
+                            alert('Blog post updated successfully!');
+                        } else {
+                            const errorData = await response.json();
+                            console.error('❌ Failed to update blog:', errorData);
+                            alert('Failed to update blog post. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('❌ Error updating blog:', error);
+                        alert('Error updating blog post. Please try again.');
+                    }
+                }
+            });
+        });
 
         async function deleteResource(id) {
             if (confirm('Are you sure you want to delete this blog post?')) {
@@ -928,7 +1243,7 @@
 
         function logout() {
             localStorage.removeItem('cms_token');
-            window.location.href = 'cms-admin-local.html';
+            window.location.href = '/cms-admin-local.html';
         }
 
         // Initialize CMS

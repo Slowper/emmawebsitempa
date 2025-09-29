@@ -21,8 +21,7 @@ class EmmaCMS {
             return;
         }
 
-        // Initialize Quill editor
-        this.initQuillEditor();
+        // Don't initialize Quill here - wait for modal to open
         
         // Hide all loading states initially
         this.hideAllLoadingStates();
@@ -132,8 +131,50 @@ class EmmaCMS {
     }
 
     initQuillEditor() {
-        // Check if Quill is available
-        if (typeof Quill !== 'undefined') {
+        console.log('🔧 Initializing Quill editor...');
+        console.log('Quill available:', typeof Quill !== 'undefined');
+        console.log('Editor element exists:', !!document.getElementById('resource-editor'));
+        console.log('Quill already initialized:', !!this.quillEditor);
+        
+        // Check if Quill is available and editor element exists
+        if (typeof Quill !== 'undefined' && document.getElementById('resource-editor') && !this.quillEditor) {
+            // Check if the element already has a Quill instance and clean it up
+            const editorElement = document.getElementById('resource-editor');
+            if (editorElement.classList.contains('ql-editor') || editorElement.querySelector('.ql-toolbar')) {
+                console.log('🧹 Cleaning up existing Quill instance...');
+                // Remove existing Quill toolbar and editor
+                const existingToolbar = editorElement.querySelector('.ql-toolbar');
+                const existingEditor = editorElement.querySelector('.ql-editor');
+                if (existingToolbar) existingToolbar.remove();
+                if (existingEditor) {
+                    // Move content back to the original element
+                    editorElement.innerHTML = existingEditor.innerHTML;
+                }
+                // Reset the element
+                editorElement.className = '';
+                editorElement.style.height = '300px';
+            }
+            // Define custom bullet styles
+            const Parchment = Quill.import('parchment');
+            const BlockEmbed = Quill.import('blots/block/embed');
+            
+            // Custom bullet blot
+            class CustomBulletBlot extends BlockEmbed {
+                static create(value) {
+                    const node = super.create();
+                    node.setAttribute('class', 'custom-bullet');
+                    node.innerHTML = value;
+                    return node;
+                }
+                
+                static value(node) {
+                    return node.innerHTML;
+                }
+            }
+            CustomBulletBlot.blotName = 'customBullet';
+            CustomBulletBlot.tagName = 'div';
+            Quill.register(CustomBulletBlot);
+
             this.quillEditor = new Quill('#resource-editor', {
                 theme: 'snow',
                 modules: {
@@ -147,10 +188,51 @@ class EmmaCMS {
                         ['link', 'image', 'video'],
                         ['blockquote', 'code-block'],
                         ['clean']
-                    ]
-                }
+                    ],
+                    clipboard: {
+                        // Enable paste functionality
+                        matchVisual: false,
+                        // Allow pasting of HTML content
+                        allowed: {
+                            tags: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+                                   'ul', 'ol', 'li', 'blockquote', 'pre', 'code', 'a', 'img', 'div', 'span'],
+                            attributes: ['href', 'src', 'alt', 'title', 'class', 'id', 'style']
+                        }
+                    },
+                    keyboard: {
+                        bindings: {
+                            // Ensure paste works with keyboard shortcuts
+                            paste: {
+                                key: 'V',
+                                shortKey: true,
+                                handler: function(range, context) {
+                                    console.log('⌨️ Quill paste handler triggered');
+                                    // Let Quill handle the paste naturally
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                },
+                formats: ['header', 'bold', 'italic', 'underline', 'strike', 'color', 'background', 
+                         'list', 'indent', 'align', 'link', 'image', 'video', 'blockquote', 
+                         'code-block']
             });
+
+            // Add custom styles for the editor
+            this.addCustomEditorStyles();
+            
+            // Add custom toolbar button for highlight boxes
+            this.addCustomToolbarButton();
+            
+            // Wait for Quill to be fully ready before setting up paste handlers
+            setTimeout(() => {
+                this.setupPasteHandlers();
+            }, 100);
+            
+            console.log('✅ Quill editor initialized successfully');
         } else {
+            console.log('❌ Quill editor initialization failed');
             console.log('Using simple rich text editor (Quill not available)');
             // Use the simple editor that's already in the HTML
             this.quillEditor = {
@@ -167,6 +249,340 @@ class EmmaCMS {
                     return '';
                 }
             };
+        }
+    }
+
+    addCustomEditorStyles() {
+        // Add custom CSS for the editor
+        const style = document.createElement('style');
+        style.textContent = `
+            .ql-editor {
+                font-family: 'Inter', sans-serif;
+                line-height: 1.6;
+                color: #1f2937;
+            }
+            
+            .ql-editor h1, .ql-editor h2 {
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                position: relative;
+            }
+            
+            .ql-editor h1::after, .ql-editor h2::after {
+                content: '';
+                position: absolute;
+                bottom: -0.5rem;
+                left: 0;
+                width: 3rem;
+                height: 3px;
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                border-radius: 2px;
+            }
+            
+            .ql-editor h3 {
+                color: #3b82f6;
+                position: relative;
+                padding-left: 1rem;
+            }
+            
+            .ql-editor h3::before {
+                content: '▶';
+                position: absolute;
+                left: 0;
+                color: #3b82f6;
+                font-size: 0.8rem;
+            }
+            
+            .ql-editor h4, .ql-editor h5, .ql-editor h6 {
+                color: #1d4ed8;
+                position: relative;
+                padding-left: 0.5rem;
+            }
+            
+            .ql-editor h4::before {
+                content: '•';
+                position: absolute;
+                left: 0;
+                color: #3b82f6;
+                font-weight: bold;
+            }
+            
+            .ql-editor strong, .ql-editor b {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+                padding: 0.1rem 0.3rem;
+                border-radius: 0.25rem;
+            }
+            
+            .ql-editor em, .ql-editor i {
+                background: rgba(59, 130, 246, 0.1);
+                padding: 0.1rem 0.2rem;
+                border-radius: 0.2rem;
+            }
+            
+            .ql-editor ul {
+                list-style: none;
+            }
+            
+            .ql-editor ul li {
+                position: relative;
+                padding-left: 1.5rem;
+            }
+            
+            .ql-editor ul li::before {
+                content: '✦';
+                position: absolute;
+                left: 0;
+                color: #3b82f6;
+                font-weight: bold;
+                font-size: 1.1rem;
+            }
+            
+            .ql-editor ol {
+                counter-reset: custom-counter;
+            }
+            
+            .ql-editor ol li {
+                counter-increment: custom-counter;
+                position: relative;
+                padding-left: 2rem;
+            }
+            
+            .ql-editor ol li::before {
+                content: counter(custom-counter);
+                position: absolute;
+                left: 0;
+                top: 0;
+                background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+                color: white;
+                width: 1.5rem;
+                height: 1.5rem;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                font-weight: bold;
+            }
+            
+            .ql-editor a {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+                text-decoration: none;
+            }
+            
+            .ql-editor blockquote {
+                border-left: 4px solid #3b82f6;
+                padding: 1.5rem;
+                background: rgba(59, 130, 246, 0.05);
+                border-radius: 0.5rem;
+                position: relative;
+            }
+            
+            .ql-editor blockquote::before {
+                content: '"';
+                position: absolute;
+                top: -0.5rem;
+                left: 1rem;
+                font-size: 3rem;
+                color: #3b82f6;
+                opacity: 0.3;
+            }
+            
+            .ql-editor code {
+                background: rgba(59, 130, 246, 0.15);
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                border: 1px solid rgba(59, 130, 246, 0.3);
+            }
+            
+            .ql-editor pre {
+                background: rgba(15, 23, 42, 0.9);
+                padding: 1.5rem;
+                border-radius: 0.5rem;
+                border: 1px solid rgba(59, 130, 246, 0.2);
+                position: relative;
+            }
+            
+            .ql-editor pre::before {
+                content: 'Code';
+                position: absolute;
+                top: 0.5rem;
+                right: 1rem;
+                background: #3b82f6;
+                color: white;
+                padding: 0.25rem 0.5rem;
+                border-radius: 0.25rem;
+                font-size: 0.7rem;
+                font-weight: bold;
+            }
+            
+            .custom-bullet {
+                margin: 1rem 0;
+                padding: 1rem;
+                background: rgba(59, 130, 246, 0.1);
+                border-left: 4px solid #3b82f6;
+                border-radius: 0.5rem;
+                position: relative;
+            }
+            
+            .custom-bullet::before {
+                content: '💡';
+                position: absolute;
+                left: -2rem;
+                top: 1rem;
+                font-size: 1.2rem;
+            }
+            
+            .highlight-box {
+                background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                border-radius: 0.5rem;
+                padding: 1rem;
+                margin: 1rem 0;
+                position: relative;
+            }
+            
+            .highlight-box::before {
+                content: '⭐';
+                position: absolute;
+                top: -0.5rem;
+                left: 1rem;
+                background: white;
+                padding: 0.25rem;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    addCustomToolbarButton() {
+        // Add a custom button to the toolbar for highlight boxes
+        const toolbar = this.quillEditor.getModule('toolbar');
+        const toolbarContainer = toolbar.container;
+        
+        // Create highlight box button
+        const highlightButton = document.createElement('button');
+        highlightButton.type = 'button';
+        highlightButton.innerHTML = '⭐';
+        highlightButton.title = 'Insert Highlight Box';
+        highlightButton.style.cssText = `
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 2px;
+            border-radius: 3px;
+            font-size: 16px;
+        `;
+        
+        highlightButton.addEventListener('click', () => {
+            const range = this.quillEditor.getSelection();
+            if (range) {
+                this.quillEditor.insertText(range.index, '\n');
+                this.quillEditor.insertEmbed(range.index + 1, 'div', {
+                    class: 'highlight-box',
+                    content: 'Highlighted content goes here...'
+                });
+                this.quillEditor.insertText(range.index + 2, '\n');
+                this.quillEditor.setSelection(range.index + 3);
+            }
+        });
+        
+        // Create custom bullet button
+        const bulletButton = document.createElement('button');
+        bulletButton.type = 'button';
+        bulletButton.innerHTML = '💡';
+        bulletButton.title = 'Insert Custom Bullet';
+        bulletButton.style.cssText = `
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 2px;
+            border-radius: 3px;
+            font-size: 16px;
+        `;
+        
+        bulletButton.addEventListener('click', () => {
+            const range = this.quillEditor.getSelection();
+            if (range) {
+                this.quillEditor.insertText(range.index, '\n');
+                this.quillEditor.insertEmbed(range.index + 1, 'div', {
+                    class: 'custom-bullet',
+                    content: 'Custom bullet content goes here...'
+                });
+                this.quillEditor.insertText(range.index + 2, '\n');
+                this.quillEditor.setSelection(range.index + 3);
+            }
+        });
+        
+        // Add the buttons to the toolbar
+        toolbarContainer.appendChild(highlightButton);
+        toolbarContainer.appendChild(bulletButton);
+    }
+
+    setupPasteHandlers() {
+        if (!this.quillEditor) return;
+        
+        console.log('🔧 Setting up paste handlers for Quill editor');
+        
+        // Handle text changes (including paste)
+        this.quillEditor.on('text-change', (delta, oldDelta, source) => {
+            if (source === 'user') {
+                console.log('📝 Text changed by user');
+            }
+        });
+
+        // Handle paste events with proper event handling
+        this.quillEditor.root.addEventListener('paste', (e) => {
+            console.log('📋 Paste event detected');
+            
+            // Ensure the editor is focused
+            if (document.activeElement !== this.quillEditor.root) {
+                this.quillEditor.focus();
+            }
+            
+            // Let the default paste behavior occur
+            // Quill's clipboard module will handle the content processing
+            setTimeout(() => {
+                console.log('✅ Paste processing completed');
+            }, 50);
+        });
+
+        // Handle keyboard shortcuts for paste
+        this.quillEditor.root.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+                console.log('⌨️ Paste shortcut detected (Ctrl/Cmd+V)');
+                
+                // Ensure editor is focused
+                if (document.activeElement !== this.quillEditor.root) {
+                    this.quillEditor.focus();
+                }
+            }
+        });
+
+        // Ensure the editor is focusable and can receive paste events
+        this.quillEditor.root.setAttribute('tabindex', '0');
+        this.quillEditor.root.style.outline = 'none';
+        
+        // Add a focus handler to ensure the editor is ready for paste
+        this.quillEditor.root.addEventListener('focus', () => {
+            console.log('🎯 Editor focused - ready for paste');
+        });
+
+        // Add click handler to ensure editor gets focus
+        this.quillEditor.root.addEventListener('click', () => {
+            console.log('🖱️ Editor clicked - ensuring focus');
+            this.quillEditor.focus();
+        });
+
+        // Test if clipboard API is available
+        if (navigator.clipboard) {
+            console.log('✅ Clipboard API available');
+        } else {
+            console.log('⚠️ Clipboard API not available - using fallback');
         }
     }
 
@@ -707,9 +1123,27 @@ class EmmaCMS {
         
         // Reset form
         form.reset();
+        
+        // Initialize Quill editor if not already done
+        if (!this.quillEditor && typeof Quill !== 'undefined') {
+            // Wait a bit for the modal to be fully displayed
+            setTimeout(() => {
+                this.initQuillEditor();
+            }, 200);
+        }
+        
         if (this.quillEditor && this.quillEditor.setContents) {
             this.quillEditor.setContents([]);
         }
+        
+        // Ensure editor is focused when modal opens
+        setTimeout(() => {
+            if (this.quillEditor && this.quillEditor.focus) {
+                this.quillEditor.focus();
+                console.log('🎯 Editor focused when modal opened');
+            }
+        }, 300);
+        
         this.currentResourceId = null;
         
         // Clear image previews
@@ -730,10 +1164,40 @@ class EmmaCMS {
         document.getElementById('modal-title').textContent = this.currentResourceId ? 'Edit Resource' : 'New Resource';
         
         modal.classList.add('active');
+        modal.style.display = 'flex';
     }
 
     closeResourceModal() {
-        document.getElementById('resource-modal').classList.remove('active');
+        console.log('🔒 Closing resource modal...');
+        const modal = document.getElementById('resource-modal');
+        if (modal) {
+            // Try both methods to ensure modal closes
+            modal.classList.remove('active');
+            modal.style.display = 'none';
+            console.log('✅ Modal closed successfully');
+        } else {
+            console.log('❌ Modal element not found');
+        }
+        
+        // Clean up Quill editor
+        if (this.quillEditor) {
+            console.log('🧹 Cleaning up Quill editor...');
+            const editorElement = document.getElementById('resource-editor');
+            if (editorElement) {
+                // Remove Quill toolbar and editor
+                const toolbar = editorElement.querySelector('.ql-toolbar');
+                const editor = editorElement.querySelector('.ql-editor');
+                if (toolbar) toolbar.remove();
+                if (editor) {
+                    // Move content back to the original element
+                    editorElement.innerHTML = editor.innerHTML;
+                }
+                // Reset the element
+                editorElement.className = '';
+                editorElement.style.height = '300px';
+            }
+            this.quillEditor = null;
+        }
     }
 
     async saveResource() {
@@ -781,10 +1245,63 @@ class EmmaCMS {
             formData.append('type', type);
             formData.append('excerpt', excerpt);
             formData.append('author', author);
-            const content = this.quillEditor && this.quillEditor.getContents ? 
-                this.quillEditor.getContents() : 
-                (this.quillEditor && this.quillEditor.root ? this.quillEditor.root.innerHTML : '');
+            // Get content from Quill editor
+            let content = '';
+            if (this.quillEditor) {
+                // Try multiple methods to get content
+                if (this.quillEditor.root && this.quillEditor.root.innerHTML) {
+                    content = this.quillEditor.root.innerHTML;
+                } else if (this.quillEditor.getContents) {
+                    // For Quill editor, get the HTML content
+                    const delta = this.quillEditor.getContents();
+                    if (delta && delta.ops && delta.ops.length > 0) {
+                        // Convert Delta to HTML using Quill's method
+                        content = this.quillEditor.root.innerHTML;
+                    } else {
+                        content = this.quillEditor.root.innerHTML;
+                    }
+                }
+                
+                // Fallback: check if there's any text content
+                if (!content || content.trim() === '' || content === '<p><br></p>') {
+                    const textContent = this.quillEditor.getText();
+                    if (textContent && textContent.trim() !== '') {
+                        content = `<p>${textContent}</p>`;
+                    }
+                }
+            }
+            
+            // Additional fallback: check the editor element directly
+            if (!content || content.trim() === '' || content === '<p><br></p>') {
+                const editorElement = document.getElementById('resource-editor');
+                if (editorElement) {
+                    content = editorElement.innerHTML;
+                }
+            }
+            
+            console.log('📝 Content being sent:', content ? 'Content found' : 'No content');
+            console.log('📝 Content length:', content.length);
+            console.log('📝 Content preview:', content.substring(0, 200) + '...');
+            
+            // Validate content
+            if (!content || content.trim() === '' || content === '<p><br></p>' || content === '<p></p>') {
+                console.error('❌ Content is empty or invalid!');
+                this.showNotification('Content is required. Please add some content to the editor.', 'error');
+                this.isSaving = false;
+                return;
+            }
+            
             formData.append('content', content);
+            
+            // Debug: Log all form data being sent
+            console.log('📤 Form data being sent:');
+            for (let [key, value] of formData.entries()) {
+                if (typeof value === 'string') {
+                    console.log(`${key}: ${value.substring(0, 100)}${value.length > 100 ? '...' : ''}`);
+                } else {
+                    console.log(`${key}: [File]`);
+                }
+            }
             formData.append('industry_id', document.getElementById('resource-industry').value);
             formData.append('status', document.getElementById('resource-status').value);
             formData.append('meta_title', document.getElementById('resource-meta-title').value);
@@ -830,22 +1347,35 @@ class EmmaCMS {
             
             const data = await response.json();
             
+            console.log('📊 Save response:', { ok: response.ok, data });
+            
             if (response.ok && data.success) {
+                console.log('✅ Resource saved successfully, closing modal and refreshing...');
                 this.closeResourceModal();
                 this.showNotification('Resource saved successfully!', 'success');
                 
                 // Refresh the current section data
                 const currentSection = this.getCurrentSection();
+                console.log('🔄 Current section:', currentSection);
                 await this.loadSectionData(currentSection);
                 
                 // If we're in blogs section, also refresh the blog list specifically
                 if (currentSection === 'blogs' || window.location.pathname.includes('cms-blogs')) {
-                    await this.loadBlogPosts();
+                    console.log('📝 Refreshing blog posts...');
+                    // Call the page-specific loadBlogPosts function if it exists
+                    if (typeof window.loadBlogPosts === 'function') {
+                        console.log('📝 Calling window.loadBlogPosts...');
+                        await window.loadBlogPosts();
+                    } else {
+                        console.log('📝 Calling this.loadBlogPosts...');
+                        await this.loadBlogPosts();
+                    }
                 }
                 
                 // Also refresh draft resources for dashboard
                 await this.loadDraftResources();
             } else {
+                console.log('❌ Save failed:', data);
                 this.showNotification(data.error || data.message || 'Error saving resource', 'error');
             }
         } catch (error) {

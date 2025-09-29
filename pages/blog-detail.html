@@ -188,7 +188,9 @@
         .main-content {
             max-width: 800px;
             margin: 0 auto;
-            padding: 8rem 2rem 4rem;
+            padding: 8rem 2rem 6rem;
+            position: relative;
+            z-index: 1;
         }
 
         .article-header {
@@ -271,6 +273,10 @@
             font-size: 1.1rem;
             line-height: 1.8;
             color: #ffffff !important;
+            max-width: 100%;
+            word-wrap: break-word;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
         }
 
         .article-content h1,
@@ -279,13 +285,40 @@
             font-weight: 700;
             margin: 2rem 0 1rem;
             color: #ffffff !important;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .article-content h1::after,
+        .article-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 3rem;
+            height: 3px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
         }
 
         .article-content h3 {
             font-size: 1.5rem;
             font-weight: 600;
             margin: 1.5rem 0 0.75rem;
-            color: #ffffff !important;
+            color: #60a5fa !important;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .article-content h3::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-size: 0.8rem;
         }
 
         .article-content h4,
@@ -293,23 +326,42 @@
         .article-content h6 {
             font-weight: 600;
             margin: 1.5rem 0 0.75rem;
-            color: #ffffff !important;
+            color: #93c5fd !important;
+            position: relative;
+            padding-left: 0.5rem;
+        }
+
+        .article-content h4::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
         }
 
         .article-content p {
             margin-bottom: 1.5rem;
             color: #ffffff !important;
+            text-align: justify;
+            hyphens: auto;
         }
 
         .article-content strong,
         .article-content b {
             color: #f8fafc !important;
-            font-weight: 600;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.25rem;
         }
 
         .article-content em,
         .article-content i {
             color: #cbd5e1 !important;
+            font-style: italic;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.1rem 0.2rem;
+            border-radius: 0.2rem;
         }
 
         .article-content ul, .article-content ol {
@@ -318,49 +370,196 @@
             color: #ffffff !important;
         }
 
-        .article-content li {
-            margin-bottom: 0.5rem;
+        .article-content ul {
+            list-style: none;
+        }
+
+        .article-content ul li {
+            position: relative;
+            margin-bottom: 0.75rem;
             color: #ffffff !important;
+            padding-left: 1.5rem;
+        }
+
+        .article-content ul li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .article-content ol {
+            counter-reset: custom-counter;
+        }
+
+        .article-content ol li {
+            counter-increment: custom-counter;
+            position: relative;
+            margin-bottom: 0.75rem;
+            color: #ffffff !important;
+            padding-left: 2rem;
+        }
+
+        .article-content ol li::before {
+            content: counter(custom-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Custom bullet styles */
+        .article-content .custom-bullet {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.1);
+            border-left: 4px solid #3b82f6;
+            border-radius: 0.5rem;
+            position: relative;
+        }
+
+        .article-content .custom-bullet::before {
+            content: '💡';
+            position: absolute;
+            left: -2rem;
+            top: 1rem;
+            font-size: 1.2rem;
         }
 
         .article-content a {
             color: #60a5fa !important;
-            text-decoration: underline;
+            text-decoration: none;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .article-content a:hover {
             color: #93c5fd !important;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
 
         .article-content blockquote {
             border-left: 4px solid #3b82f6;
-            padding-left: 1.5rem;
+            padding: 1.5rem;
             margin: 1.5rem 0;
             color: #cbd5e1 !important;
             font-style: italic;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 0.5rem;
+            position: relative;
+        }
+
+        .article-content blockquote::before {
+            content: '"';
+            position: absolute;
+            top: -0.5rem;
+            left: 1rem;
+            font-size: 3rem;
+            color: #3b82f6;
+            opacity: 0.3;
         }
 
         .article-content code {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(59, 130, 246, 0.15);
             color: #60a5fa !important;
             padding: 0.25rem 0.5rem;
             border-radius: 0.25rem;
             font-family: 'Courier New', monospace;
+            border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
         .article-content pre {
-            background: rgba(15, 23, 42, 0.8);
+            background: rgba(15, 23, 42, 0.9);
             color: #e2e8f0 !important;
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 0.5rem;
             overflow-x: auto;
             margin: 1.5rem 0;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            position: relative;
+        }
+
+        .article-content pre::before {
+            content: 'Code';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: bold;
         }
 
         .article-content pre code {
             background: none;
             padding: 0;
             color: #e2e8f0 !important;
+            border: none;
+        }
+
+        /* Highlight boxes */
+        .article-content .highlight-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .article-content .highlight-box::before {
+            content: '⭐';
+            position: absolute;
+            top: -0.5rem;
+            left: 1rem;
+            background: #0f172a;
+            padding: 0.25rem;
+        }
+
+        /* Tables */
+        .article-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        .article-content th,
+        .article-content td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            color: #ffffff !important;
+        }
+
+        .article-content th {
+            background: rgba(59, 130, 246, 0.2);
+            font-weight: 600;
+            color: #60a5fa !important;
+        }
+
+        .article-content tr:hover {
+            background: rgba(59, 130, 246, 0.05);
         }
 
         .article-tags {
@@ -724,12 +923,33 @@
             document.getElementById('article-body').innerHTML = cleanContent;
             
             // Update author info
-            const author = article.author || 'Emma AI Team';
+            const author = article.author || article.author_name || 'Emma AI Team';
             const authorAvatar = document.getElementById('author-avatar');
-            if (article.authorImage || article.author_image) {
-                authorAvatar.innerHTML = `<img src="${article.authorImage || article.author_image}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">`;
+            const authorImageUrl = article.authorImage || article.author_image || article.authorImage;
+            
+            console.log('👤 Author image data:', {
+                authorImage: article.authorImage,
+                author_image: article.author_image,
+                authorImageUrl: authorImageUrl
+            });
+            
+            if (authorImageUrl) {
+                // Ensure the URL is properly formatted
+                let fullAuthorImageUrl;
+                if (authorImageUrl.startsWith('http')) {
+                    fullAuthorImageUrl = authorImageUrl;
+                } else if (authorImageUrl.startsWith('/')) {
+                    fullAuthorImageUrl = authorImageUrl;
+                } else if (authorImageUrl.startsWith('uploads/')) {
+                    fullAuthorImageUrl = '/' + authorImageUrl;
+                } else {
+                    fullAuthorImageUrl = '/cms/uploads/' + authorImageUrl;
+                }
+                authorAvatar.innerHTML = `<img src="${fullAuthorImageUrl}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">`;
+                console.log('✅ Author image set:', fullAuthorImageUrl);
             } else {
                 authorAvatar.textContent = author.charAt(0).toUpperCase();
+                console.log('❌ No author image found, using initial');
             }
             document.getElementById('author-name').textContent = author;
             
@@ -746,12 +966,34 @@
             const readTime = article.readTime || '5';
             document.getElementById('read-time').textContent = readTime + ' min read';
             
-            // Update image
-            if (article.image || article.image_url) {
+            // Update featured image
+            console.log('🖼️ Article image data:', {
+                image: article.image,
+                image_url: article.image_url,
+                featured_image: article.featured_image
+            });
+            
+            const imageUrl = article.image_url || article.image || article.featured_image;
+            if (imageUrl) {
+                // Ensure the URL is properly formatted
+                let fullImageUrl;
+                if (imageUrl.startsWith('http')) {
+                    fullImageUrl = imageUrl;
+                } else if (imageUrl.startsWith('/')) {
+                    fullImageUrl = imageUrl;
+                } else if (imageUrl.startsWith('uploads/')) {
+                    fullImageUrl = '/' + imageUrl;
+                } else {
+                    fullImageUrl = '/cms/uploads/' + imageUrl;
+                }
+                
                 const img = document.getElementById('article-image');
-                img.src = article.image || article.image_url;
+                img.src = fullImageUrl;
                 img.alt = article.title;
                 img.style.display = 'block';
+                console.log('✅ Featured image set:', fullImageUrl);
+            } else {
+                console.log('❌ No featured image URL found');
             }
             
             // Update tags

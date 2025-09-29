@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">Use Case - Emma AI</title>
+    
+    <!-- Primary Meta Tags -->
+    <meta name="title" id="meta-title" content="Use Case - Emma AI">
+    <meta name="description" id="meta-description" content="Explore our AI automation use cases and intelligent workflow solutions.">
+    <meta name="keywords" content="AI use case, automation solutions, Emma AI, intelligent workflows">
+    <meta name="author" content="Emma AI Team">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" id="og-url" content="">
+    <meta property="og:title" id="og-title" content="">
+    <meta property="og:description" id="og-description" content="">
+    <meta property="og:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" id="twitter-url" content="">
+    <meta property="twitter:title" id="twitter-title" content="">
+    <meta property="twitter:description" id="twitter-description" content="">
+    <meta property="twitter:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" id="canonical-url" href="">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/Logo And Recording/cropped_circle_image.png">
+    <link rel="apple-touch-icon" href="/Logo And Recording/cropped_circle_image.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            line-height: 1.6;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-container {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-image {
+            width: 24px;
+            height: 24px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #3b82f6;
+        }
+
+        .use-case-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .use-case-header {
+            margin-bottom: 3rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #60a5fa;
+        }
+
+        .use-case-category {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .use-case-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .use-case-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            color: #94a3b8;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .use-case-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .use-case-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #ffffff !important;
+            max-width: 100%;
+            word-wrap: break-word;
+        }
+
+        .use-case-content h1,
+        .use-case-content h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0 1rem;
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .use-case-content h1::after,
+        .use-case-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -0.5rem;
+            left: 0;
+            width: 3rem;
+            height: 3px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+
+        .use-case-content h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #60a5fa !important;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .use-case-content h3::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-size: 0.8rem;
+        }
+
+        .use-case-content h4,
+        .use-case-content h5,
+        .use-case-content h6 {
+            font-weight: 600;
+            margin: 1.5rem 0 0.75rem;
+            color: #93c5fd !important;
+            position: relative;
+            padding-left: 0.5rem;
+        }
+
+        .use-case-content h4::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+        }
+
+        .use-case-content p {
+            margin-bottom: 1.5rem;
+            color: #ffffff !important;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .use-case-content strong,
+        .use-case-content b {
+            color: #f8fafc !important;
+            font-weight: 700;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 0.1rem 0.3rem;
+            border-radius: 0.25rem;
+        }
+
+        .use-case-content em,
+        .use-case-content i {
+            color: #cbd5e1 !important;
+            font-style: italic;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.1rem 0.2rem;
+            border-radius: 0.2rem;
+        }
+
+        .use-case-content ul, .use-case-content ol {
+            margin-bottom: 1.5rem;
+            padding-left: 2rem;
+            color: #ffffff !important;
+        }
+
+        .use-case-content ul {
+            list-style: none;
+        }
+
+        .use-case-content ul li {
+            position: relative;
+            margin-bottom: 0.75rem;
+            color: #ffffff !important;
+            padding-left: 1.5rem;
+        }
+
+        .use-case-content ul li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .use-case-content ol {
+            counter-reset: custom-counter;
+        }
+
+        .use-case-content ol li {
+            counter-increment: custom-counter;
+            position: relative;
+            margin-bottom: 0.75rem;
+            color: #ffffff !important;
+            padding-left: 2rem;
+        }
+
+        .use-case-content ol li::before {
+            content: counter(custom-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .use-case-content a {
+            color: #60a5fa !important;
+            text-decoration: none;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .use-case-content a:hover {
+            color: #93c5fd !important;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .use-case-content blockquote {
+            border-left: 4px solid #3b82f6;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            color: #cbd5e1 !important;
+            font-style: italic;
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: 0.5rem;
+            position: relative;
+        }
+
+        .use-case-content blockquote::before {
+            content: '"';
+            position: absolute;
+            top: -0.5rem;
+            left: 1rem;
+            font-size: 3rem;
+            color: #3b82f6;
+            opacity: 0.3;
+        }
+
+        .use-case-content code {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa !important;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .use-case-content pre {
+            background: rgba(15, 23, 42, 0.9);
+            color: #e2e8f0 !important;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            position: relative;
+        }
+
+        .use-case-content pre::before {
+            content: 'Code';
+            position: absolute;
+            top: 0.5rem;
+            right: 1rem;
+            background: #3b82f6;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .use-case-content pre code {
+            background: none;
+            padding: 0;
+            color: #e2e8f0 !important;
+            border: none;
+        }
+
+        .use-case-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .tag {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .loading-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(59, 130, 246, 0.3);
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .use-case-container {
+                padding: 6rem 1rem 2rem;
+            }
+            
+            .use-case-title {
+                font-size: 2rem;
+            }
+            
+            .nav-content {
+                padding: 0 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-logo">
+                <div class="logo-container">
+                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
+                    <span class="logo-text">Emma AI</span>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/resources">Resources</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Loading State -->
+    <div id="loading-state" class="loading-state">
+        <div class="loading-spinner"></div>
+        <p>Loading use case...</p>
+    </div>
+
+    <!-- Use Case Content -->
+    <div id="use-case-content" style="display: none;">
+        <div class="use-case-container">
+            <a href="/resources" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Resources
+            </a>
+            
+            <article class="use-case-header">
+                <span class="use-case-category" id="use-case-category">Use Case</span>
+                <h1 class="use-case-title" id="use-case-title">Loading...</h1>
+                <div class="use-case-meta" id="use-case-meta">
+                    <div class="author-info">
+                        <div class="author-avatar" id="author-avatar">E</div>
+                        <span id="author-name">Emma AI Team</span>
+                    </div>
+                    <span id="use-case-date">Loading...</span>
+                </div>
+            </article>
+
+            <img class="use-case-image" id="use-case-image" src="" alt="" style="display: none;">
+
+            <div class="use-case-content" id="use-case-body">
+                Loading content...
+            </div>
+
+            <div class="use-case-tags" id="use-case-tags">
+                <!-- Tags will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-state" class="error-state" style="display: none;">
+        <h2>Use Case Not Found</h2>
+        <p>The use case you're looking for doesn't exist or has been removed.</p>
+        <a href="/resources" class="back-link">
+            <i class="fas fa-arrow-left"></i>
+            Back to Resources
+        </a>
+    </div>
+
+    <script>
+        // Get use case ID from URL
+        function getUseCaseId() {
+            const path = window.location.pathname;
+            const segments = path.split('/');
+            return segments[segments.length - 1];
+        }
+
+        // Load use case data
+        async function loadUseCase() {
+            const useCaseSlug = getUseCaseId();
+            console.log('Loading use case:', useCaseSlug);
+            
+            try {
+                // Try to fetch from use cases API first using the slug
+                let response = await fetch(`/api/usecases`);
+                let useCase = null;
+                
+                if (response.ok) {
+                    const useCases = await response.json();
+                    // Find the use case with matching slug
+                    useCase = useCases.find(uc => uc.slug === useCaseSlug);
+                }
+                
+                // If not found in use cases, try resources API
+                if (!useCase) {
+                    response = await fetch(`/api/resources`);
+                    if (response.ok) {
+                        const resources = await response.json();
+                        useCase = resources.find(resource => resource.slug === useCaseSlug && resource.type === 'use-case');
+                    }
+                }
+                
+                if (useCase) {
+                    displayUseCase(useCase);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error loading use case:', error);
+                showError();
+            }
+        }
+
+        // Display use case content
+        function displayUseCase(useCase) {
+            console.log('Displaying use case:', useCase);
+            
+            // Hide loading state
+            document.getElementById('loading-state').style.display = 'none';
+            
+            // Show use case content
+            document.getElementById('use-case-content').style.display = 'block';
+            
+            // Update page title and meta
+            document.getElementById('page-title').textContent = useCase.title + ' - Emma AI';
+            document.getElementById('meta-title').content = useCase.title + ' - Emma AI';
+            document.getElementById('meta-description').content = useCase.excerpt || useCase.description || 'Explore our AI automation use cases.';
+            
+            // Update use case content
+            document.getElementById('use-case-title').textContent = useCase.title;
+            
+            // Clean up content and remove any malformed HTML
+            let cleanContent = useCase.content || useCase.excerpt || 'Content not available.';
+            // Remove any malformed HTML artifacts
+            cleanContent = cleanContent.replace(/'">/g, '');
+            cleanContent = cleanContent.replace(/'/g, "'");
+            
+            document.getElementById('use-case-body').innerHTML = cleanContent;
+            
+            // Update author info
+            const author = useCase.author || useCase.author_name || 'Emma AI Team';
+            const authorAvatar = document.getElementById('author-avatar');
+            if (useCase.authorImage || useCase.author_image) {
+                authorAvatar.innerHTML = `<img src="${useCase.authorImage || useCase.author_image}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">`;
+            } else {
+                authorAvatar.textContent = author.charAt(0).toUpperCase();
+            }
+            document.getElementById('author-name').textContent = author;
+            
+            // Update date
+            const date = useCase.date || useCase.created_at || new Date().toISOString();
+            const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            document.getElementById('use-case-date').textContent = formattedDate;
+            
+            // Update image
+            console.log('🖼️ Use case image data:', {
+                image: useCase.image,
+                image_url: useCase.image_url,
+                featured_image: useCase.featured_image
+            });
+            
+            const imageUrl = useCase.image || useCase.image_url || useCase.featured_image;
+            if (imageUrl) {
+                const img = document.getElementById('use-case-image');
+                img.src = imageUrl;
+                img.alt = useCase.title;
+                img.style.display = 'block';
+                console.log('✅ Image set:', imageUrl);
+            } else {
+                console.log('❌ No image URL found');
+            }
+            
+            // Update tags
+            const tagsContainer = document.getElementById('use-case-tags');
+            if (useCase.tags) {
+                let tags = [];
+                try {
+                    tags = typeof useCase.tags === 'string' ? JSON.parse(useCase.tags) : useCase.tags;
+                } catch (e) {
+                    tags = useCase.tags.split(',').map(tag => tag.trim());
+                }
+                
+                tagsContainer.innerHTML = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+            }
+            
+            // Update meta tags
+            const currentUrl = window.location.href;
+            document.getElementById('og-url').content = currentUrl;
+            document.getElementById('og-title').content = useCase.title;
+            document.getElementById('og-description').content = useCase.excerpt || useCase.description || '';
+            document.getElementById('twitter-url').content = currentUrl;
+            document.getElementById('twitter-title').content = useCase.title;
+            document.getElementById('twitter-description').content = useCase.excerpt || useCase.description || '';
+            document.getElementById('canonical-url').href = currentUrl;
+        }
+
+        // Show error state
+        function showError() {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+        }
+
+        // Load use case when page loads
+        document.addEventListener('DOMContentLoaded', loadUseCase);
+    </script>
+</body>
+</html>

@@ -52,16 +52,16 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Serve static files
 app.use('/uploads', express.static('uploads'));
-app.use('/cms-uploads', express.static('cms-uploads'));
-app.use('/quill', express.static('quill'));
+app.use('/cms/uploads', express.static(path.join(__dirname, '../uploads')));
+app.use('/quill', express.static(path.join(__dirname, '../quill')));
 
 // Serve admin interface
 app.get('/admin', (req, res) => {
-    res.sendFile(path.join(__dirname, 'cms-admin-standalone.html'));
+    res.sendFile(path.join(__dirname, '../admin/cms-admin-standalone.html'));
 });
 
 app.get('/admin-local', (req, res) => {
-    res.sendFile(path.join(__dirname, 'cms-admin-local.html'));
+    res.sendFile(path.join(__dirname, '../admin/cms-admin-local.html'));
 });
 
 // Database connection
@@ -82,7 +82,7 @@ const pool = mysql.createPool(dbConfig);
 // File upload configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        const uploadPath = 'cms-uploads';
+        const uploadPath = 'cms/uploads';
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
@@ -380,6 +380,25 @@ app.get('/api/resources/:slug', async (req, res) => {
     }
 });
 
+// Test endpoint for debugging
+app.post('/api/test-resource', authenticateToken, async (req, res) => {
+    try {
+        console.log('🧪 Test endpoint called');
+        console.log('req.body:', req.body);
+        console.log('req.user:', req.user);
+        
+        const [result] = await pool.execute(
+            'INSERT INTO resources (title, slug, type, status, content, content_plain, author_id, author_name, read_time, word_count) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            ['Test Title', 'test-title', 'blog', 'draft', 'Test content', 'Test content', 1, 'Test Author', 1, 2]
+        );
+        
+        res.json({ success: true, id: result.insertId });
+    } catch (error) {
+        console.error('Test error:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Create new resource
 app.post('/api/resources', authenticateToken, upload.fields([
     { name: 'featured_image', maxCount: 1 },
@@ -390,18 +409,37 @@ app.post('/api/resources', authenticateToken, upload.fields([
         const {
             title,
             type,
-            excerpt,
+            excerpt = '',
             content,
-            industry_id,
-            tags,
-            meta_title,
-            meta_description,
-            meta_keywords,
+            author = '',
+            industry_id = null,
+            tags = '',
+            meta_title = '',
+            meta_description = '',
+            meta_keywords = '',
             status = 'draft'
         } = req.body;
 
+        // Debug: Log received data
+        console.log('📝 Received form data:');
+        console.log('Title:', title);
+        console.log('Type:', type);
+        console.log('Content length:', content ? content.length : 0);
+        console.log('Content preview:', content ? content.substring(0, 100) + '...' : 'No content');
+        console.log('All body fields:', Object.keys(req.body));
+        console.log('req.files:', req.files);
+        
         if (!title || !type || !content) {
-            return res.status(400).json({ error: 'Title, type, and content are required' });
+            console.log('❌ Validation failed - missing required fields');
+            return res.status(400).json({ 
+                error: 'Title, type, and content are required',
+                debug: {
+                    title: !!title,
+                    type: !!type,
+                    content: !!content,
+                    contentLength: content ? content.length : 0
+                }
+            });
         }
 
         const slug = generateSlug(title);
@@ -414,9 +452,9 @@ app.post('/api/resources', authenticateToken, upload.fields([
         const authorImage = req.files?.author_image?.[0];
         const galleryFiles = req.files?.gallery || [];
 
-        const featuredImageUrl = featuredImage ? `/cms-uploads/${featuredImage.filename}` : null;
-        const authorImageUrl = authorImage ? `/cms-uploads/${authorImage.filename}` : null;
-        const galleryUrls = galleryFiles.map(file => `/cms-uploads/${file.filename}`);
+        const featuredImageUrl = featuredImage ? `/cms/uploads/${featuredImage.filename}` : null;
+        const authorImageUrl = authorImage ? `/cms/uploads/${authorImage.filename}` : null;
+        const galleryUrls = galleryFiles.map(file => `/cms/uploads/${file.filename}`);
 
         // Parse tags
         let tagIds = [];
@@ -430,6 +468,9 @@ app.post('/api/resources', authenticateToken, upload.fields([
 
         const publishedAt = status === 'published' ? new Date() : null;
 
+        // Debug: Check for undefined values
+        console.log('🔍 Creating resource with title:', title);
+
         const [result] = await pool.execute(`
             INSERT INTO resources (
                 title, slug, type, status, excerpt, content, content_plain,
@@ -438,11 +479,11 @@ app.post('/api/resources', authenticateToken, upload.fields([
                 meta_keywords, read_time, word_count, published_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `, [
-            title, slug, type, status, excerpt, content, contentPlain,
-            featuredImageUrl, req.body.featured_image_alt || title, JSON.stringify(galleryUrls),
-            req.user.id, `${req.user.first_name || ''} ${req.user.last_name || ''}`.trim() || req.user.username,
-            authorImageUrl, industry_id || null, JSON.stringify(tagIds),
-            meta_title || title, meta_description || excerpt, meta_keywords,
+            title, slug, type, status, excerpt || null, content, contentPlain,
+            featuredImageUrl || null, req.body.featured_image_alt || title, JSON.stringify(galleryUrls),
+            req.user?.id || 1, author || `${req.user?.first_name || ''} ${req.user?.last_name || ''}`.trim() || req.user?.username || 'admin',
+            authorImageUrl || null, industry_id ? parseInt(industry_id) : null, JSON.stringify(tagIds),
+            meta_title || title, meta_description || excerpt, meta_keywords || null,
             readTime, wordCount, publishedAt
         ]);
 
@@ -519,13 +560,13 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
         };
 
         if (featuredImage) {
-            updateFields.featured_image = `/cms-uploads/${featuredImage.filename}`;
+            updateFields.featured_image = `/cms/uploads/${featuredImage.filename}`;
         }
         if (authorImage) {
-            updateFields.author_image = `/cms-uploads/${authorImage.filename}`;
+            updateFields.author_image = `/cms/uploads/${authorImage.filename}`;
         }
         if (galleryFiles.length > 0) {
-            updateFields.gallery = JSON.stringify(galleryFiles.map(file => `/cms-uploads/${file.filename}`));
+            updateFields.gallery = JSON.stringify(galleryFiles.map(file => `/cms/uploads/${file.filename}`));
         }
         if (status) {
             updateFields.status = status;
@@ -669,7 +710,7 @@ app.post('/api/upload', authenticateToken, upload.single('file'), async (req, re
             file: {
                 id: result.insertId,
                 filename: req.file.filename,
-                url: `/cms-uploads/${req.file.filename}`,
+                url: `/cms/uploads/${req.file.filename}`,
                 size: req.file.size,
                 type: req.file.mimetype
             }

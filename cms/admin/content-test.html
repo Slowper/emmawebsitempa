@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Test - Emma CMS</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .editor-container { margin: 20px 0; border: 1px solid #ccc; }
+        .test-button { padding: 10px 20px; margin: 5px; background: #007cba; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .test-button:hover { background: #005a87; }
+        .result { margin-top: 20px; padding: 10px; background: #f0f0f0; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Content Extraction Test</h1>
+    
+    <div class="editor-container">
+        <h3>Quill Editor Test:</h3>
+        <div id="quill-editor" style="height: 200px;"></div>
+    </div>
+    
+    <div>
+        <button class="test-button" onclick="testContentExtraction()">Test Content Extraction</button>
+        <button class="test-button" onclick="addSampleContent()">Add Sample Content</button>
+        <button class="test-button" onclick="clearEditor()">Clear Editor</button>
+    </div>
+    
+    <div id="result" class="result" style="display: none;">
+        <h3>Test Results:</h3>
+        <div id="result-content"></div>
+    </div>
+
+    <script>
+        let quill;
+        
+        // Initialize Quill editor
+        try {
+            quill = new Quill('#quill-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        ['link']
+                    ],
+                    clipboard: {
+                        matchVisual: false,
+                        allowed: {
+                            tags: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'ul', 'ol', 'li', 'a'],
+                            attributes: ['href', 'src', 'alt', 'title']
+                        }
+                    }
+                }
+            });
+            
+            console.log('✅ Quill editor initialized');
+            
+        } catch (error) {
+            console.log('❌ Error initializing Quill:', error.message);
+        }
+        
+        function addSampleContent() {
+            if (quill) {
+                quill.setContents([
+                    { insert: 'Test Blog Post\n', attributes: { header: 2 } },
+                    { insert: 'This is a test blog post with some content.\n\n' },
+                    { insert: 'Here are some features:\n' },
+                    { insert: '• Feature 1\n' },
+                    { insert: '• Feature 2\n' },
+                    { insert: '• Feature 3\n\n' },
+                    { insert: 'This content should be properly extracted when testing.' }
+                ]);
+                console.log('✅ Sample content added');
+            }
+        }
+        
+        function clearEditor() {
+            if (quill) {
+                quill.setText('');
+                console.log('✅ Editor cleared');
+            }
+        }
+        
+        function testContentExtraction() {
+            if (!quill) {
+                showResult('❌ Quill editor not initialized', 'error');
+                return;
+            }
+            
+            // Test different content extraction methods
+            const methods = {
+                'quill.root.innerHTML': quill.root.innerHTML,
+                'quill.getContents()': quill.getContents(),
+                'quill.getText()': quill.getText(),
+                'quill.getLength()': quill.getLength()
+            };
+            
+            let results = '<h4>Content Extraction Methods:</h4>';
+            
+            for (const [method, value] of Object.entries(methods)) {
+                results += `<p><strong>${method}:</strong></p>`;
+                if (typeof value === 'string') {
+                    results += `<pre>${value.substring(0, 200)}${value.length > 200 ? '...' : ''}</pre>`;
+                } else if (typeof value === 'object') {
+                    results += `<pre>${JSON.stringify(value, null, 2).substring(0, 200)}...</pre>`;
+                } else {
+                    results += `<pre>${value}</pre>`;
+                }
+            }
+            
+            // Test the actual content extraction logic from the CMS
+            const content = extractContentForSubmission();
+            results += `<h4>CMS Content Extraction Result:</h4>`;
+            results += `<p><strong>Content:</strong> ${content ? 'Found' : 'Not found'}</p>`;
+            results += `<p><strong>Length:</strong> ${content ? content.length : 0}</p>`;
+            results += `<p><strong>Preview:</strong></p>`;
+            results += `<pre>${content ? content.substring(0, 300) + '...' : 'No content'}</pre>`;
+            
+            showResult(results, content ? 'success' : 'error');
+        }
+        
+        function extractContentForSubmission() {
+            // This mimics the content extraction logic from the CMS
+            let content = '';
+            if (quill) {
+                // Try multiple methods to get content
+                if (quill.root && quill.root.innerHTML) {
+                    content = quill.root.innerHTML;
+                } else if (quill.getContents) {
+                    // For Quill editor, get the HTML content
+                    const delta = quill.getContents();
+                    if (delta && delta.ops && delta.ops.length > 0) {
+                        // Convert Delta to HTML using Quill's method
+                        content = quill.root.innerHTML;
+                    } else {
+                        content = quill.root.innerHTML;
+                    }
+                }
+                
+                // Fallback: check if there's any text content
+                if (!content || content.trim() === '' || content === '<p><br></p>') {
+                    const textContent = quill.getText();
+                    if (textContent && textContent.trim() !== '') {
+                        content = `<p>${textContent}</p>`;
+                    }
+                }
+            }
+            
+            // Additional fallback: check the editor element directly
+            if (!content || content.trim() === '' || content === '<p><br></p>') {
+                const editorElement = document.getElementById('quill-editor');
+                if (editorElement) {
+                    content = editorElement.innerHTML;
+                }
+            }
+            
+            return content;
+        }
+        
+        function showResult(content, type) {
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('result-content').innerHTML = content;
+            console.log('📊 Test result:', type);
+        }
+    </script>
+</body>
+</html>
