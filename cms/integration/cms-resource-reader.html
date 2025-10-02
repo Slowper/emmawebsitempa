@@ -781,6 +781,26 @@
     </footer>
 
     <script>
+        // Helper function to clean Quill editor artifacts from content
+        function cleanQuillContent(content) {
+            if (!content) return content;
+            
+            let cleanContent = content;
+            
+            // Remove Quill editor artifacts
+            cleanContent = cleanContent
+                .replace(/<div class="ql-clipboard"[^>]*>[\s\S]*?<\/div>/g, '')
+                .replace(/<div class="ql-tooltip[^>]*>[\s\S]*?<\/div>/g, '')
+                .replace(/<input[^>]*data-formula[^>]*>/g, '')
+                .replace(/<a class="ql-preview"[^>]*>[\s\S]*?<\/a>/g, '')
+                .replace(/<a class="ql-action"[^>]*>[\s\S]*?<\/a>/g, '')
+                .replace(/<a class="ql-remove"[^>]*>[\s\S]*?<\/a>/g, '')
+                .replace(/<div class="ql-toolbar"[^>]*>[\s\S]*?<\/div>/g, '')
+                .replace(/<div class="ql-container"[^>]*>[\s\S]*?<\/div>/g, '');
+            
+            return cleanContent;
+        }
+
         class ResourceReader {
             constructor() {
                 this.apiBase = 'http://localhost:3001/api';
@@ -888,7 +908,7 @@
                 }
                 
                 // Update article content
-                document.getElementById('article-body').innerHTML = resource.content;
+                document.getElementById('article-body').innerHTML = cleanQuillContent(resource.content);
                 
                 // Update tags
                 if (resource.tags && resource.tags.length > 0) {

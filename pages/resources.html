@@ -196,23 +196,27 @@
         
         .nav-links { 
             display: flex; 
-            gap: 0.5rem; 
+            gap: 0.3rem; 
             background: rgba(30, 41, 59, 0.8);
             backdrop-filter: blur(10px);
-            padding: 0.5rem;
+            padding: 0.4rem;
             border-radius: 1rem;
             border: 1px solid rgba(59, 130, 246, 0.2);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex-wrap: nowrap;
         }
         .nav-link { 
             color: #94a3b8; 
             text-decoration: none; 
             font-weight: 500; 
-            padding: 0.75rem 1.5rem;
+            padding: 0.5rem 1rem;
             border-radius: 0.75rem;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            white-space: nowrap;
+            flex-shrink: 0;
+            font-size: 0.9rem;
         }
         .nav-link::before {
             content: '';
@@ -276,11 +280,11 @@
         .lottie-animation {
             width: 100%;
             height: 100%;
-            opacity: 0.6;
+            opacity: 0.8;
             filter: blur(1px);
-            transform: scale(0.5) rotate(90deg);
+            transform: scale(1.8) rotate(90deg);
             transform-origin: center center;
-            object-fit: contain;
+            object-fit: cover;
             will-change: transform;
             transform-style: preserve-3d;
             backface-visibility: hidden;
@@ -291,13 +295,13 @@
         /* Responsive adjustments for landscape mode */
         @media (max-width: 768px) {
             .lottie-animation {
-                transform: scale(0.6) rotate(90deg);
+                transform: scale(2.2) rotate(90deg);
             }
         }
         
         @media (min-width: 1200px) {
             .lottie-animation {
-                transform: scale(0.4) rotate(90deg);
+                transform: scale(1.5) rotate(90deg);
             }
         }
         
@@ -305,7 +309,7 @@
         @media (prefers-reduced-motion: reduce) {
             .lottie-animation {
                 animation: none !important;
-                transform: scale(0.5) rotate(90deg) !important;
+                transform: scale(1.8) rotate(90deg) !important;
             }
             .lottie-container {
                 transform: translateZ(0) !important;
@@ -400,144 +404,898 @@
 
         /* Filter System */
         .filters-section {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 2rem;
-            margin-bottom: 2rem;
+            padding: 3rem 2rem;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 80px rgba(59, 130, 246, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .filters-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+            pointer-events: none;
+        }
+
+        /* Resource Type Filter */
+        .resource-type-filter {
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .filter-section-title {
+            color: #f8fafc;
+            margin-bottom: 1.5rem;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .filter-tabs {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
             width: 100%;
-            min-height: 50px;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .filter-tab {
-            padding: 0.6rem 1.2rem;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 0.75rem;
-            color: #94a3b8;
+            padding: 1rem 0.75rem;
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.9) 0%, rgba(71, 85, 105, 0.8) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 1rem;
+            color: #ffffff;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
             position: relative;
             font-size: 0.9rem;
-            white-space: nowrap;
-            display: block !important;
-            visibility: visible !important;
-            opacity: 1 !important;
             text-align: center;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            min-height: 60px;
+            display: flex;
+            overflow: hidden;
+            white-space: nowrap;
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .filter-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
         .filter-tab:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: #f8fafc;
+            background: linear-gradient(135deg, rgba(71, 85, 105, 0.95) 0%, rgba(100, 116, 139, 0.9) 100%);
+            color: #ffffff;
+            border-color: rgba(59, 130, 246, 0.7);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.4), 0 0 60px rgba(59, 130, 246, 0.2);
+            opacity: 1;
+        }
+
+        .filter-tab:hover::before {
+            opacity: 1;
         }
 
         .filter-tab.active {
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: #f8fafc;
+            color: #ffffff;
             border-color: transparent;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.25);
+            transform: translateY(-2px);
+            font-weight: 700;
+        }
+
+        .filter-tab.active::before {
+            opacity: 0;
+        }
+
+        /* Ensure all filter tabs are visible */
+        .filter-tab:nth-child(1),
+        .filter-tab:nth-child(2),
+        .filter-tab:nth-child(3),
+        .filter-tab:nth-child(4) {
+            opacity: 1 !important;
+            visibility: visible !important;
+            display: flex !important;
+            min-height: 60px !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 1rem 0.75rem !important;
+        }
+
+        /* Reset button default styles */
+        .filter-tab {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            outline: none;
+            text-decoration: none;
+        }
+
+        .filter-tab:focus {
+            outline: none;
         }
 
         /* Industry Filter */
         .industry-filter {
-            margin-bottom: 2rem;
-        }
-
-        .industry-filter h3 {
-            color: #f8fafc;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
+            margin-bottom: 0;
+            position: relative;
+            z-index: 2;
         }
 
         .industry-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .industry-tag {
-            padding: 0.5rem 1rem;
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 2rem;
-            color: #94a3b8;
+            padding: 1rem 1.25rem;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(51, 65, 85, 0.8) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            border-radius: 1rem;
+            color: #f1f5f9;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
         }
 
-        .industry-tag:hover,
+        .industry-tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .industry-tag:hover::before {
+            opacity: 1;
+        }
+
+        .industry-tag:hover {
+            background: linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.9) 100%);
+            color: #ffffff;
+            border-color: rgba(59, 130, 246, 0.6);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.15);
+        }
+
         .industry-tag.active {
-            background: rgba(59, 130, 246, 0.2);
-            color: #3b82f6;
-            border-color: #3b82f6;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.25);
+            transform: translateY(-2px);
+            font-weight: 700;
         }
 
-        /* Resources Grid */
+        .industry-tag.active::before {
+            opacity: 0;
+        }
+
+        /* Resources Section */
         .resources-section {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
             flex: 1;
             margin-bottom: 4rem;
         }
 
-        .resources-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 400px));
-            gap: 2rem;
-            margin: 2rem 0;
-            justify-content: center;
+        /* Content Sections Container */
+        .content-sections-container {
+            width: 100%;
+            min-height: 600px;
         }
 
-        .resource-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 1rem;
-            overflow: hidden;
+        /* Individual Content Section */
+        .content-section {
+            width: 100%;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.6) 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
             border: 1px solid rgba(59, 130, 246, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            min-height: 300px;
+            padding: 2.5rem;
             display: flex;
             flex-direction: column;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 80px rgba(59, 130, 246, 0.05);
         }
 
-        .resource-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.1);
+        .content-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(139, 92, 246, 0.03) 100%);
+            pointer-events: none;
         }
 
-        .resource-image {
-            width: 100%;
-            height: 250px;
-            background: #334155;
+        .content-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-section-title {
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+            position: relative;
+        }
+
+        .content-section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            border-radius: 2px;
+        }
+
+        .content-section-nav {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .content-nav-btn {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #94a3b8;
-            font-size: 2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-nav-btn:hover {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.2);
+        }
+
+        .content-scroller-container {
+            flex: 1;
+            overflow: hidden;
+            border-radius: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-scroller {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(59, 130, 246, 0.3) transparent;
+            padding: 1.5rem 0;
+            scroll-behavior: smooth;
+            width: 100%;
+        }
+
+        .content-scroller::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .content-scroller::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.3);
+            border-radius: 4px;
+        }
+
+        .content-scroller::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.6), rgba(139, 92, 246, 0.6));
+            border-radius: 4px;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .content-scroller::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.8), rgba(139, 92, 246, 0.8));
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+            height: fit-content;
             position: relative;
             overflow: hidden;
-            border-radius: 1rem 1rem 0 0;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .content-card:hover::before {
+            opacity: 1;
+        }
+
+        .content-card:hover {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.8) 100%);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.15), 0 0 60px rgba(59, 130, 246, 0.1);
+        }
+
+        .content-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #f8fafc;
+            margin: 0;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .content-card-date {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            white-space: nowrap;
+            margin-left: 0.75rem;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .content-card-excerpt {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .content-card-author {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .content-card-author::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 50%;
+        }
+
+        .content-card-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .content-card-link:hover {
+            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateX(4px);
+        }
+
+        .content-card-link::after {
+            content: '→';
+            transition: transform 0.3s ease;
+        }
+
+        .content-card-link:hover::after {
+            transform: translateX(2px);
+        }
+
+        /* Blog Posts Horizontal Scroller */
+        .blog-scroller-section {
+            margin-bottom: 4rem;
+        }
+
+        .blog-scroller-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .blog-scroller-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .blog-scroller-nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .blog-scroller-btn {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .blog-scroller-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border-color: #3b82f6;
+        }
+
+        .blog-scroller-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .blog-scroller-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: rgba(30, 41, 59, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+
+        .blog-scroller {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+        }
+        
+        .blog-scroller:active {
+            cursor: grabbing;
+        }
+
+        .blog-scroller::-webkit-scrollbar {
+            display: none;
+        }
+
+        .blog-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%);
+            backdrop-filter: blur(15px);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-width: 340px;
+            max-width: 380px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .blog-card:hover::before {
+            opacity: 1;
+        }
+
+        .blog-card:hover {
+            transform: translateY(-12px) scale(1.03);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2), 0 0 80px rgba(59, 130, 246, 0.1);
+        }
+
+        .blog-card-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+
+        .blog-card-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .blog-card:hover .blog-card-image::before {
+            opacity: 1;
+        }
+
+        .blog-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .blog-card:hover .blog-card-image img {
+            transform: scale(1.08);
+        }
+
+        .blog-card-content {
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 0 0 1.25rem 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blog-card-category {
+            color: #3b82f6 !important;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+            display: block !important;
+            visibility: visible !important;
+            letter-spacing: 1px;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            width: fit-content;
+        }
+
+        .blog-card-title {
+            font-size: 1.375rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: #f8fafc !important;
+            line-height: 1.3;
+            display: block !important;
+            visibility: visible !important;
+            flex: 1;
+        }
+
+        .blog-card-excerpt {
+            color: #cbd5e1 !important;
+            margin-bottom: 1.25rem;
+            line-height: 1.6;
+            display: block !important;
+            visibility: visible !important;
+            font-size: 0.95rem;
+        }
+
+        .blog-card-meta {
+            display: flex !important;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+            font-size: 0.875rem;
+            color: #94a3b8 !important;
+            visibility: visible !important;
+        }
+
+        .blog-card-author {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .blog-card-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .blog-card-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .blog-card-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            font-size: 0.875rem;
+        }
+
+        .blog-card-link:hover {
+            color: #60a5fa;
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateX(4px);
+        }
+
+        .blog-card-link::after {
+            content: '→';
+            transition: transform 0.3s ease;
+            font-weight: bold;
+        }
+
+        .blog-card-link:hover::after {
+            transform: translateX(3px);
+        }
+
+        .blog-card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .blog-card-tag {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 0.375rem 0.875rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .blog-card-tag:hover {
+            background: rgba(59, 130, 246, 0.25);
+            transform: translateY(-1px);
+        }
+
+        /* Other Resources Grid (for non-blog content) */
+        .other-resources-section {
+            margin-top: 4rem;
+        }
+
+        .other-resources-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .resource-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.7) 100%);
+            backdrop-filter: blur(15px);
+            border-radius: 1.25rem;
+            overflow: hidden;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.02) 0%, rgba(139, 92, 246, 0.02) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .resource-card:hover::before {
+            opacity: 1;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 25px 50px rgba(59, 130, 246, 0.2), 0 0 80px rgba(59, 130, 246, 0.1);
+        }
+
+        .resource-image {
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(135deg, #334155 0%, #475569 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+            border-radius: 1.25rem 1.25rem 0 0;
+        }
+
+        .resource-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .resource-card:hover .resource-image::before {
+            opacity: 1;
         }
 
         .resource-image img {
             width: 100%;
             height: 100%;
             object-fit: contain;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s ease;
+            position: relative;
+            z-index: 2;
         }
 
-        .resource-image:hover img {
-            transform: scale(1.05);
+        .resource-card:hover .resource-image img {
+            transform: scale(1.08);
         }
 
         .fallback-icon {
@@ -608,46 +1366,57 @@
         }
 
         .resource-content {
-            padding: 1.5rem;
+            padding: 2rem;
             position: relative;
             z-index: 2;
-            background: rgba(30, 41, 59, 0.8);
-            border-radius: 0 0 1rem 1rem;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border-radius: 0 0 1.25rem 1.25rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
 
         .resource-category {
             color: #3b82f6 !important;
-            font-size: 0.875rem;
-            font-weight: 600;
+            font-size: 0.75rem;
+            font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             display: block !important;
             visibility: visible !important;
+            letter-spacing: 1px;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            width: fit-content;
         }
 
         .resource-title {
-            font-size: 1.25rem;
+            font-size: 1.375rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
             color: #f8fafc !important;
             line-height: 1.3;
             display: block !important;
             visibility: visible !important;
+            flex: 1;
         }
 
         .resource-excerpt {
             color: #cbd5e1 !important;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             line-height: 1.6;
             display: block !important;
             visibility: visible !important;
+            font-size: 0.95rem;
         }
 
         .resource-meta {
             display: flex !important;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             font-size: 0.875rem;
             color: #94a3b8 !important;
             visibility: visible !important;
@@ -656,20 +1425,22 @@
         .author-info {
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .author-avatar {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 0.7rem;
+            font-size: 0.8rem;
             font-weight: 600;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
         }
 
         .author-avatar img {
@@ -682,12 +1453,33 @@
         .resource-link {
             color: #3b82f6;
             text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s ease;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            font-size: 0.875rem;
         }
 
         .resource-link:hover {
             color: #60a5fa;
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateX(4px);
+        }
+
+        .resource-link::after {
+            content: '→';
+            transition: transform 0.3s ease;
+            font-weight: bold;
+        }
+
+        .resource-link:hover::after {
+            transform: translateX(3px);
         }
 
         .resource-tags {
@@ -697,12 +1489,19 @@
         }
 
         .tag {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba(59, 130, 246, 0.15);
             color: #60a5fa;
-            padding: 0.25rem 0.75rem;
+            padding: 0.375rem 0.875rem;
             border-radius: 1rem;
             font-size: 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(59, 130, 246, 0.25);
+            transform: translateY(-1px);
         }
 
         /* Loading and Empty States */
@@ -813,11 +1612,40 @@
         @media (max-width: 1024px) {
             .filter-tabs {
                 gap: 0.5rem;
+                justify-content: center;
+                overflow-x: auto;
+                flex-wrap: nowrap !important;
+                display: flex !important;
+                flex-direction: row !important;
             }
             
             .filter-tab {
                 padding: 0.5rem 1rem;
                 font-size: 0.85rem;
+                flex-shrink: 0 !important;
+                flex-grow: 0 !important;
+                min-width: 120px;
+                max-width: 160px;
+            }
+            
+            .content-scroller {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 1.5rem;
+            }
+            
+            .resources-grid {
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            }
+            
+            .filter-tabs {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.75rem;
+                max-width: 500px;
+            }
+            
+            .industry-tags {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+                gap: 0.75rem;
             }
         }
 
@@ -840,15 +1668,82 @@
                 grid-template-columns: 1fr;
             }
             
+            .content-scroller {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
             .filter-tabs {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+                max-width: 400px;
+            }
+            
+            .industry-tags {
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+                gap: 0.5rem;
+            }
+            
+            .filter-tabs {
+                display: flex !important;
+                flex-direction: row !important;
+                flex-wrap: nowrap !important;
                 gap: 0.4rem;
                 padding: 0 1rem;
+                overflow-x: auto;
+                justify-content: center;
+                align-items: center;
+                align-content: center;
+                white-space: nowrap;
             }
             
             .filter-tab {
-                padding: 0.5rem 0.8rem;
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+                flex-shrink: 0 !important;
+                flex-grow: 0 !important;
+                height: 40px !important;
+                max-height: 40px !important;
+                min-width: 100px;
+                max-width: 140px;
+                box-sizing: border-box;
+                background: rgba(15, 23, 42, 0.8);
+                border: 1px solid rgba(59, 130, 246, 0.3);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                display: inline-flex !important;
+            }
+            
+            .industry-tag {
+                padding: 0.5rem 1rem;
                 font-size: 0.8rem;
+                height: 2.2rem;
+            }
+            
+            /* Content sections mobile styles */
+            .content-section {
+                padding: 1rem;
+                min-height: 400px;
+            }
+            
+            .content-card {
+                min-width: 250px;
+                max-width: 280px;
+                padding: 1rem;
+            }
+            
+            .content-scroller {
+                gap: 1rem;
+            }
+            
+            .content-section-title {
+                font-size: 1.25rem;
+            }
+            
+            .content-nav-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.7rem;
             }
             
             .footer-top {
@@ -862,14 +1757,34 @@
 
         @media (max-width: 480px) {
             .filter-tabs {
-                grid-template-columns: 1fr;
-                gap: 0.3rem;
-                padding: 0 0.5rem;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.4rem;
+                max-width: 350px;
             }
             
             .filter-tab {
-                padding: 0.4rem 0.6rem;
-                font-size: 0.75rem;
+                padding: 0.75rem 0.5rem;
+                font-size: 0.8rem;
+                min-height: 50px;
+            }
+            
+            .industry-tags {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .industry-tag {
+                padding: 0.75rem 1rem;
+                font-size: 0.85rem;
+                min-height: 45px;
+            }
+            
+            .filters-section {
+                padding: 2rem 1rem;
+            }
+            
+            .filter-section-title {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -932,41 +1847,108 @@
     <!-- Filters Section -->
     <div class="filters-section">
         <!-- Content Type Filter -->
-        <div class="filter-tabs">
-            <button class="filter-tab active" onclick="filterByType('all')">All Resources</button>
-            <button class="filter-tab" onclick="filterByType('blog')">Blog Posts</button>
-            <button class="filter-tab" onclick="filterByType('case-study')">Case Studies</button>
-            <button class="filter-tab" onclick="filterByType('use-case')">Use Cases</button>
+        <div class="resource-type-filter">
+            <h3 class="filter-section-title">Filter by Resource Type</h3>
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterByType('all')">All Resources</button>
+                <button class="filter-tab" onclick="filterByType('blog')">Blog Posts</button>
+                <button class="filter-tab" onclick="filterByType('case-study')">Case Studies</button>
+                <button class="filter-tab" onclick="filterByType('use-case')">Use Cases</button>
+            </div>
         </div>
 
         <!-- Industry Filter -->
         <div class="industry-filter">
-            <h3>Filter by Industry</h3>
-            <div class="industry-tags">
+            <h3 class="filter-section-title">Filter by Industry</h3>
+            <div class="industry-tags" id="industry-filters-container">
                 <span class="industry-tag active" onclick="filterByIndustry('all')">All Industries</span>
-                <span class="industry-tag" onclick="filterByIndustry('healthcare')">Healthcare</span>
-                <span class="industry-tag" onclick="filterByIndustry('banking')">Banking & Finance</span>
-                <span class="industry-tag" onclick="filterByIndustry('education')">Education</span>
-                <span class="industry-tag" onclick="filterByIndustry('manufacturing')">Manufacturing</span>
-                <span class="industry-tag" onclick="filterByIndustry('retail')">Retail</span>
-                <span class="industry-tag" onclick="filterByIndustry('finance')">Finance</span>
+                <!-- Dynamic industry filters will be loaded here -->
             </div>
         </div>
     </div>
 
     <!-- Resources Section -->
     <div class="resources-section">
-        <div class="resources-grid" id="resources-grid">
-            <!-- Loading state -->
-            <div class="loading-state" id="loading-state">
-                <div class="loading-spinner"></div>
-                <p>Loading resources...</p>
+        <!-- Horizontal Content Sections -->
+        <div class="content-sections-container">
+            <!-- Blog Posts Section -->
+            <div class="content-section" id="blog-section" style="display: flex;">
+                <div class="content-section-header">
+                    <h2 class="content-section-title">Blog Posts</h2>
+                    <div class="content-section-nav">
+                        <button class="content-nav-btn" onclick="scrollContent('blog', 'left')">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="content-nav-btn" onclick="scrollContent('blog', 'right')">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="content-scroller-container">
+                    <div class="content-scroller" id="blog-scroller">
+                        <!-- Blog cards will be populated here -->
+                    </div>
+                </div>
             </div>
-            
-            <!-- Empty state -->
-            <div class="empty-state" id="empty-state" style="display: none;">
-                <h3>No resources found</h3>
-                <p>Check back later for new content.</p>
+
+            <!-- Case Studies Section -->
+            <div class="content-section" id="case-studies-section" style="display: flex;">
+                <div class="content-section-header">
+                    <h2 class="content-section-title">Case Studies</h2>
+                    <div class="content-section-nav">
+                        <button class="content-nav-btn" onclick="scrollContent('case-studies', 'left')">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="content-nav-btn" onclick="scrollContent('case-studies', 'right')">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="content-scroller-container">
+                    <div class="content-scroller" id="case-studies-scroller">
+                        <!-- Case study cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Use Cases Section -->
+            <div class="content-section" id="use-cases-section" style="display: flex;">
+                <div class="content-section-header">
+                    <h2 class="content-section-title">Use Cases</h2>
+                    <div class="content-section-nav">
+                        <button class="content-nav-btn" onclick="scrollContent('use-cases', 'left')">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="content-nav-btn" onclick="scrollContent('use-cases', 'right')">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="content-scroller-container">
+                    <div class="content-scroller" id="use-cases-scroller">
+                        <!-- Use case cards will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- All Resources Section -->
+            <div class="content-section" id="all-resources-section" style="display: flex;">
+                <div class="content-section-header">
+                    <h2 class="content-section-title">All Resources</h2>
+                </div>
+                <div class="resources-grid" id="resources-grid">
+                    <!-- Loading state -->
+                    <div class="loading-state" id="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Loading resources...</p>
+                    </div>
+                    
+                    <!-- Empty state -->
+                    <div class="empty-state" id="empty-state" style="display: none;">
+                        <h3>No resources found</h3>
+                        <p>Check back later for new content.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1119,6 +2101,8 @@
         let currentIndustryFilter = 'all';
         let allResources = [];
         let filteredResources = [];
+        let blogPosts = [];
+        let otherResources = [];
 
         // Filter functions - defined globally
         function filterByType(type) {
@@ -1132,7 +2116,8 @@
             event.target.classList.add('active');
         }
 
-        function filterByIndustry(industry) {
+        function filterByIndustry(industry, element = null) {
+            console.log('🔍 Filtering by industry:', industry);
             currentIndustryFilter = industry;
             filterResources();
             
@@ -1140,7 +2125,19 @@
             document.querySelectorAll('.industry-tag').forEach(tag => {
                 tag.classList.remove('active');
             });
-            event.target.classList.add('active');
+            
+            // Find and activate the clicked tag
+            if (element) {
+                element.classList.add('active');
+            } else {
+                // Find the tag by text content if no element provided
+                const targetTag = Array.from(document.querySelectorAll('.industry-tag')).find(tag => 
+                    tag.textContent.toLowerCase() === industry
+                );
+                if (targetTag) {
+                    targetTag.classList.add('active');
+                }
+            }
         }
 
         function filterResources() {
@@ -1168,8 +2165,20 @@
                 
                 // Filter by industry
                 if (currentIndustryFilter !== 'all') {
-                    const resourceIndustry = resource.industry || 'all';
-                    if (resourceIndustry !== currentIndustryFilter) {
+                    const resourceIndustry = resource.industry_name || resource.industry || 'all';
+                    // Convert to lowercase for case-insensitive matching
+                    const filterIndustry = currentIndustryFilter.toLowerCase();
+                    const resourceIndustryLower = resourceIndustry.toLowerCase();
+                    
+                    console.log('🔍 Industry comparison:', {
+                        resource: resource.title,
+                        resourceIndustry: resourceIndustry,
+                        resourceIndustryLower: resourceIndustryLower,
+                        filterIndustry: filterIndustry,
+                        matches: resourceIndustryLower === filterIndustry
+                    });
+                    
+                    if (resourceIndustryLower !== filterIndustry) {
                         showResource = false;
                     }
                 }
@@ -1179,11 +2188,64 @@
             
             console.log('📊 Filtered results:', filteredResources.length, 'resources');
             
-            // Display filtered resources
-            displayResources(filteredResources);
+            // Separate filtered resources
+            const filteredBlogs = filteredResources.filter(resource => resource.type === 'blog');
+            const filteredOtherResources = filteredResources.filter(resource => resource.type !== 'blog');
+            
+            // Sort filtered blogs by date (latest first)
+            filteredBlogs.sort((a, b) => {
+                const dateA = new Date(a.date || a.created_at || 0);
+                const dateB = new Date(b.date || b.created_at || 0);
+                return dateB - dateA;
+            });
+            
+            // Display content based on filter
+            displayContentByFilter();
         }
 
         // Global variables are now defined at the top of the script
+
+        // Load industries from API and populate filters
+        async function loadIndustries() {
+            try {
+                console.log('🏭 Loading industries from API...');
+                const response = await fetch('http://localhost:3001/api/industries');
+                const industries = await response.json();
+                
+                console.log('📊 Industries loaded:', industries);
+                
+                // Get the industry filters container
+                const container = document.getElementById('industry-filters-container');
+                if (!container) {
+                    console.error('❌ Industry filters container not found');
+                    return;
+                }
+                
+                // Clear existing filters (except "All Industries")
+                const allIndustriesTag = container.querySelector('.industry-tag.active');
+                container.innerHTML = '';
+                if (allIndustriesTag) {
+                    container.appendChild(allIndustriesTag);
+                }
+                
+                // Add dynamic industry filters
+                if (industries && industries.length > 0) {
+                    industries.forEach(industry => {
+                        const industryTag = document.createElement('span');
+                        industryTag.className = 'industry-tag';
+                        industryTag.textContent = industry.name;
+                        industryTag.onclick = () => filterByIndustry(industry.name.toLowerCase(), industryTag);
+                        container.appendChild(industryTag);
+                    });
+                } else {
+                    console.log('⚠️ No industries found');
+                }
+                
+                console.log('✅ Industry filters updated');
+            } catch (error) {
+                console.error('❌ Error loading industries:', error);
+            }
+        }
 
         // Load resources from API
         async function loadResources() {
@@ -1218,7 +2280,7 @@
                 
                 console.log('📊 API Response:', { resources, blogs, useCases, caseStudies });
                 
-                // Combine all resources and remove duplicates by ID
+                // Separate blog posts from other resources
                 const allResourcesArray = [
                     ...(resources.resources || resources).map(r => ({ ...r, type: r.type || 'resource' })),
                     ...(blogs.resources || blogs).map(b => ({ ...b, type: 'blog' })),
@@ -1239,13 +2301,28 @@
                 
                 allResources = uniqueResources;
                 
+                // Initialize filtered resources with all resources by default
+                filteredResources = [...allResources];
+                console.log('✅ Initialized filteredResources with all resources:', filteredResources.length);
+                
+                // Separate blog posts and other resources
+                blogPosts = allResources.filter(resource => resource.type === 'blog');
+                otherResources = allResources.filter(resource => resource.type !== 'blog');
+                
+                // Sort blog posts by date (latest first)
+                blogPosts.sort((a, b) => {
+                    const dateA = new Date(a.date || a.created_at || 0);
+                    const dateB = new Date(b.date || b.created_at || 0);
+                    return dateB - dateA;
+                });
+                
                 console.log('📋 Total resources loaded:', allResources.length);
                 
                 // Update stats
                 updateStats();
                 
-                // Display resources
-                displayResources(allResources);
+                // Display content based on current filter
+                displayContentByFilter();
                 
             } catch (error) {
                 console.error('❌ Error loading resources:', error);
@@ -1277,6 +2354,329 @@
             document.getElementById('total-resources').textContent = totalResources;
             document.getElementById('case-studies-count').textContent = caseStudies;
             document.getElementById('use-cases-count').textContent = useCases;
+        }
+        
+        // Display content based on current filter
+        function displayContentByFilter() {
+            console.log('📊 Displaying content based on filter:', currentTypeFilter);
+            
+            // Hide all sections first
+            document.getElementById('blog-section').style.display = 'none';
+            document.getElementById('case-studies-section').style.display = 'none';
+            document.getElementById('use-cases-section').style.display = 'none';
+            document.getElementById('all-resources-section').style.display = 'none';
+            
+            // Show only the selected section
+            if (currentTypeFilter === 'all') {
+                document.getElementById('all-resources-section').style.display = 'flex';
+                populateAllResourcesSection();
+            } else if (currentTypeFilter === 'blog') {
+                document.getElementById('blog-section').style.display = 'flex';
+                populateBlogSection();
+            } else if (currentTypeFilter === 'case-study') {
+                document.getElementById('case-studies-section').style.display = 'flex';
+                populateCaseStudiesSection();
+            } else if (currentTypeFilter === 'use-case') {
+                document.getElementById('use-cases-section').style.display = 'flex';
+                populateUseCasesSection();
+            }
+        }
+        
+        // Populate blog section
+        function populateBlogSection() {
+            const scroller = document.getElementById('blog-scroller');
+            scroller.innerHTML = '';
+            
+            const filteredBlogs = filteredResources.filter(r => r.type === 'blog');
+            filteredBlogs.forEach(blog => {
+                const card = createContentCard(blog, 'blog');
+                scroller.appendChild(card);
+            });
+        }
+        
+        // Populate case studies section
+        function populateCaseStudiesSection() {
+            const scroller = document.getElementById('case-studies-scroller');
+            scroller.innerHTML = '';
+            
+            const filteredCaseStudies = filteredResources.filter(r => r.type === 'case-study');
+            filteredCaseStudies.forEach(caseStudy => {
+                const card = createContentCard(caseStudy, 'case-study');
+                scroller.appendChild(card);
+            });
+        }
+        
+        // Populate use cases section
+        function populateUseCasesSection() {
+            const scroller = document.getElementById('use-cases-scroller');
+            scroller.innerHTML = '';
+            
+            const filteredUseCases = filteredResources.filter(r => r.type === 'use-case');
+            filteredUseCases.forEach(useCase => {
+                const card = createContentCard(useCase, 'use-case');
+                scroller.appendChild(card);
+            });
+        }
+        
+        // Populate all resources section
+        function populateAllResourcesSection() {
+            const grid = document.getElementById('resources-grid');
+            const loadingState = document.getElementById('loading-state');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (loadingState) loadingState.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'none';
+            
+            // Clear existing cards
+            const children = Array.from(grid.children);
+            children.forEach(child => {
+                if (child.id !== 'loading-state' && child.id !== 'empty-state') {
+                    child.remove();
+                }
+            });
+            
+            // Create resource cards from filtered resources
+            filteredResources.forEach(resource => {
+                const card = createResourceCard(resource);
+                grid.appendChild(card);
+            });
+        }
+        
+        // Create content card for horizontal sections
+        function createContentCard(resource, type) {
+            const card = document.createElement('div');
+            card.className = 'content-card';
+            
+            // Format date
+            const date = resource.date || resource.created_at || new Date().toISOString();
+            const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            // Get author info
+            const author = resource.author || resource.author_name || 'Emma AI Team';
+            
+            // Create link based on type
+            let linkUrl = '#';
+            if (type === 'blog') {
+                linkUrl = `/blog/${resource.slug || resource.id}`;
+            } else if (type === 'case-study') {
+                linkUrl = `/casestudy/${resource.slug || resource.id}`;
+            } else if (type === 'use-case') {
+                linkUrl = `/usecase/${resource.slug || resource.id}`;
+            }
+            
+            const cardHTML = `
+                <div class="content-card-header">
+                    <h3 class="content-card-title">${resource.title || 'Untitled'}</h3>
+                    <span class="content-card-date">${formattedDate}</span>
+                </div>
+                <p class="content-card-excerpt">${(resource.excerpt || resource.description || 'No description available.').substring(0, 100)}${(resource.excerpt || resource.description || '').length > 100 ? '...' : ''}</p>
+                <div class="content-card-footer">
+                    <span class="content-card-author">By ${author}</span>
+                    <a href="${linkUrl}" class="content-card-link">Read More →</a>
+                </div>
+            `;
+            
+            card.innerHTML = cardHTML;
+            return card;
+        }
+        
+        // Content navigation function
+        function scrollContent(type, direction) {
+            const scroller = document.getElementById(`${type}-scroller`);
+            if (!scroller) return;
+            
+            const scrollAmount = 350; // Width of one card + gap
+            if (direction === 'left') {
+                scroller.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                scroller.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        // Display blog posts in horizontal scroller
+        function displayBlogPosts(blogs) {
+            console.log('📝 Displaying blog posts:', blogs.length, 'blogs');
+            
+            const blogScrollerSection = document.getElementById('blog-scroller-section');
+            const blogScroller = document.getElementById('blog-scroller');
+            
+            if (blogs.length === 0) {
+                blogScrollerSection.style.display = 'none';
+                return;
+            }
+            
+            // Show the blog scroller section
+            blogScrollerSection.style.display = 'block';
+            
+            // Clear existing blog cards
+            blogScroller.innerHTML = '';
+            
+            // Create blog cards
+            blogs.forEach((blog, index) => {
+                console.log(`Creating blog card ${index + 1}:`, blog.title);
+                const card = createBlogCard(blog);
+                blogScroller.appendChild(card);
+            });
+            
+            // Update scroll button states
+            updateScrollButtons();
+        }
+        
+        // Display other resources in grid
+        function displayOtherResources(resources) {
+            console.log('📊 Displaying other resources:', resources.length, 'resources');
+            
+            const otherResourcesSection = document.getElementById('other-resources-section');
+            const resourcesGrid = document.getElementById('resources-grid');
+            const loadingState = document.getElementById('loading-state');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (resources.length === 0) {
+                otherResourcesSection.style.display = 'none';
+                return;
+            }
+            
+            // Show the other resources section
+            otherResourcesSection.style.display = 'block';
+            
+            // Hide loading and empty states
+            if (loadingState) loadingState.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'none';
+            
+            // Clear existing cards
+            const children = Array.from(resourcesGrid.children);
+            children.forEach(child => {
+                if (child.id !== 'loading-state' && child.id !== 'empty-state') {
+                    child.remove();
+                }
+            });
+            
+            // Create resource cards
+            resources.forEach((resource, index) => {
+                console.log(`Creating resource card ${index + 1}:`, resource.title);
+                const card = createResourceCard(resource);
+                resourcesGrid.appendChild(card);
+            });
+        }
+        
+        // Create a blog card element
+        function createBlogCard(blog) {
+            console.log('🎯 Creating blog card for:', blog);
+            
+            const card = document.createElement('div');
+            card.className = 'blog-card';
+            
+            // Format date
+            const date = blog.date || blog.created_at || new Date().toISOString();
+            const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            // Parse tags
+            let tags = [];
+            if (blog.tags) {
+                try {
+                    tags = typeof blog.tags === 'string' ? JSON.parse(blog.tags) : blog.tags;
+                } catch (e) {
+                    tags = [blog.tags];
+                }
+            }
+            
+            // Get author info
+            const author = blog.author || blog.author_name || 'Emma AI Team';
+            let authorImage = blog.authorImage || blog.author_image;
+            
+            // Ensure author image URL is properly formatted
+            if (authorImage && !authorImage.startsWith('http') && !authorImage.startsWith('/')) {
+                if (authorImage.startsWith('uploads/')) {
+                    authorImage = '/' + authorImage;
+                } else {
+                    authorImage = '/cms/uploads/' + authorImage;
+                }
+            }
+            
+            // Get the correct image URL
+            let imageUrl = blog.image_url || blog.featured_image || blog.image;
+            
+            // Ensure image URL is properly formatted
+            if (imageUrl && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                if (imageUrl.startsWith('uploads/')) {
+                    imageUrl = '/' + imageUrl;
+                } else {
+                    imageUrl = '/cms/uploads/' + imageUrl;
+                }
+            }
+            
+            // Create link
+            const linkUrl = `/blog/${blog.slug || blog.id}`;
+            
+            const cardHTML = `
+                <div class="blog-card-image">
+                    ${imageUrl ? 
+                        `<img src="${imageUrl}" alt="${blog.title}" onerror="this.style.display='none'; this.parentElement.querySelector('.fallback-icon').style.display='block';">
+                         <div class="fallback-icon" style="display:none;">📝</div>` :
+                        `<div class="fallback-icon">📝</div>`
+                    }
+                </div>
+                <div class="blog-card-content">
+                    <div class="blog-card-category">Blog Post</div>
+                    <h3 class="blog-card-title">${blog.title || 'Untitled'}</h3>
+                    <p class="blog-card-excerpt">${(blog.excerpt || blog.description || 'No description available.').substring(0, 120)}${(blog.excerpt || blog.description || '').length > 120 ? '...' : ''}</p>
+                    <div class="blog-card-meta">
+                        <div class="blog-card-author">
+                            <div class="blog-card-avatar">
+                                ${authorImage ? 
+                                    `<img src="${authorImage}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">` :
+                                    author.charAt(0).toUpperCase()
+                                }
+                            </div>
+                            <span>${author} • ${formattedDate}</span>
+                        </div>
+                        <a href="${linkUrl}" class="blog-card-link">Read More →</a>
+                    </div>
+                    <div class="blog-card-tags">
+                        ${tags.map(tag => `<span class="blog-card-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+            
+            card.innerHTML = cardHTML;
+            return card;
+        }
+        
+        // Blog scroller navigation functions
+        function scrollBlogs(direction) {
+            const scroller = document.getElementById('blog-scroller');
+            const scrollAmount = 350; // Width of one card + gap
+            
+            if (direction === 'left') {
+                scroller.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            } else {
+                scroller.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+            
+            // Update button states after a short delay
+            setTimeout(updateScrollButtons, 300);
+        }
+        
+        function updateScrollButtons() {
+            const scroller = document.getElementById('blog-scroller');
+            const leftBtn = document.getElementById('blog-scroll-left');
+            const rightBtn = document.getElementById('blog-scroll-right');
+            
+            if (!scroller || !leftBtn || !rightBtn) return;
+            
+            const isAtStart = scroller.scrollLeft <= 0;
+            const isAtEnd = scroller.scrollLeft >= (scroller.scrollWidth - scroller.clientWidth);
+            
+            leftBtn.disabled = isAtStart;
+            rightBtn.disabled = isAtEnd;
         }
         
         // Display resources in the grid
@@ -1485,6 +2885,10 @@
                             </div>
                             <span>${author} • ${formattedDate} • ${resource.readTime || '5'} min read</span>
                         </div>
+                        <div class="view-count" style="display: flex; align-items: center; gap: 0.25rem; color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;">
+                            <i class="fas fa-eye"></i>
+                            <span>${resource.view_count || 0} views</span>
+                        </div>
                         <a href="${linkUrl}" class="resource-link">${resource.type === 'blog' ? 'Read More' : 'View'} →</a>
                     </div>
                     <div class="resource-tags">
@@ -1516,14 +2920,112 @@
             const resourcesGrid = document.getElementById('resources-grid');
             console.log('📦 Resources grid found:', !!resourcesGrid);
             
-            // Load resources from API
+            // Load industries and resources from API
+            loadIndustries();
             loadResources();
             
             // Debug: Check if filter tabs are found
             const filterTabs = document.querySelectorAll('.filter-tab');
             console.log('🔍 Found filter tabs:', filterTabs.length);
+            
+            // Add touch support for blog scroller
+            const blogScroller = document.getElementById('blog-scroller');
+            if (blogScroller) {
+                let isScrolling = false;
+                let startX = 0;
+                let scrollLeft = 0;
+                
+                // Touch events for mobile
+                blogScroller.addEventListener('touchstart', (e) => {
+                    isScrolling = true;
+                    startX = e.touches[0].pageX - blogScroller.offsetLeft;
+                    scrollLeft = blogScroller.scrollLeft;
+                });
+                
+                blogScroller.addEventListener('touchmove', (e) => {
+                    if (!isScrolling) return;
+                    e.preventDefault();
+                    const x = e.touches[0].pageX - blogScroller.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    blogScroller.scrollLeft = scrollLeft - walk;
+                });
+                
+                blogScroller.addEventListener('touchend', () => {
+                    isScrolling = false;
+                    updateScrollButtons();
+                });
+                
+                // Mouse events for desktop
+                blogScroller.addEventListener('mousedown', (e) => {
+                    isScrolling = true;
+                    startX = e.pageX - blogScroller.offsetLeft;
+                    scrollLeft = blogScroller.scrollLeft;
+                    blogScroller.style.cursor = 'grabbing';
+                });
+                
+                blogScroller.addEventListener('mousemove', (e) => {
+                    if (!isScrolling) return;
+                    e.preventDefault();
+                    const x = e.pageX - blogScroller.offsetLeft;
+                    const walk = (x - startX) * 2;
+                    blogScroller.scrollLeft = scrollLeft - walk;
+                });
+                
+                blogScroller.addEventListener('mouseup', () => {
+                    isScrolling = false;
+                    blogScroller.style.cursor = 'grab';
+                    updateScrollButtons();
+                });
+                
+                blogScroller.addEventListener('mouseleave', () => {
+                    isScrolling = false;
+                    blogScroller.style.cursor = 'grab';
+                });
+                
+                // Update scroll buttons on scroll
+                blogScroller.addEventListener('scroll', updateScrollButtons);
+            }
         });
 
+
+        // Security: Disable all content editing on frontend
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable contenteditable on all elements
+            document.querySelectorAll('*').forEach(element => {
+                element.contentEditable = false;
+                element.setAttribute('contenteditable', 'false');
+            });
+            
+            // Prevent text selection and editing
+            document.addEventListener('keydown', function(e) {
+                // Disable F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    (e.ctrlKey && e.key === 'u') ||
+                    (e.ctrlKey && e.key === 's')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        });
 
         // Initialize GSAP ScrollTrigger
         gsap.registerPlugin(ScrollTrigger);

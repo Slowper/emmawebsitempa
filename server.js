@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const session = require('express-session');
 // SSR handler removed - using MPA instead
 require('dotenv').config({ path: './config.env' });
 
@@ -36,6 +37,17 @@ app.use(helmet({
 app.use(cors({
     origin: ['http://localhost:3000', 'http://localhost:8000'],
     credentials: true
+}));
+
+// Session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'emma-cms-secret-key-2024',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set to true in production with HTTPS
+        maxAge: 30 * 60 * 1000 // 30 minutes
+    }
 }));
 
 // Rate limiting - Optimized for development
@@ -78,58 +90,34 @@ const dbConfig = {
     host: process.env.DB_HOST || 'localhost',
     user: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'emma_cms',
+    database: process.env.DB_NAME || 'emma_resources_cms',
     waitForConnections: true,
-    connectionLimit: parseInt(process.env.DB_CONNECTION_LIMIT) || 20,
+    connectionLimit: 5,
     queueLimit: 0,
-    acquireTimeout: parseInt(process.env.DB_ACQUIRE_TIMEOUT) || 60000,
-    timeout: parseInt(process.env.DB_TIMEOUT) || 60000,
-    reconnect: true,
-    // Connection pool settings
-    idleTimeout: parseInt(process.env.DB_IDLE_TIMEOUT) || 300000,
-    maxReconnects: parseInt(process.env.DB_MAX_RECONNECTS) || 3,
-    reconnectDelay: parseInt(process.env.DB_RECONNECT_DELAY) || 2000,
     // MySQL specific settings
     charset: 'utf8mb4',
-    timezone: 'Z',
-    // Connection timeout settings
-    connectTimeout: parseInt(process.env.DB_ACQUIRE_TIMEOUT) || 5000,
-    // Query timeout
-    queryTimeout: parseInt(process.env.DB_QUERY_TIMEOUT) || 10000,
-    // Keep alive settings
-    keepAliveInitialDelay: 0,
-    enableKeepAlive: true
+    timezone: 'Z'
 };
 
-const pool = mysql.createPool(dbConfig);
+// Create database pool asynchronously after server starts
+let pool;
+setTimeout(() => {
+    pool = mysql.createPool(dbConfig);
+    console.log('✅ Database pool created');
+}, 100);
 
-// Database connection health check
+// Database connection health check (disabled for instant startup)
 const checkDatabaseConnection = async () => {
+    if (!pool) return false;
     try {
         const connection = await pool.getConnection();
         await connection.ping();
         connection.release();
-        console.log('✅ Database connection is healthy');
         return true;
     } catch (error) {
-        console.error('❌ Database connection failed:', error.message);
         return false;
     }
 };
-
-// Test database connection on startup (non-blocking)
-setTimeout(() => {
-    checkDatabaseConnection().then(isHealthy => {
-        if (!isHealthy) {
-            console.warn('⚠️  Database connection issues detected. Some features may not work properly.');
-        }
-    }).catch(err => {
-        console.warn('⚠️  Database health check failed:', err.message);
-    });
-}, 1000); // Delay by 1 second to allow server to start
-
-// Periodic health check every 15 minutes (reduced frequency)
-setInterval(checkDatabaseConnection, 15 * 60 * 1000);
 
 // Database health check endpoint
 app.get('/api/health/database', async (req, res) => {
@@ -689,6 +677,39 @@ async function initializeDatabase() {
 
 // API Routes
 
+// Endpoint to increment the view count for a resource
+app.post('/api/resources/:slug/view', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        console.log('📊 View count increment request for slug:', slug);
+
+        // Atomically update the view count in the database
+        // Try slug first, then ID if slug doesn't exist
+        let [result] = await pool.execute(
+            'UPDATE resources SET view_count = view_count + 1 WHERE slug = ?',
+            [slug]
+        );
+        
+        // If no rows affected by slug, try as ID
+        if (result.affectedRows === 0) {
+            [result] = await pool.execute(
+                'UPDATE resources SET view_count = view_count + 1 WHERE id = ?',
+                [slug]
+            );
+        }
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ success: false, error: 'Resource not found' });
+        }
+
+        console.log('✅ View count incremented for slug:', slug);
+        res.json({ success: true, message: 'View count updated.' });
+    } catch (error) {
+        console.error('❌ Error updating view count:', error);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+});
+
 // Debug endpoint to check database and users
 app.get('/api/debug/users', async (req, res) => {
     try {
@@ -842,30 +863,39 @@ app.put('/api/navigation', async (req, res) => {
 
 app.get('/api/stats', async (req, res) => {
     try {
-        // Get actual counts from database
-        const [publishedRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE status = "published"');
-        const [draftRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE status = "draft"');
-        const [blogRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE type = "blog" AND status = "published"');
-        const [caseStudyRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE type = "case_study" AND status = "published"');
-        const [useCaseRows] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE type = "use_case" AND status = "published"');
-        const [userRows] = await pool.execute('SELECT COUNT(*) as count FROM users');
+        console.log('📊 Loading dashboard stats...');
+        
+        // Use the retry mechanism for database queries
+        const publishedRows = await executeWithRetry('SELECT COUNT(*) as count FROM resources WHERE status = "published"');
+        const draftRows = await executeWithRetry('SELECT COUNT(*) as count FROM resources WHERE status = "draft"');
+        const blogRows = await executeWithRetry('SELECT COUNT(*) as count FROM resources WHERE type = "blog" AND status = "published"');
+        const caseStudyRows = await executeWithRetry('SELECT COUNT(*) as count FROM resources WHERE type = "case-study" AND status = "published"');
+        const useCaseRows = await executeWithRetry('SELECT COUNT(*) as count FROM resources WHERE type = "use-case" AND status = "published"');
+        const userRows = await executeWithRetry('SELECT COUNT(*) as count FROM users');
+        
+        // Get total views from view_count column
+        const viewsRows = await executeWithRetry('SELECT SUM(COALESCE(view_count, 0)) as total FROM resources');
+        const totalViews = viewsRows[0].total || 0;
         
         const stats = {
-            totalPublished: publishedRows[0].count,
-            totalDrafts: draftRows[0].count,
-            totalViews: 0, // This would need a views tracking system
-            totalBlogs: blogRows[0].count,
-            totalCaseStudies: caseStudyRows[0].count,
-            totalUseCases: useCaseRows[0].count,
-            totalUsers: userRows[0].count,
-            lastUpdated: new Date().toISOString()
+            total_published: publishedRows[0].count,
+            total_drafts: draftRows[0].count,
+            views_last_30_days: totalViews, // Using total views for now
+            total_blogs: blogRows[0].count,
+            total_case_studies: caseStudyRows[0].count,
+            total_use_cases: useCaseRows[0].count,
+            total_users: userRows[0].count,
+            last_updated: new Date().toISOString()
         };
         
         console.log('📊 Stats calculated:', stats);
         res.json(stats);
     } catch (error) {
         console.error('Stats endpoint error:', error);
-        res.status(500).json({ error: 'Failed to load stats' });
+        res.status(500).json({ 
+            error: 'Failed to load stats',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
     }
 });
 
@@ -1075,19 +1105,186 @@ const executeWithRetry = async (query, params = [], maxRetries = 3) => {
 // Resources endpoints
 app.get('/api/resources', async (req, res) => {
     try {
-        const rows = await executeWithRetry(`
-            SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
-                   featured_image as image_url, author_image as authorImage, gallery, industry_id,
-                   meta_title, meta_description, meta_keywords, read_time, slug
-            FROM resources 
-            ORDER BY created_at DESC
-        `);
-        res.json(rows);
+        const { type, status, limit, sort, order } = req.query;
+        
+        let query = `
+            SELECT r.id, r.type, r.title, r.excerpt, r.content, r.author, r.date, r.tags, r.status, 
+                   r.created_at, r.updated_at, r.featured_image as image_url, r.author_image as authorImage, 
+                   r.gallery, r.industry_id, r.meta_title, r.meta_description, r.meta_keywords, 
+                   r.read_time, r.slug, r.view_count, i.name as industry_name
+            FROM resources r
+            LEFT JOIN industries i ON r.industry_id = i.id
+        `;
+        
+        const conditions = [];
+        const params = [];
+        
+        if (type) {
+            conditions.push('r.type = ?');
+            params.push(type);
+        }
+        
+        if (status) {
+            conditions.push('r.status = ?');
+            params.push(status);
+        }
+        
+        if (conditions.length > 0) {
+            query += ' WHERE ' + conditions.join(' AND ');
+        }
+        
+        query += ` ORDER BY r.${sort || 'created_at'} ${order || 'DESC'}`;
+        
+        if (limit) {
+            query += ` LIMIT ${parseInt(limit)}`;
+        }
+        
+        const rows = await executeWithRetry(query, params);
+        
+        // Clean up Quill editor artifacts from content
+        const cleanedRows = rows.map(row => ({
+            ...row,
+            content: cleanQuillContent(row.content)
+        }));
+        
+        // Return consistent format
+        res.json({
+            resources: cleanedRows,
+            total: cleanedRows.length,
+            success: true
+        });
     } catch (error) {
         console.error('Resources endpoint error:', error);
         res.status(500).json({ 
             error: 'Failed to load resources',
             details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+// Industries endpoints
+app.get('/api/industries', async (req, res) => {
+    try {
+        const rows = await executeWithRetry(`
+            SELECT id, name, slug, description, color, icon, is_active, sort_order, created_at, updated_at
+            FROM industries 
+            WHERE is_active = 1
+            ORDER BY sort_order ASC, name ASC
+        `);
+        res.json(rows);
+    } catch (error) {
+        console.error('Industries endpoint error:', error);
+        res.status(500).json({ 
+            error: 'Failed to load industries',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+app.post('/api/industries', authenticateToken, async (req, res) => {
+    try {
+        const { name, description, color, icon, sort_order } = req.body;
+        
+        if (!name) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Industry name is required' 
+            });
+        }
+
+        // Generate slug from name
+        const slug = name.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+
+        const [result] = await pool.execute(`
+            INSERT INTO industries (name, slug, description, color, icon, sort_order, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+        `, [name, slug, description || '', color || '#3b82f6', icon || '', sort_order || 0]);
+
+        res.json({ 
+            success: true, 
+            message: 'Industry created successfully',
+            id: result.insertId 
+        });
+    } catch (error) {
+        console.error('Industry creation error:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to create industry', 
+            details: error.message 
+        });
+    }
+});
+
+app.put('/api/industries/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { name, description, color, icon, sort_order, is_active } = req.body;
+        
+        if (!name) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Industry name is required' 
+            });
+        }
+
+        // Generate slug from name
+        const slug = name.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+
+        await pool.execute(`
+            UPDATE industries SET 
+                name = ?, slug = ?, description = ?, color = ?, icon = ?, 
+                sort_order = ?, is_active = ?, updated_at = NOW()
+            WHERE id = ?
+        `, [name, slug, description || '', color || '#3b82f6', icon || '', sort_order || 0, is_active !== undefined ? is_active : 1, id]);
+
+        res.json({ 
+            success: true, 
+            message: 'Industry updated successfully' 
+        });
+    } catch (error) {
+        console.error('Industry update error:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to update industry', 
+            details: error.message 
+        });
+    }
+});
+
+app.delete('/api/industries/:id', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Check if industry is being used by any resources
+        const [resources] = await pool.execute('SELECT COUNT(*) as count FROM resources WHERE industry_id = ?', [id]);
+        
+        if (resources[0].count > 0) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Cannot delete industry that is being used by resources. Please reassign resources first.' 
+            });
+        }
+        
+        await pool.execute('DELETE FROM industries WHERE id = ?', [id]);
+        
+        res.json({ 
+            success: true, 
+            message: 'Industry deleted successfully' 
+        });
+    } catch (error) {
+        console.error('Industry deletion error:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to delete industry', 
+            details: error.message 
         });
     }
 });
@@ -1278,18 +1475,26 @@ app.post('/api/resources', authenticateToken, upload.fields([
 
 app.get('/api/resources/:id', async (req, res) => {
     try {
-        const [rows] = await pool.execute('SELECT * FROM resources WHERE id = ?', [req.params.id]);
+        const [rows] = await pool.execute('SELECT *, view_count FROM resources WHERE id = ?', [req.params.id]);
         if (rows.length === 0) {
             return res.status(404).json({ error: 'Resource not found' });
         }
-        res.json(rows[0]);
+        
+        // Clean up Quill editor artifacts from content
+        const cleanedRow = {
+            ...rows[0],
+            content: cleanQuillContent(rows[0].content)
+        };
+        
+        res.json(cleanedRow);
     } catch (error) {
         console.error('Resource fetch error:', error);
         res.status(500).json({ error: 'Failed to fetch resource' });
     }
 });
 
-app.put('/api/resources/:id', authenticateToken, upload.fields([
+// CMS-specific resource update endpoint - only accessible from CMS interface
+app.put('/api/cms/resources/:id', authenticateToken, upload.fields([
     { name: 'featured_image', maxCount: 1 },
     { name: 'author_image', maxCount: 1 },
     { name: 'gallery', maxCount: 10 }
@@ -1475,12 +1680,14 @@ app.get('/api/tags', async (req, res) => {
 // Blog endpoints
 app.get('/api/blogs', async (req, res) => {
     try {
-        const rows = await executeWithRetry(`
-            SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
-                   featured_image as image_url, author_image as authorImage, gallery, industry_id,
-                   meta_title, meta_description, meta_keywords, read_time, slug
+        if (!pool) {
+            return res.status(503).json({ error: 'Database not ready yet' });
+        }
+        const [rows] = await pool.execute(`
+            SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                   featured_image as image_url, author_image as authorImage, gallery, view_count
             FROM resources 
-            WHERE type = "blog" 
+            WHERE type = 'blog' AND status = 'published' 
             ORDER BY created_at DESC
         `);
         res.json(rows);
@@ -1496,7 +1703,13 @@ app.get('/api/blogs', async (req, res) => {
 // Use cases endpoints
 app.get('/api/usecases', async (req, res) => {
     try {
-        const rows = await executeWithRetry('SELECT * FROM resources WHERE type = "use-case" ORDER BY created_at DESC');
+        const rows = await executeWithRetry(`
+            SELECT r.*, r.view_count, i.name as industry_name
+            FROM resources r
+            LEFT JOIN industries i ON r.industry_id = i.id
+            WHERE r.type = "use-case" 
+            ORDER BY r.created_at DESC
+        `);
         res.json(rows);
     } catch (error) {
         console.error('Use cases endpoint error:', error);
@@ -1510,12 +1723,124 @@ app.get('/api/usecases', async (req, res) => {
 // Case studies endpoints
 app.get('/api/casestudies', async (req, res) => {
     try {
-        const rows = await executeWithRetry('SELECT * FROM resources WHERE type = "case-study" ORDER BY created_at DESC');
+        const rows = await executeWithRetry(`
+            SELECT r.*, r.view_count, i.name as industry_name
+            FROM resources r
+            LEFT JOIN industries i ON r.industry_id = i.id
+            WHERE r.type = "case-study" 
+            ORDER BY r.created_at DESC
+        `);
         res.json(rows);
     } catch (error) {
         console.error('Case studies endpoint error:', error);
         res.status(500).json({ 
             error: 'Failed to load case studies',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+// Individual case study endpoint with view tracking
+app.get('/api/casestudies/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        console.log('📊 Fetching case study:', slug);
+
+        // Try to find by slug first, then by ID
+        let rows = await executeWithRetry(`
+            SELECT r.*, r.view_count, i.name as industry_name
+            FROM resources r
+            LEFT JOIN industries i ON r.industry_id = i.id
+            WHERE r.type = "case-study" AND r.slug = ?
+        `, [slug]);
+
+        // If not found by slug, try by ID
+        if (rows.length === 0) {
+            rows = await executeWithRetry(`
+                SELECT r.*, r.view_count, i.name as industry_name
+                FROM resources r
+                LEFT JOIN industries i ON r.industry_id = i.id
+                WHERE r.type = "case-study" AND r.id = ?
+            `, [slug]);
+        }
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Case study not found' });
+        }
+
+        const caseStudy = rows[0];
+        
+        // Increment view count
+        try {
+            await pool.execute(
+                'UPDATE resources SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ?',
+                [caseStudy.id]
+            );
+            console.log('✅ View count incremented for case study:', caseStudy.id);
+        } catch (viewError) {
+            console.error('❌ Error incrementing view count:', viewError);
+        }
+
+        // Return the case study data with updated view count
+        caseStudy.view_count = (caseStudy.view_count || 0) + 1;
+        res.json(caseStudy);
+    } catch (error) {
+        console.error('Case study endpoint error:', error);
+        res.status(500).json({ 
+            error: 'Failed to load case study',
+            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+// Individual use case endpoint with view tracking
+app.get('/api/usecases/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        console.log('📊 Fetching use case:', slug);
+
+        // Try to find by slug first, then by ID
+        let rows = await executeWithRetry(`
+            SELECT r.*, r.view_count, i.name as industry_name
+            FROM resources r
+            LEFT JOIN industries i ON r.industry_id = i.id
+            WHERE r.type = "use-case" AND r.slug = ?
+        `, [slug]);
+
+        // If not found by slug, try by ID
+        if (rows.length === 0) {
+            rows = await executeWithRetry(`
+                SELECT r.*, r.view_count, i.name as industry_name
+                FROM resources r
+                LEFT JOIN industries i ON r.industry_id = i.id
+                WHERE r.type = "use-case" AND r.id = ?
+            `, [slug]);
+        }
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: 'Use case not found' });
+        }
+
+        const useCase = rows[0];
+        
+        // Increment view count
+        try {
+            await pool.execute(
+                'UPDATE resources SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ?',
+                [useCase.id]
+            );
+            console.log('✅ View count incremented for use case:', useCase.id);
+        } catch (viewError) {
+            console.error('❌ Error incrementing view count:', viewError);
+        }
+
+        // Return the use case data with updated view count
+        useCase.view_count = (useCase.view_count || 0) + 1;
+        res.json(useCase);
+    } catch (error) {
+        console.error('Use case endpoint error:', error);
+        res.status(500).json({ 
+            error: 'Failed to load use case',
             details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
         });
     }
@@ -1870,31 +2195,72 @@ app.get('/api/blogs', async (req, res) => {
 
 app.get('/api/blogs/:id', async (req, res) => {
     try {
-        const { id } = req.params;
-        const [rows] = await pool.execute(`
-            SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
-                   featured_image as image_url, author_image as authorImage, gallery, industry_id,
-                   meta_title, meta_description, meta_keywords, read_time, slug
-            FROM resources 
-            WHERE id = ? AND type = 'blog' AND status = 'published'
-        `, [id]);
+        if (!pool) {
+            return res.status(503).json({ error: 'Database not ready yet' });
+        }
         
-        if (rows.length === 0) {
+        const { id } = req.params;
+        
+        // Check if id is numeric (direct ID lookup) or a slug
+        const isNumericId = /^\d+$/.test(id);
+        
+        let query, params;
+        if (isNumericId) {
+            // Direct ID lookup
+            query = `
+                SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                       featured_image as image_url, author_image as authorImage, gallery
+                FROM resources 
+                WHERE id = ? AND type = 'blog' AND status = 'published'
+            `;
+            params = [id];
+        } else {
+            // Slug-based lookup - create slug from title
+            query = `
+                SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                       featured_image as image_url, author_image as authorImage, gallery
+                FROM resources 
+                WHERE type = 'blog' AND status = 'published'
+            `;
+            params = [];
+        }
+        
+        const [rows] = await pool.execute(query, params);
+        
+        let blog = null;
+        if (isNumericId) {
+            blog = rows[0];
+        } else {
+            // Find blog by matching slug
+            blog = rows.find(row => {
+                const slug = row.title
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\s-]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-')
+                    .trim();
+                return slug === id;
+            });
+        }
+        
+        if (!blog) {
             return res.status(404).json({ error: 'Blog not found' });
         }
         
-        const blog = {
-            ...rows[0],
-            gallery: rows[0].gallery ? (() => {
+        const blogData = {
+            ...blog,
+            featured_image: blog.image_url,
+            published_date: blog.created_at,
+            gallery: blog.gallery ? (() => {
                 try {
-                    return JSON.parse(rows[0].gallery);
+                    return JSON.parse(blog.gallery);
                 } catch (e) {
                     return [];
                 }
             })() : []
         };
         
-        res.json(blog);
+        res.json(blogData);
     } catch (error) {
         console.error('Error fetching blog:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -1925,10 +2291,13 @@ app.post('/api/blogs', authenticateToken, upload.fields([
         
         const galleryArray = gallery ? gallery.split('\n').filter(url => url.trim()) : [];
         
+        // Clean the content to remove Quill editor artifacts
+        const cleanContent = content; // Temporarily disable cleaning to test
+        
         const [result] = await pool.execute(`
             INSERT INTO blogs (title, category, author, excerpt, content, image, authorImage, gallery, status, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'published', NOW(), NOW())
-        `, [title, category, author, excerpt, content, imagePath, authorImagePath, JSON.stringify(galleryArray)]);
+        `, [title, category, author, excerpt, cleanContent, imagePath, authorImagePath, JSON.stringify(galleryArray)]);
         
         res.json({ 
             message: 'Blog created successfully', 
@@ -1940,50 +2309,8 @@ app.post('/api/blogs', authenticateToken, upload.fields([
     }
 });
 
-app.put('/api/blogs/:id', authenticateToken, upload.fields([
-    { name: 'blogImage', maxCount: 1 },
-    { name: 'blogAuthorImage', maxCount: 1 }
-]), async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, category, author, excerpt, content, gallery } = req.body;
-        
-        if (!title || !category || !author || !content) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-        
-        // Get existing blog data
-        const [existingRows] = await pool.execute('SELECT image, authorImage FROM blogs WHERE id = ?', [id]);
-        if (existingRows.length === 0) {
-            return res.status(404).json({ error: 'Blog not found' });
-        }
-        
-        let imagePath = existingRows[0].image;
-        let authorImagePath = existingRows[0].authorImage;
-        
-        if (req.files.blogImage) {
-            imagePath = `/cms/uploads/blogs/${req.files.blogImage[0].filename}`;
-        }
-        
-        if (req.files.blogAuthorImage) {
-            authorImagePath = `/cms/uploads/blogs/${req.files.blogAuthorImage[0].filename}`;
-        }
-        
-        const galleryArray = gallery ? gallery.split('\n').filter(url => url.trim()) : [];
-        
-        await pool.execute(`
-            UPDATE blogs 
-            SET title = ?, category = ?, author = ?, excerpt = ?, content = ?, 
-                image = ?, authorImage = ?, gallery = ?, updated_at = NOW()
-            WHERE id = ?
-        `, [title, category, author, excerpt, content, imagePath, authorImagePath, JSON.stringify(galleryArray), id]);
-        
-        res.json({ message: 'Blog updated successfully' });
-    } catch (error) {
-        console.error('Error updating blog:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+// Blog update endpoint removed for security - blog updates must be done through CMS only
+// This prevents direct API access to blog updates, ensuring all content changes go through the CMS interface
 
 app.delete('/api/blogs/:id', authenticateToken, async (req, res) => {
     try {
@@ -2040,46 +2367,8 @@ app.post('/api/usecases', authenticateToken, upload.fields([
     }
 });
 
-app.put('/api/usecases/:id', authenticateToken, upload.fields([
-    { name: 'useCaseGallery', maxCount: 10 }
-]), async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, industry, icon, description, tags, stats, detailedContent, gallery } = req.body;
-        
-        if (!title || !industry || !description) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-        
-        // Get existing use case data
-        const [existingRows] = await pool.execute('SELECT gallery FROM use_cases WHERE id = ?', [id]);
-        if (existingRows.length === 0) {
-            return res.status(404).json({ error: 'Use case not found' });
-        }
-        
-        let galleryArray = existingRows[0].gallery ? JSON.parse(existingRows[0].gallery) : [];
-        
-        if (req.files.useCaseGallery) {
-            galleryArray = req.files.useCaseGallery.map(file => `/cms/uploads/usecases/${file.filename}`);
-        } else if (gallery) {
-            galleryArray = gallery.split('\n').filter(url => url.trim());
-        }
-        
-        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
-        const statsArray = stats ? JSON.parse(stats) : [];
-        
-        await pool.execute(`
-            UPDATE use_cases 
-            SET title = ?, description = ?, industry = ?, stats = ?, gallery = ?, updated_at = NOW()
-            WHERE id = ?
-        `, [title, description, industry, JSON.stringify(statsArray), JSON.stringify(galleryArray), id]);
-        
-        res.json({ message: 'Use case updated successfully' });
-    } catch (error) {
-        console.error('Error updating use case:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+// Use case update endpoint removed for security - use case updates must be done through CMS only
+// This prevents direct API access to use case updates, ensuring all content changes go through the CMS interface
 
 app.delete('/api/usecases/:id', authenticateToken, async (req, res) => {
     try {
@@ -2197,46 +2486,8 @@ app.post('/api/casestudies', authenticateToken, upload.fields([
     }
 });
 
-app.put('/api/casestudies/:id', authenticateToken, upload.fields([
-    { name: 'caseStudyImage', maxCount: 1 },
-    { name: 'caseStudyGallery', maxCount: 10 }
-]), async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { title, client, industry, date, summary, tags, results, content, gallery } = req.body;
-        
-        if (!title || !client || !industry) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-        
-        // Get existing case study data
-        const [existingRows] = await pool.execute('SELECT tags FROM case_studies WHERE id = ?', [id]);
-        if (existingRows.length === 0) {
-            return res.status(404).json({ error: 'Case study not found' });
-        }
-        
-        let galleryArray = [];
-        if (req.files.caseStudyGallery) {
-            galleryArray = req.files.caseStudyGallery.map(file => `/cms/uploads/casestudies/${file.filename}`);
-        } else if (gallery) {
-            galleryArray = gallery.split('\n').filter(url => url.trim());
-        }
-        
-        const tagsArray = tags ? tags.split(',').map(tag => tag.trim()) : [];
-        const resultsArray = results ? JSON.parse(results) : [];
-        
-        await pool.execute(`
-            UPDATE case_studies 
-            SET title = ?, client = ?, industry = ?, summary = ?, results = ?, tags = ?, updated_at = NOW()
-            WHERE id = ?
-        `, [title, client, industry, summary, JSON.stringify(resultsArray), JSON.stringify(tagsArray), id]);
-        
-        res.json({ message: 'Case study updated successfully' });
-    } catch (error) {
-        console.error('Error updating case study:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+// Case study update endpoint removed for security - case study updates must be done through CMS only
+// This prevents direct API access to case study updates, ensuring all content changes go through the CMS interface
 
 app.delete('/api/casestudies/:id', authenticateToken, async (req, res) => {
     try {
@@ -2410,28 +2661,8 @@ app.post('/api/pricing/plan', authenticateToken, async (req, res) => {
     }
 });
 
-app.put('/api/pricing/plan/:id', authenticateToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { plan_name, plan_description, plan_type, price_amount, price_period, is_featured, features, button_text, button_action, display_order, is_active } = req.body;
-        
-        if (!plan_name) {
-            return res.status(400).json({ error: 'Plan name is required' });
-        }
-        
-        await pool.execute(`
-            UPDATE pricing_plans 
-            SET plan_name = ?, plan_description = ?, plan_type = ?, price_amount = ?, price_period = ?, 
-                is_featured = ?, features = ?, button_text = ?, button_action = ?, display_order = ?, is_active = ?
-            WHERE id = ?
-        `, [plan_name, plan_description, plan_type, price_amount, price_period, is_featured, JSON.stringify(features || []), button_text, button_action, display_order, is_active !== undefined ? is_active : true, id]);
-        
-        res.json({ message: 'Pricing plan updated successfully' });
-    } catch (error) {
-        console.error('Error updating pricing plan:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
+// Pricing plan update endpoint removed for security - pricing plan updates must be done through CMS only
+// This prevents direct API access to pricing plan updates, ensuring all content changes go through the CMS interface
 
 app.delete('/api/pricing/plan/:id', authenticateToken, async (req, res) => {
     try {
@@ -2642,46 +2873,156 @@ app.get('/contact', (req, res) => {
 // SEO-friendly blog URLs
 app.get('/blog/:slug', async (req, res) => {
     try {
+        if (!pool) {
+            return res.status(503).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
         const { slug } = req.params;
         console.log('🔍 Blog route hit with slug:', slug);
         
-        // Try to find by slug first (if column exists)
         let [rows] = [];
-        try {
-            [rows] = await pool.execute(
-                `SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
-                        featured_image as image_url, author_image as authorImage, gallery, industry_id,
-                        meta_title, meta_description, meta_keywords, read_time, slug
-                 FROM resources 
-                 WHERE slug = ? AND type = "blog" AND status = "published"`,
-                [slug]
-            );
-            console.log('📝 Found by slug:', rows.length);
-        } catch (slugError) {
-            console.log('❌ Slug column not available, trying ID-based lookup');
-            // If slug column doesn't exist, try ID-based lookup
-            [rows] = await pool.execute(
-                `SELECT id, type, title, excerpt, content, author, date, tags, status, created_at, updated_at,
-                        featured_image as image_url, author_image as authorImage, gallery, industry_id,
-                        meta_title, meta_description, meta_keywords, read_time, slug
-                 FROM resources 
-                 WHERE id = ? AND type = "blog" AND status = "published"`,
-                [slug]
-            );
+        
+        // Check if slug is numeric (direct ID lookup)
+        const isNumericId = /^\d+$/.test(slug);
+        
+        if (isNumericId) {
+            // Try to find by ID first
+            try {
+                [rows] = await pool.execute(
+                    `SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                            featured_image as image_url, author_image as authorImage, gallery, view_count
+                     FROM resources 
+                     WHERE id = ? AND type = 'blog' AND status = "published"`,
+                    [slug]
+                );
+                console.log('📝 Found by ID:', rows.length);
+            } catch (error) {
+                console.log('❌ Error finding blog by ID:', error.message);
+                [rows] = [];
+            }
+        } else {
+            // Try to find by slug match (generate slug from title and compare)
+            try {
+                // Add retry logic for database timeouts
+                let retries = 3;
+                while (retries > 0) {
+                    try {
+                        [rows] = await pool.execute(
+                            `SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                                    featured_image as image_url, author_image as authorImage, gallery, view_count
+                             FROM resources 
+                             WHERE type = 'blog' AND status = "published"`,
+                            []
+                        );
+                        break; // Success, exit retry loop
+                    } catch (dbError) {
+                        retries--;
+                        if (retries === 0) throw dbError;
+                        console.log(`🔄 Database timeout, retrying... (${retries} attempts left)`);
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+                    }
+                }
+                
+                // Find blog by matching slug
+                const blog = rows.find(row => {
+                    const generatedSlug = row.title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, '')
+                        .replace(/\s+/g, '-')
+                        .replace(/-+/g, '-')
+                        .trim();
+                    
+                    // Check if the provided slug matches the generated slug
+                    // Also handle cases where slug might be duplicated or have extra characters
+                    return generatedSlug === slug || 
+                           slug.includes(generatedSlug) || 
+                           generatedSlug.includes(slug.replace(/-+/g, '-'));
+                });
+                
+                if (blog) {
+                    rows = [blog];
+                    console.log('📝 Found by slug match:', blog.title);
+                } else {
+                    rows = [];
+                    console.log('❌ No blog found matching slug:', slug);
+                }
+            } catch (error) {
+                console.log('❌ Error finding blog by slug:', error.message);
+                [rows] = [];
+            }
         }
         
-        if (rows.length === 0) {
+        if (!rows || rows.length === 0) {
             console.log('❌ No blog found for slug:', slug);
             return res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
         }
         
         const blog = rows[0];
         console.log('✅ Blog found:', blog.title);
-        // Serve the static blog detail page instead of generating HTML
-        res.sendFile(path.join(__dirname, 'pages', 'blog-detail.html'));
+        console.log('📸 Author image:', blog.authorImage);
+        console.log('📸 Author image type:', typeof blog.authorImage);
+        console.log('📸 Full blog object keys:', Object.keys(blog));
+        console.log('📝 Content length:', blog.content ? blog.content.length : 'No content');
+        console.log('📝 Content preview:', blog.content ? blog.content.substring(0, 200) + '...' : 'No content');
+        
+        // Increment view count
+        try {
+            await pool.execute(
+                'UPDATE resources SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ?',
+                [blog.id]
+            );
+            console.log('📊 View count incremented for blog:', blog.title);
+        } catch (error) {
+            console.error('❌ Error incrementing view count:', error);
+        }
+        console.log('📝 Excerpt:', blog.excerpt ? blog.excerpt.substring(0, 100) + '...' : 'No excerpt');
+        console.log('🔍 View count value:', blog.view_count, 'Type:', typeof blog.view_count);
+        
+        // Read the blog detail HTML template
+        const blogTemplate = fs.readFileSync(path.join(__dirname, 'pages', 'blog-detail.html'), 'utf8');
+        
+        // Replace placeholders with actual blog data
+        let renderedHtml = blogTemplate
+            .replace('<title id="page-title">Blog Post - Emma AI</title>', `<title id="page-title">${blog.title} - Emma AI</title>`)
+            .replace('content="Read our latest insights on AI automation and intelligent workflows."', `content="${(blog.excerpt || blog.content.substring(0, 160)).replace(/"/g, '&quot;')}"`)
+            .replace('<h1 class="article-title" id="article-title">Loading...</h1>', `<h1 class="article-title" id="article-title">${blog.title}</h1>`)
+            .replace('<div class="article-excerpt" id="article-excerpt">Loading excerpt...</div>', `<div class="article-excerpt" id="article-excerpt">${blog.excerpt || ''}</div>`)
+            .replace('Loading content...', cleanQuillContent(blog.content))
+            .replace('<span id="author-name">Emma AI Team</span>', `<span id="author-name">${blog.author || 'Emma AI Team'}</span>`)
+            .replace(/<div class="author-avatar" id="author-avatar">E<\/div>/, (() => {
+                if (blog.authorImage) {
+                    const imageUrl = blog.authorImage.startsWith('/') ? blog.authorImage : '/' + blog.authorImage;
+                    return `<div class="author-avatar" id="author-avatar"><img src="${imageUrl}" alt="${blog.author || 'Author'}" /></div>`;
+                } else {
+                    return `<div class="author-avatar" id="author-avatar">${(blog.author || 'E').charAt(0).toUpperCase()}</div>`;
+                }
+            })())
+            .replace('<span id="article-date">Loading...</span>', `<span id="article-date">${new Date(blog.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>`)
+            .replace('<span id="view-count-number">0</span>', `<span id="view-count-number">${blog.view_count || 0}</span>`)
+            .replace('<!-- DEBUG: view_count -->', `<!-- DEBUG: view_count = ${blog.view_count} -->`)
+            .replace('<body>', `<body data-view-count="${blog.view_count || 0}" data-blog-id="${blog.id}">`)
+            .replace('<img class="article-image" id="article-image" src="" alt="" style="display: none;">', `<img class="article-image" id="article-image" src="${blog.image_url ? (blog.image_url.startsWith('/') ? blog.image_url : '/' + blog.image_url) : ''}" alt="${blog.title}" style="${blog.image_url ? 'display: block;' : 'display: none;'}">`)
+            .replace('<div class="loading-state" id="loading-state">', '<div class="loading-state" id="loading-state" style="display: none;">')
+            .replace('<div id="article-content" style="display: none;">', '<div id="article-content" style="display: block;">');
+        
+        res.send(renderedHtml);
     } catch (error) {
         console.error('Error serving blog:', error);
         res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
+    }
+});
+
+// API endpoint to get current blog data
+app.get('/api/blog/current', async (req, res) => {
+    try {
+        if (!req.session || !req.session.currentBlog) {
+            return res.status(404).json({ error: 'No blog data found' });
+        }
+        
+        res.json(req.session.currentBlog);
+    } catch (error) {
+        console.error('Error getting current blog:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -2714,6 +3055,18 @@ app.get('/casestudy/:slug', async (req, res) => {
         }
         
         const caseStudy = rows[0];
+        
+        // Increment view count
+        try {
+            await pool.execute(
+                'UPDATE resources SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ?',
+                [caseStudy.id]
+            );
+            console.log('📊 View count incremented for case study:', caseStudy.title);
+        } catch (error) {
+            console.error('❌ Error incrementing view count:', error);
+        }
+        
         // Serve the static case study detail page
         res.sendFile(path.join(__dirname, 'pages', 'case-study-detail.html'));
     } catch (error) {
@@ -2751,6 +3104,18 @@ app.get('/usecase/:slug', async (req, res) => {
         }
         
         const useCase = rows[0];
+        
+        // Increment view count
+        try {
+            await pool.execute(
+                'UPDATE resources SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ?',
+                [useCase.id]
+            );
+            console.log('📊 View count incremented for use case:', useCase.title);
+        } catch (error) {
+            console.error('❌ Error incrementing view count:', error);
+        }
+        
         // Serve the static use case detail page
         res.sendFile(path.join(__dirname, 'pages', 'use-case-detail.html'));
     } catch (error) {
@@ -2830,6 +3195,27 @@ function generateSlug(title) {
         .replace(/\s+/g, '-') // Replace spaces with hyphens
         .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
         .trim('-'); // Remove leading/trailing hyphens
+}
+
+// Helper function to clean Quill editor artifacts from content
+function cleanQuillContent(content) {
+    if (!content) return content;
+    
+    let cleanContent = content;
+    
+    // Only remove actual Quill editor artifacts, not the main content
+    cleanContent = cleanContent
+        .replace(/<div class="ql-clipboard"[^>]*>[\s\S]*?<\/div>/g, '')
+        .replace(/<div class="ql-tooltip[^>]*>[\s\S]*?<\/div>/g, '')
+        .replace(/<input[^>]*data-formula[^>]*>/g, '')
+        .replace(/<a class="ql-preview"[^>]*>[\s\S]*?<\/a>/g, '')
+        .replace(/<a class="ql-action"[^>]*>[\s\S]*?<\/a>/g, '')
+        .replace(/<a class="ql-remove"[^>]*>[\s\S]*?<\/a>/g, '')
+        // Only remove specific Quill toolbar elements, not content
+        .replace(/<div class="ql-toolbar"[^>]*>[\s\S]*?<\/div>/g, '')
+        .replace(/<div class="ql-container"[^>]*>[\s\S]*?<\/div>/g, '');
+    
+    return cleanContent;
 }
 
 // Function to update existing resources with slugs
@@ -2958,7 +3344,7 @@ function generateBlogPage(blog) {
         ${blog.featured_image ? `<img src="${blog.featured_image}" alt="${blog.title}" class="blog-image">` : ''}
         
         <div class="blog-content">
-            ${blog.content || blog.excerpt}
+            ${cleanQuillContent(blog.content || blog.excerpt)}
         </div>
 
         <div class="blog-tags">
@@ -3063,7 +3449,7 @@ function generateCaseStudyPage(caseStudy) {
         ${caseStudy.image_url ? `<img src="${caseStudy.image_url}" alt="${caseStudy.title}" class="case-study-image">` : ''}
         
         <div class="case-study-content">
-            ${caseStudy.content || caseStudy.excerpt}
+            ${cleanQuillContent(caseStudy.content || caseStudy.excerpt)}
         </div>
 
         <div class="case-study-tags">
@@ -3168,7 +3554,7 @@ function generateUseCasePage(useCase) {
         ${useCase.image_url ? `<img src="${useCase.image_url}" alt="${useCase.title}" class="use-case-image">` : ''}
         
         <div class="use-case-content">
-            ${useCase.content || useCase.excerpt}
+            ${cleanQuillContent(useCase.content || useCase.excerpt)}
         </div>
 
         <div class="use-case-tags">

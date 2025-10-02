@@ -147,6 +147,15 @@
             padding: 2rem;
         }
 
+        /* Ensure only active sections are visible */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+
         /* Cards */
         .card {
             background: white;
@@ -725,7 +734,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Management</div>
-                <a href="#" class="nav-item" onclick="alert('Industries management coming soon!')">
+                <a href="#" class="nav-item" data-section="industries">
                     <i class="fas fa-building"></i>
                     Industries
                 </a>
@@ -833,7 +842,7 @@
                     </div>
                 </div>
 
-                <!-- Draft Resources Section -->
+                <!-- Draft Resources Section (inside dashboard) -->
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">Draft Resources</h3>
@@ -852,8 +861,9 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Resources Section -->
+            <!-- Resources Section -->
                 <div id="resources-section" class="section">
                     <div class="card">
                         <div class="card-header">
@@ -1074,6 +1084,30 @@
                 }
             };
         }
+
+        // Initialize CMS when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.cms = new EmmaCMS();
+            
+            // Check for hash fragment and show appropriate section
+            const hash = window.location.hash.substring(1); // Remove the #
+            if (hash) {
+                console.log('🔗 Hash fragment detected:', hash);
+                
+                // Immediately hide dashboard section if accessing a specific section
+                const dashboardSection = document.getElementById('dashboard-section');
+                if (dashboardSection && hash !== 'dashboard') {
+                    dashboardSection.classList.remove('active');
+                    console.log('🚫 Dashboard section hidden for:', hash);
+                }
+                
+                setTimeout(() => {
+                    if (window.cms && window.cms.showSection) {
+                        window.cms.showSection(hash);
+                    }
+                }, 1000); // Wait for CMS to be fully initialized
+            }
+        });
     </script>
 </body>
 </html>

@@ -12,6 +12,33 @@ const slugify = require('slugify');
 const { v4: uuidv4 } = require('uuid');
 require('dotenv').config({ path: './config.env' });
 
+// Helper function to clean Quill editor artifacts from content
+function cleanQuillContent(content) {
+    if (!content) return content;
+    
+    let cleanContent = content;
+    
+    // Remove the ql-editor wrapper and extract just the content
+    const qlEditorMatch = cleanContent.match(/<div class="ql-editor"[^>]*>(.*?)<\/div>/s);
+    if (qlEditorMatch) {
+        cleanContent = qlEditorMatch[1];
+    }
+    
+    // Remove Quill editor artifacts
+    cleanContent = cleanContent
+        .replace(/<div class="ql-clipboard"[^>]*>[\s\S]*?<\/div>/g, '')
+        .replace(/<div class="ql-tooltip[^>]*>[\s\S]*?<\/div>/g, '')
+        .replace(/<input[^>]*data-formula[^>]*>/g, '')
+        .replace(/<a class="ql-preview"[^>]*>[\s\S]*?<\/a>/g, '')
+        .replace(/<a class="ql-action"[^>]*>[\s\S]*?<\/a>/g, '')
+        .replace(/<a class="ql-remove"[^>]*>[\s\S]*?<\/a>/g, '')
+        // Remove any remaining ql-* elements
+        .replace(/<[^>]*class="[^"]*ql-[^"]*"[^>]*>[\s\S]*?<\/[^>]*>/g, '')
+        .replace(/<[^>]*class="[^"]*ql-[^"]*"[^>]*\/?>/g, '');
+    
+    return cleanContent;
+}
+
 const app = express();
 const PORT = process.env.CMS_PORT || 3001;
 
@@ -443,7 +470,9 @@ app.post('/api/resources', authenticateToken, upload.fields([
         }
 
         const slug = generateSlug(title);
-        const contentPlain = extractPlainText(content);
+        // Clean the content to remove Quill editor artifacts
+        const cleanContent = cleanQuillContent(content);
+        const contentPlain = extractPlainText(cleanContent);
         const readTime = calculateReadingTime(contentPlain);
         const wordCount = contentPlain.split(/\s+/).length;
 
@@ -479,7 +508,7 @@ app.post('/api/resources', authenticateToken, upload.fields([
                 meta_keywords, read_time, word_count, published_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `, [
-            title, slug, type, status, excerpt || null, content, contentPlain,
+            title, slug, type, status, excerpt || null, cleanContent, contentPlain,
             featuredImageUrl || null, req.body.featured_image_alt || title, JSON.stringify(galleryUrls),
             req.user?.id || 1, author || `${req.user?.first_name || ''} ${req.user?.last_name || ''}`.trim() || req.user?.username || 'admin',
             authorImageUrl || null, industry_id ? parseInt(industry_id) : null, JSON.stringify(tagIds),
@@ -534,7 +563,9 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
         }
 
         const slug = generateSlug(title);
-        const contentPlain = extractPlainText(content);
+        // Clean the content to remove Quill editor artifacts
+        const cleanContent = cleanQuillContent(content);
+        const contentPlain = extractPlainText(cleanContent);
         const readTime = calculateReadingTime(contentPlain);
         const wordCount = contentPlain.split(/\s+/).length;
 
@@ -548,7 +579,7 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
             slug,
             type,
             excerpt,
-            content,
+            content: cleanContent,
             content_plain: contentPlain,
             industry_id: industry_id || null,
             meta_title: meta_title || title,

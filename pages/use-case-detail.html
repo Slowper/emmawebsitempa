@@ -37,87 +37,296 @@
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
+    <!-- <link rel="stylesheet" href="/styles.css"> -->
     
     <style>
+        /* Global Reset */
+        * {
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
+            background: #0f172a !important;
+            color: #f8fafc !important;
             margin: 0;
+            padding: 0;
             line-height: 1.6;
         }
 
-        .nav-container {
+        /* Override any conflicting styles from main stylesheet */
+        .main-content {
+            background: #0f172a !important;
+            color: #f8fafc !important;
+        }
+
+        .main-content * {
+            color: inherit !important;
+        }
+
+        /* Strong overrides for all text elements */
+        .use-case-content *,
+        .use-case-content h1,
+        .use-case-content h2,
+        .use-case-content h3,
+        .use-case-content h4,
+        .use-case-content h5,
+        .use-case-content h6,
+        .use-case-content p,
+        .use-case-content span,
+        .use-case-content div,
+        .use-case-content li {
+            color: #ffffff !important;
+        }
+
+        /* Override any inline styles */
+        .use-case-content [style*="color"] {
+            color: #ffffff !important;
+        }
+
+        /* Navigation Styles - Exact Copy from Blog Page */
+        .navbar {
             position: fixed;
             top: 0;
             left: 0;
-            right: 0;
+            width: 100%;
             background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
             z-index: 1000;
             padding: 1rem 0;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1), 0 0 40px rgba(59, 130, 246, 0.05);
         }
-
-        .nav-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
+        
+        .nav-container { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 0 2rem; 
         }
-
-        .nav-logo {
+        
+        .nav-logo { 
+            display: flex; 
+            align-items: center; 
+            position: relative;
+        }
+        
+        .logo-container {
+            position: relative;
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+            min-height: 48px;
         }
-
-        .logo-container {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
+        
         .logo-image {
-            width: 24px;
-            height: 24px;
+            height: 32px;
+            width: 32px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4));
+            position: relative;
+            z-index: 2;
             object-fit: cover;
+            display: block;
+            background: #f0f0f0;
+            border: 2px solid #3b82f6;
         }
-
+        
         .logo-text {
-            font-size: 1.5rem;
+            font-size: 1.25rem;
             font-weight: 700;
             background: linear-gradient(135deg, #3b82f6, #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            position: relative;
+            z-index: 2;
+            letter-spacing: -0.025em;
+        }
+        
+        .nav-links { 
+            display: flex; 
+            gap: 0.5rem; 
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        .nav-link { 
+            color: #94a3b8; 
+            text-decoration: none; 
+            font-weight: 500; 
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .nav-link:hover { 
+            color: #f8fafc; 
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+        .nav-link.active { 
+            color: #f8fafc; 
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            transform: translateY(-1px);
         }
 
-        .nav-links {
+
+
+        .use-case-category {
+            color: #3b82f6;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .use-case-title {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            color: #f8fafc !important;
+        }
+
+        .use-case-excerpt {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Fallback for browsers that don't support background-clip */
+        @supports not (-webkit-background-clip: text) {
+            .use-case-title {
+                color: #3b82f6 !important;
+                background: none;
+            }
+        }
+
+        .use-case-meta {
             display: flex;
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            gap: 2rem;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
         }
 
-        .nav-links a {
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
             color: #94a3b8;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .use-case-date {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .view-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .use-case-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
             text-decoration: none;
             font-weight: 500;
-            transition: color 0.3s ease;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
         }
 
-        .nav-links a:hover {
-            color: #3b82f6;
+        .back-link:hover {
+            color: #60a5fa;
+            transform: translateX(-2px);
         }
+
 
         .use-case-container {
             max-width: 800px;
@@ -211,6 +420,13 @@
             color: #ffffff !important;
             max-width: 100%;
             word-wrap: break-word;
+            overflow: hidden;
+        }
+        
+        /* Remove any Quill editor artifacts */
+        .ql-clipboard,
+        .ql-tooltip {
+            display: none !important;
         }
 
         .use-case-content h1,
@@ -482,33 +698,62 @@
                 font-size: 2rem;
             }
             
-            .nav-content {
+            .nav-container {
                 padding: 0 1rem;
             }
             
             .nav-links {
                 display: none;
             }
+            
+            .logo-container {
+                padding: 0.25rem 0.75rem;
+                min-height: 40px;
+            }
+            
+            .logo-image {
+                height: 28px;
+                width: 28px;
+            }
+            
+            .logo-text {
+                font-size: 1.1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-container {
+                padding: 0 0.75rem;
+            }
+            
+            .logo-container {
+                padding: 0.25rem 0.5rem;
+                gap: 0.5rem;
+            }
+            
+            .logo-text {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="nav-container">
-        <div class="nav-content">
+    <nav class="navbar">
+        <div class="nav-container">
             <div class="nav-logo">
                 <div class="logo-container">
                     <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
                     <span class="logo-text">Emma AI</span>
                 </div>
             </div>
-            <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/about">About</a></li>
-                <li><a href="/resources">Resources</a></li>
-                <li><a href="/pricing">Pricing</a></li>
-                <li><a href="/contact">Contact</a></li>
-            </ul>
+            <div class="nav-links">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/pricing" class="nav-link">Pricing</a>
+                <a href="/resources" class="nav-link active">Resources</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
         </div>
     </nav>
 
@@ -529,12 +774,17 @@
             <article class="use-case-header">
                 <span class="use-case-category" id="use-case-category">Use Case</span>
                 <h1 class="use-case-title" id="use-case-title">Loading...</h1>
+                <div class="use-case-excerpt" id="use-case-excerpt">Loading excerpt...</div>
                 <div class="use-case-meta" id="use-case-meta">
                     <div class="author-info">
                         <div class="author-avatar" id="author-avatar">E</div>
                         <span id="author-name">Emma AI Team</span>
                     </div>
                     <span id="use-case-date">Loading...</span>
+                    <div class="view-count">
+                        <i class="fas fa-eye"></i>
+                        <span id="view-count-number">0</span> views
+                    </div>
                 </div>
             </article>
 
@@ -622,11 +872,80 @@
             // Update use case content
             document.getElementById('use-case-title').textContent = useCase.title;
             
+            // Update excerpt
+            const excerpt = useCase.excerpt || useCase.description || 'Explore our AI automation use cases.';
+            document.getElementById('use-case-excerpt').textContent = excerpt;
+            
             // Clean up content and remove any malformed HTML
             let cleanContent = useCase.content || useCase.excerpt || 'Content not available.';
-            // Remove any malformed HTML artifacts
+            
+            // Remove Quill editor wrapper div if present
+            cleanContent = cleanContent.replace(/<div[^>]*class="ql-editor"[^>]*>(.*?)<\/div>/s, '$1');
+            
+            // Remove Quill editor artifacts that create large scroll areas
+            cleanContent = cleanContent.replace(/<div class="ql-clipboard"[^>]*>.*?<\/div>/gs, '');
+            cleanContent = cleanContent.replace(/<div class="ql-tooltip[^>]*>.*?<\/div>/gs, '');
+            cleanContent = cleanContent.replace(/<div[^>]*ql-tooltip[^>]*>.*?<\/div>/gs, '');
+            
+            // Remove additional Quill editor artifacts
+            cleanContent = cleanContent.replace(/<input[^>]*data-formula[^>]*>/g, '');
+            cleanContent = cleanContent.replace(/<a class="ql-preview"[^>]*>[\s\S]*?<\/a>/g, '');
+            cleanContent = cleanContent.replace(/<a class="ql-action"[^>]*>[\s\S]*?<\/a>/g, '');
+            cleanContent = cleanContent.replace(/<a class="ql-remove"[^>]*>[\s\S]*?<\/a>/g, '');
+            cleanContent = cleanContent.replace(/<div class="ql-toolbar"[^>]*>[\s\S]*?<\/div>/g, '');
+            cleanContent = cleanContent.replace(/<div class="ql-container"[^>]*>[\s\S]*?<\/div>/g, '');
+            
+            // Remove any malformed HTML artifacts but preserve proper HTML formatting
             cleanContent = cleanContent.replace(/'">/g, '');
             cleanContent = cleanContent.replace(/'/g, "'");
+            
+            // Convert plain text numbered lists to proper HTML lists - enhanced processing
+            cleanContent = cleanContent.replace(/(\d+\.\s[^\n\r]+(?:\n\r?|\r\n?)?[^\n\r]*)/g, (match) => {
+                // Split by line breaks to handle multi-line items
+                const lines = match.split(/\n\r?|\r\n?/).filter(line => line.trim());
+                if (lines.length > 0) {
+                    // Find all numbered items in the match
+                    const numberedItems = [];
+                    let currentItem = '';
+                    
+                    lines.forEach(line => {
+                        const trimmed = line.trim();
+                        // Enhanced pattern to catch various numbering formats (numbers and letters)
+                        if (trimmed.match(/^[\d]+\./) || trimmed.match(/^[a-zA-Z]+\./)) {
+                            // Start of new item
+                            if (currentItem) {
+                                numberedItems.push(currentItem.trim());
+                            }
+                            // More aggressive removal of numbers/letters - handle various formats including malformed ones
+                            let cleanItem = trimmed.replace(/^[\d]+\.\s*/, '').replace(/^[\d]+\s*/, '');
+                            cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*/, '').replace(/^[a-zA-Z]+\s*/, '');
+                            // Handle cases like "1. 2. 4. Text" or "a. b. c. Text" - remove all leading numbers/letters
+                            cleanItem = cleanItem.replace(/^[\d]+\.\s*[\d]+\.\s*[\d]+\.\s*/, '');
+                            cleanItem = cleanItem.replace(/^[\d]+\.\s*[\d]+\.\s*/, '');
+                            cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                            cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                            currentItem = cleanItem;
+                        } else if (trimmed && currentItem) {
+                            // Continuation of current item
+                            currentItem += ' ' + trimmed;
+                        }
+                    });
+                    
+                    if (currentItem) {
+                        numberedItems.push(currentItem.trim());
+                    }
+                    
+                    if (numberedItems.length > 0) {
+                        const listItems = numberedItems.map(item => `<li>${item}</li>`).join('');
+                        return `<ol>${listItems}</ol>`;
+                    }
+                }
+                return match;
+            });
+            
+            // Convert section headers to proper HTML headers
+            cleanContent = cleanContent.replace(/^([A-Z][^:]+):\s*$/gm, '<h2>$1</h2>');
+            cleanContent = cleanContent.replace(/^(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation):\s*$/gm, '<h2>$1</h2>');
             
             document.getElementById('use-case-body').innerHTML = cleanContent;
             
@@ -634,7 +953,12 @@
             const author = useCase.author || useCase.author_name || 'Emma AI Team';
             const authorAvatar = document.getElementById('author-avatar');
             if (useCase.authorImage || useCase.author_image) {
-                authorAvatar.innerHTML = `<img src="${useCase.authorImage || useCase.author_image}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">`;
+                let authorImageUrl = useCase.authorImage || useCase.author_image;
+                // Fix author image URL path - add /cms prefix if not present
+                if (authorImageUrl.startsWith('uploads/') && !authorImageUrl.startsWith('/cms/uploads/')) {
+                    authorImageUrl = '/cms/' + authorImageUrl;
+                }
+                authorAvatar.innerHTML = `<img src="${authorImageUrl}" alt="${author}" onerror="this.parentElement.innerHTML='${author.charAt(0).toUpperCase()}'">`;
             } else {
                 authorAvatar.textContent = author.charAt(0).toUpperCase();
             }
@@ -649,6 +973,10 @@
             });
             document.getElementById('use-case-date').textContent = formattedDate;
             
+            // Update view count
+            const viewCount = useCase.view_count || 0;
+            document.getElementById('view-count-number').textContent = viewCount;
+            
             // Update image
             console.log('🖼️ Use case image data:', {
                 image: useCase.image,
@@ -659,10 +987,15 @@
             const imageUrl = useCase.image || useCase.image_url || useCase.featured_image;
             if (imageUrl) {
                 const img = document.getElementById('use-case-image');
-                img.src = imageUrl;
+                // Fix image URL path - add /cms prefix if not present
+                let fixedImageUrl = imageUrl;
+                if (imageUrl.startsWith('uploads/') && !imageUrl.startsWith('/cms/uploads/')) {
+                    fixedImageUrl = '/cms/' + imageUrl;
+                }
+                img.src = fixedImageUrl;
                 img.alt = useCase.title;
                 img.style.display = 'block';
-                console.log('✅ Image set:', imageUrl);
+                console.log('✅ Image set:', fixedImageUrl);
             } else {
                 console.log('❌ No image URL found');
             }

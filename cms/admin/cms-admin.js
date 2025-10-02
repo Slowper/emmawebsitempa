@@ -137,21 +137,31 @@ class EmmaCMS {
         console.log('Quill already initialized:', !!this.quillEditor);
         
         // Check if Quill is available and editor element exists
-        if (typeof Quill !== 'undefined' && document.getElementById('resource-editor') && !this.quillEditor) {
-            // Check if the element already has a Quill instance and clean it up
+        if (typeof Quill !== 'undefined' && document.getElementById('resource-editor')) {
+            // Always clean up any existing instance first
             const editorElement = document.getElementById('resource-editor');
-            if (editorElement.classList.contains('ql-editor') || editorElement.querySelector('.ql-toolbar')) {
-                console.log('🧹 Cleaning up existing Quill instance...');
-                // Remove existing Quill toolbar and editor
-                const existingToolbar = editorElement.querySelector('.ql-toolbar');
-                const existingEditor = editorElement.querySelector('.ql-editor');
-                if (existingToolbar) existingToolbar.remove();
-                if (existingEditor) {
-                    // Move content back to the original element
-                    editorElement.innerHTML = existingEditor.innerHTML;
+            
+            // If we have a previous Quill instance, disable it
+            if (this.quillEditor) {
+                console.log('🧹 Disabling existing Quill instance...');
+                try {
+                    this.quillEditor.disable();
+                    this.quillEditor = null;
+                } catch (e) {
+                    console.log('Error disabling Quill:', e);
                 }
-                // Reset the element
+            }
+            
+            // Clean up any existing Quill DOM elements
+            if (editorElement.classList.contains('ql-container') || editorElement.querySelector('.ql-toolbar')) {
+                console.log('🧹 Cleaning up existing Quill DOM elements...');
+                const parent = editorElement.parentElement;
+                const existingToolbar = parent.querySelector('.ql-toolbar');
+                if (existingToolbar) existingToolbar.remove();
+                
+                // Reset the editor element
                 editorElement.className = '';
+                editorElement.innerHTML = '';
                 editorElement.style.height = '300px';
             }
             // Define custom bullet styles
@@ -201,6 +211,26 @@ class EmmaCMS {
                     },
                     keyboard: {
                         bindings: {
+                            // Disable automatic list conversion
+                            'list autofill': {
+                                key: ' ',
+                                shiftKey: null,
+                                ctrlKey: null,
+                                altKey: null,
+                                handler: function(range, context) {
+                                    return true; // Allow default behavior (no auto-conversion)
+                                }
+                            },
+                            // Disable automatic ordered list conversion
+                            'list tab': {
+                                key: 'Tab',
+                                shiftKey: null,
+                                ctrlKey: null,
+                                altKey: null,
+                                handler: function(range, context) {
+                                    return true; // Allow default behavior (no auto-conversion)
+                                }
+                            },
                             // Ensure paste works with keyboard shortcuts
                             paste: {
                                 key: 'V',
@@ -208,6 +238,16 @@ class EmmaCMS {
                                 handler: function(range, context) {
                                     console.log('⌨️ Quill paste handler triggered');
                                     // Let Quill handle the paste naturally
+                                    return true;
+                                }
+                            },
+                            // Add formatting shortcut
+                            format: {
+                                key: 'F',
+                                shortKey: true,
+                                handler: (range, context) => {
+                                    console.log('⌨️ Format shortcut triggered');
+                                    this.forceFormatContent();
                                     return true;
                                 }
                             }
@@ -228,6 +268,7 @@ class EmmaCMS {
             // Wait for Quill to be fully ready before setting up paste handlers
             setTimeout(() => {
                 this.setupPasteHandlers();
+                // this.setupAutoFormatting(); // DISABLED: Let blog logic handle formatting on save
             }, 100);
             
             console.log('✅ Quill editor initialized successfully');
@@ -518,9 +559,412 @@ class EmmaCMS {
             }
         });
         
+        // Create format button
+        const formatButton = document.createElement('button');
+        formatButton.type = 'button';
+        formatButton.innerHTML = '✨';
+        formatButton.title = 'Auto-Format Content';
+        formatButton.style.cssText = `
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 2px;
+            border-radius: 3px;
+            font-size: 16px;
+            background-color: #3b82f6;
+            color: white;
+        `;
+        
+        formatButton.addEventListener('click', () => {
+            console.log('✨ Manual formatting triggered');
+            this.forceFormatContent();
+        });
+        
+        // Create a specific fix button for letter numbering
+        const fixButton = document.createElement('button');
+        fixButton.type = 'button';
+        fixButton.innerHTML = '🔢';
+        fixButton.title = 'Fix Letter Numbering (a,b,a,a) → (1,2,3,4)';
+        fixButton.style.cssText = `
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            margin: 0 2px;
+            border-radius: 3px;
+            font-size: 16px;
+            background-color: #ef4444;
+            color: white;
+        `;
+        
+        fixButton.addEventListener('click', () => {
+            console.log('🔢 Fixing letter numbering...');
+            this.fixLetterNumberingDirectly();
+        });
+        
+        // Create BULLETS button - NEW!
+        const bulletsButton = document.createElement('button');
+        bulletsButton.type = 'button';
+        bulletsButton.innerHTML = '✦';
+        bulletsButton.title = 'Convert to Bullets';
+        bulletsButton.style.cssText = `
+            background: #3b82f6;
+            border: none;
+            cursor: pointer;
+            padding: 5px 8px;
+            margin: 0 2px;
+            border-radius: 3px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        `;
+        
+        bulletsButton.addEventListener('click', () => {
+            this.convertToBullets();
+        });
+
         // Add the buttons to the toolbar
         toolbarContainer.appendChild(highlightButton);
         toolbarContainer.appendChild(bulletButton);
+        toolbarContainer.appendChild(formatButton);
+        toolbarContainer.appendChild(fixButton);
+        toolbarContainer.appendChild(bulletsButton);
+        
+        // Make format function globally accessible for debugging
+        window.forceFormat = () => {
+            console.log('🔧 Manual format triggered from console');
+            this.forceFormatContent();
+        };
+        
+        // Make direct fix function globally accessible
+        window.fixNumbers = () => {
+            console.log('🔢 Manual number fix triggered from console');
+            this.fixLetterNumberingDirectly();
+        };
+        
+        // Add a simple, direct fix for the current content
+        window.quickFix = () => {
+            console.log('🚀 Quick fix triggered');
+            this.quickFixContent();
+        };
+        
+        // Add bullets conversion function
+        window.convertToBullets = () => {
+            console.log('✦ Manual bullets conversion triggered');
+            this.convertToBullets();
+        };
+        
+        // Add a simple fix for letter-based numbering
+        window.fixLetterNumbering = () => {
+            if (!this.quillEditor) {
+                console.log('❌ Quill editor not available');
+                return;
+            }
+            
+            console.log('🔧 Fixing letter-based numbering...');
+            let content = this.quillEditor.root.innerHTML;
+            console.log('📝 Current content:', content);
+            
+            // Direct replacement of letter-based numbering
+            content = content.replace(/(<p[^>]*>)\s*([a-zA-Z])\.\s*([^<]+)(<\/p>)/g, (match, openTag, letter, text, closeTag) => {
+                return `${openTag}<li>${text}${closeTag}`;
+            });
+            
+            // Wrap consecutive li elements in ol
+            content = content.replace(/(<li[^>]*>.*?<\/li>)(\s*<li[^>]*>.*?<\/li>)+/g, (match) => {
+                return `<ol>${match}</ol>`;
+            });
+            
+            console.log('📝 Fixed content:', content);
+            this.quillEditor.root.innerHTML = content;
+            console.log('✅ Letter-based numbering fixed');
+        };
+    }
+
+    fixLetterNumberingDirectly() {
+        if (!this.quillEditor) {
+            console.log('❌ Quill editor not available');
+            return;
+        }
+        
+        console.log('🔢 Starting direct letter numbering fix...');
+        
+        // Get all text content from the editor
+        const editorElement = this.quillEditor.root;
+        const allText = editorElement.textContent || editorElement.innerText || '';
+        console.log('📝 All text content:', allText);
+        
+        // Split into lines and process
+        const lines = allText.split(/\n/);
+        const processedLines = [];
+        let inList = false;
+        let listItems = [];
+        
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            console.log(`📝 Processing line ${i}: "${line}"`);
+            
+            // Check if line starts with letter + period (a., b., etc.)
+            if (line.match(/^[a-zA-Z]\.\s/)) {
+                console.log(`✅ Found letter-based item: "${line}"`);
+                
+                // Extract the text after the letter and period
+                const textAfterLetter = line.replace(/^[a-zA-Z]\.\s*/, '').trim();
+                console.log(`📝 Text after letter: "${textAfterLetter}"`);
+                
+                if (textAfterLetter) {
+                    listItems.push(textAfterLetter);
+                    inList = true;
+                }
+            } else if (inList && line && !line.match(/^[a-zA-Z]\.\s/)) {
+                // This might be a continuation of the previous list item
+                console.log(`📝 Continuation line: "${line}"`);
+                if (listItems.length > 0) {
+                    listItems[listItems.length - 1] += ' ' + line;
+                }
+            } else {
+                // End of list, add the list to processed lines
+                if (inList && listItems.length > 0) {
+                    console.log(`📝 Creating list with ${listItems.length} items:`, listItems);
+                    const listHTML = '<ol>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ol>';
+                    processedLines.push(listHTML);
+                    listItems = [];
+                    inList = false;
+                }
+                
+                // Add regular line
+                if (line) {
+                    processedLines.push(`<p>${line}</p>`);
+                }
+            }
+        }
+        
+        // Close any remaining list
+        if (inList && listItems.length > 0) {
+            console.log(`📝 Creating final list with ${listItems.length} items:`, listItems);
+            const listHTML = '<ol>' + listItems.map(item => `<li>${item}</li>`).join('') + '</ol>';
+            processedLines.push(listHTML);
+        }
+        
+        // Join all processed lines
+        const newContent = processedLines.join('');
+        console.log('📝 New content:', newContent);
+        
+        // Update the editor
+        editorElement.innerHTML = newContent;
+        console.log('✅ Direct letter numbering fix completed');
+        
+        // Trigger a change event to let Quill know content changed
+        if (this.quillEditor.update) {
+            this.quillEditor.update();
+        }
+    }
+
+    quickFixContent() {
+        if (!this.quillEditor) {
+            console.log('❌ Quill editor not available');
+            return;
+        }
+        
+        console.log('🚀 Starting quick fix...');
+        
+        // Get the current HTML content
+        let content = this.quillEditor.root.innerHTML;
+        console.log('📝 Current content:', content);
+        
+        // If content is wrapped in a single paragraph, extract the text and process it
+        if (content.match(/^<p[^>]*>.*<\/p>$/s)) {
+            console.log('📝 Processing single paragraph content');
+            
+            // Extract text from paragraph
+            const textContent = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+            console.log('📝 Extracted text:', textContent);
+            
+            // Split by actual line breaks in the text
+            const lines = textContent.split(/\n/);
+            const result = [];
+            let currentList = [];
+            let inList = false;
+            
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
+                
+                console.log(`📝 Processing line: "${trimmed}"`);
+                
+                // Check for headers
+                if (trimmed.match(/^(For Business|For Patients|Our Solution|RESULTS & IMPACT|CONCLUSION):\s*$/i)) {
+                    // Close any current list
+                    if (inList && currentList.length > 0) {
+                        result.push(`<ol>${currentList.join('')}</ol>`);
+                        currentList = [];
+                        inList = false;
+                    }
+                    result.push(`<h2>${trimmed.replace(/:\s*$/, '')}</h2>`);
+                }
+                // Check for numbered items
+                else if (trimmed.match(/^\d+\.\s/)) {
+                    const item = trimmed.replace(/^\d+\.\s*/, '');
+                    currentList.push(`<li>${item}</li>`);
+                    inList = true;
+                }
+                // Check for letter-based items
+                else if (trimmed.match(/^[a-zA-Z]\.\s/)) {
+                    const item = trimmed.replace(/^[a-zA-Z]\.\s*/, '');
+                    currentList.push(`<li>${item}</li>`);
+                    inList = true;
+                }
+                // Regular paragraph
+                else {
+                    // Close any current list
+                    if (inList && currentList.length > 0) {
+                        result.push(`<ol>${currentList.join('')}</ol>`);
+                        currentList = [];
+                        inList = false;
+                    }
+                    result.push(`<p>${trimmed}</p>`);
+                }
+            }
+            
+            // Close any remaining list
+            if (inList && currentList.length > 0) {
+                result.push(`<ol>${currentList.join('')}</ol>`);
+            }
+            
+            const newContent = result.join('');
+            console.log('📝 New content:', newContent);
+            
+            // Update the editor
+            this.quillEditor.root.innerHTML = newContent;
+            console.log('✅ Quick fix completed');
+        } else {
+            console.log('📝 Content is not in single paragraph format, skipping quick fix');
+        }
+    }
+
+    processContentForSaving(content) {
+        console.log('📝 Processing content for saving using blog logic...');
+        console.log('📝 Input content:', content);
+        
+        // Handle content that's all in one paragraph (common issue)
+        if (content.match(/^<p>.*<\/p>$/s) && !content.includes('<h2>') && !content.includes('<li>')) {
+            console.log('📝 Detected single paragraph content - processing line by line');
+            
+            // Extract text from paragraph
+            const textContent = content.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+            console.log('📝 Extracted text:', textContent);
+            
+            // Split by line breaks and process
+            const lines = textContent.split('\n').filter(line => line.trim());
+            const processedLines = [];
+            
+            for (const line of lines) {
+                const trimmed = line.trim();
+                
+                // Check for section headers
+                if (trimmed.match(/^(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients|RESULTS\s*&\s*IMPACT|Our Solution):\s*$/i)) {
+                    processedLines.push(`<h2>${trimmed.replace(/:\s*$/, '')}</h2>`);
+                }
+                // Check for numbered list items
+                else if (trimmed.match(/^[\d]+\.\s/) || trimmed.match(/^[a-zA-Z]+\.\s/)) {
+                    // Remove numbers/letters and add as list item
+                    let item = trimmed.replace(/^[\d]+\.\s*/, '').replace(/^[a-zA-Z]+\.\s*/, '');
+                    item = item.replace(/^[\d]+\.\s*/, '').replace(/^[a-zA-Z]+\.\s*/, '');
+                    processedLines.push(`<li>${item}</li>`);
+                }
+                // Regular paragraph
+                else if (trimmed) {
+                    processedLines.push(`<p>${trimmed}</p>`);
+                }
+            }
+            
+            // Join lines and wrap consecutive list items in ul
+            let newContent = processedLines.join('\n');
+            newContent = newContent.replace(/(<li>[^<]*<\/li>(?:\s*<li>[^<]*<\/li>)*)/g, (match) => {
+                if (!match.includes('<ul>') && !match.includes('<ol>')) {
+                    return `<ul>${match}</ul>`;
+                }
+                return match;
+            });
+            
+            console.log('📝 Processed single paragraph content:', newContent);
+            content = newContent;
+        }
+        
+        // Convert plain text numbered lists to proper HTML lists
+        content = content.replace(/(\d+\.\s[^\n\r]+(?:\n\r?|\r\n?)?[^\n\r]*)/g, (match) => {
+            // Split by line breaks to handle multi-line items
+            const lines = match.split(/\n\r?|\r\n?/).filter(line => line.trim());
+            if (lines.length > 0) {
+                // Find all numbered items in the match
+                const numberedItems = [];
+                let currentItem = '';
+                
+                lines.forEach(line => {
+                    const trimmed = line.trim();
+                    if (trimmed.match(/^[\d]+\./) || trimmed.match(/^[a-zA-Z]+\./)) {
+                        // Start of new item
+                        if (currentItem) {
+                            numberedItems.push(currentItem.trim());
+                        }
+                        // Remove the number/letter and period from the beginning - more aggressive removal
+                        let cleanItem = trimmed.replace(/^[\d]+\.\s*/, '').replace(/^[\d]+\s*/, '');
+                        cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*/, '').replace(/^[a-zA-Z]+\s*/, '');
+                        // Handle cases like "1. 2. 4. Text" or "a. b. c. Text" - remove all leading numbers/letters
+                        cleanItem = cleanItem.replace(/^[\d]+\.\s*[\d]+\.\s*[\d]+\.\s*/, '');
+                        cleanItem = cleanItem.replace(/^[\d]+\.\s*[\d]+\.\s*/, '');
+                        cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                        cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                        currentItem = cleanItem;
+                    } else if (trimmed && currentItem) {
+                        // Continuation of current item
+                        currentItem += ' ' + trimmed;
+                    }
+                });
+                
+                if (currentItem) {
+                    numberedItems.push(currentItem.trim());
+                }
+                
+                if (numberedItems.length > 0) {
+                    const listItems = numberedItems.map(item => `<li>${item}</li>`).join('');
+                    return `<ul>${listItems}</ul>`;
+                }
+            }
+            return match;
+        });
+        
+        // Convert plain text bullet points to proper HTML lists
+        content = content.replace(/([-•*]\s[^\n\r]+(?:\n\r?|\r\n?)[^\n\r]*)/g, (match) => {
+            const lines = match.split(/\n\r?|\r\n?/).filter(line => line.trim());
+            if (lines.length > 0) {
+                const listItems = lines.map(line => {
+                    const trimmed = line.trim();
+                    if (trimmed.match(/^[-•*]/)) {
+                        const item = trimmed.replace(/^[-•*]\s*/, '');
+                        return `<li>${item}</li>`;
+                    }
+                    return `<li>${trimmed}</li>`;
+                }).join('');
+                return `<ul>${listItems}</ul>`;
+            }
+            return match;
+        });
+        
+        // Convert common section headers to proper HTML headers
+        content = content.replace(/^(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients|RESULTS\s*&\s*IMPACT|Our Solution):\s*$/gm, '<h2>$1</h2>');
+        
+        // Convert **bold** to <strong>bold</strong>
+        content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        
+        // Convert *italic* to <em>italic</em>
+        content = content.replace(/\*(.*?)\*/g, '<em>$1</em>');
+        
+        console.log('📝 Content processing completed');
+        return content;
     }
 
     setupPasteHandlers() {
@@ -586,6 +1030,390 @@ class EmmaCMS {
         }
     }
 
+    setupAutoFormatting() {
+        if (!this.quillEditor) return;
+        
+        console.log('🔧 Setting up auto-formatting for Quill editor');
+        
+        // Apply formatting immediately when editor is ready
+        setTimeout(() => {
+            console.log('🎯 Applying initial formatting to editor content');
+            this.forceFormatContent();
+        }, 1000);
+        
+        // Handle text changes to auto-format content
+        this.quillEditor.on('text-change', (delta, oldDelta, source) => {
+            if (source === 'user') {
+                console.log('📝 Text changed by user - checking for auto-formatting');
+                
+                // Get current content
+                const content = this.quillEditor.root.innerHTML;
+                console.log('📝 Current content:', content);
+                
+                // Auto-format section headers
+                const formattedContent = this.autoFormatContent(content);
+                console.log('📝 Formatted content:', formattedContent);
+                
+                // If content was changed, update the editor
+                if (formattedContent !== content) {
+                    console.log('🔄 Content formatted, updating editor');
+                    
+                    // Temporarily disable the text-change event to prevent infinite loop
+                    this.quillEditor.off('text-change');
+                    
+                    // Update content using Quill's method to maintain cursor position
+                    const currentSelection = this.quillEditor.getSelection();
+                    this.quillEditor.root.innerHTML = formattedContent;
+                    
+                    // Restore cursor position
+                    if (currentSelection) {
+                        setTimeout(() => {
+                            this.quillEditor.setSelection(currentSelection);
+                        }, 50);
+                    }
+                    
+                    // Re-enable the text-change event
+                    setTimeout(() => {
+                        this.quillEditor.on('text-change', arguments.callee);
+                    }, 200);
+                } else {
+                    console.log('📝 No formatting changes needed');
+                }
+            }
+        });
+        
+        // Also handle on blur to format when user finishes editing
+        this.quillEditor.on('selection-change', (range, oldRange, source) => {
+            if (oldRange && !range) {
+                // Selection lost (blur event)
+                console.log('📝 Editor blurred - applying final formatting');
+                setTimeout(() => {
+                    this.forceFormatContent();
+                }, 500);
+            }
+        });
+    }
+
+    autoFormatContent(content) {
+        if (!content) return content;
+        
+        let formattedContent = content;
+        
+        // If content is wrapped in a single paragraph (like from paste), process it specially
+        if (formattedContent.match(/^<p[^>]*>.*<\/p>$/s) && !formattedContent.includes('<h2>') && !formattedContent.includes('<li>')) {
+            console.log('📝 Auto-formatting single paragraph content');
+            
+            // Extract text from paragraph
+            const textContent = formattedContent.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+            
+            // Split by line breaks and process
+            const lines = textContent.split(/\n/);
+            const result = [];
+            let currentList = [];
+            let inList = false;
+            
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed) continue;
+                
+                // Check for headers
+                if (trimmed.match(/^(For Business|For Patients|Our Solution|RESULTS & IMPACT|CONCLUSION|The Problem):\s*$/i)) {
+                    // Close any current list
+                    if (inList && currentList.length > 0) {
+                        result.push(`<ol>${currentList.join('')}</ol>`);
+                        currentList = [];
+                        inList = false;
+                    }
+                    result.push(`<h2>${trimmed.replace(/:\s*$/, '')}</h2>`);
+                }
+                // Check for numbered items
+                else if (trimmed.match(/^\d+\.\s/)) {
+                    const item = trimmed.replace(/^\d+\.\s*/, '');
+                    currentList.push(`<li>${item}</li>`);
+                    inList = true;
+                }
+                // Check for letter-based items
+                else if (trimmed.match(/^[a-zA-Z]\.\s/)) {
+                    const item = trimmed.replace(/^[a-zA-Z]\.\s*/, '');
+                    currentList.push(`<li>${item}</li>`);
+                    inList = true;
+                }
+                // Regular paragraph
+                else {
+                    // Close any current list
+                    if (inList && currentList.length > 0) {
+                        result.push(`<ol>${currentList.join('')}</ol>`);
+                        currentList = [];
+                        inList = false;
+                    }
+                    result.push(`<p>${trimmed}</p>`);
+                }
+            }
+            
+            // Close any remaining list
+            if (inList && currentList.length > 0) {
+                result.push(`<ol>${currentList.join('')}</ol>`);
+            }
+            
+            formattedContent = result.join('');
+        } else {
+            // Handle existing HTML content (individual paragraphs, etc.)
+            // Convert section headers to proper HTML headers
+            formattedContent = formattedContent.replace(/<p>\s*(RESULTS\s*&\s*IMPACT|CONCLUSION|The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients):\s*<\/p>/gi, '<h2>$1</h2>');
+            formattedContent = formattedContent.replace(/<p>\s*([A-Z][^:]+):\s*<\/p>/g, '<h2>$1</h2>');
+            
+            // Convert plain text numbered lists to proper HTML lists
+            formattedContent = formattedContent.replace(/(<p>\s*(\d+\.\s[^<\n]+)<\/p>)/g, (match, fullMatch, content) => {
+                const item = content.replace(/^\d+\.\s*/, '');
+                return `<li>${item}</li>`;
+            });
+            
+            // Wrap consecutive list items in ordered list
+            formattedContent = formattedContent.replace(/(<li>[^<]*<\/li>(?:\s*<li>[^<]*<\/li>)*)/g, (match) => {
+                if (!match.includes('<ol>') && !match.includes('<ul>')) {
+                    return `<ol>${match}</ol>`;
+                }
+                return match;
+            });
+        }
+        
+        return formattedContent;
+    }
+
+    applyFinalFormatting() {
+        if (!this.quillEditor) return;
+        
+        console.log('🔧 Applying final formatting to editor content');
+        
+        // Get current content
+        const content = this.quillEditor.root.innerHTML;
+        
+        // Apply comprehensive formatting
+        const formattedContent = this.comprehensiveFormatContent(content);
+        
+        // If content was changed, update the editor
+        if (formattedContent !== content) {
+            console.log('🔄 Final formatting applied');
+            
+            // Save cursor position
+            const currentSelection = this.quillEditor.getSelection();
+            
+            // Update content
+            this.quillEditor.root.innerHTML = formattedContent;
+            
+            // Restore cursor position
+            if (currentSelection) {
+                setTimeout(() => {
+                    this.quillEditor.setSelection(currentSelection);
+                }, 50);
+            }
+        }
+    }
+
+    comprehensiveFormatContent(content) {
+        if (!content) return content;
+        
+        let formattedContent = content;
+        console.log('🔧 Starting comprehensive formatting...');
+        
+        // Handle content that's wrapped in a single paragraph tag (like from Quill paste)
+        if (formattedContent.match(/^<p>.*<\/p>$/s) && !formattedContent.includes('<h2>') && !formattedContent.includes('<li>')) {
+            console.log('📝 Processing single paragraph content');
+            
+            // Extract text from paragraph tag
+            const textContent = formattedContent.replace(/<p[^>]*>/g, '').replace(/<\/p>/g, '');
+            
+            // Split content into lines
+            const lines = textContent.split('\n').filter(line => line.trim());
+            const processedLines = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Check for section headers
+                if (line.match(/^(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients|RESULTS\s*&\s*IMPACT|Our Solution):\s*$/i)) {
+                    processedLines.push(`<h2>${line.replace(/:\s*$/, '')}</h2>`);
+                }
+                // Check for numbered list items (numbers and letters)
+                else if (line.match(/^[\d]+\.\s/) || line.match(/^[a-zA-Z]+\.\s/)) {
+                    // More aggressive removal of numbers/letters - handle various formats
+                    let item = line.replace(/^[\d]+\.\s*/, '').replace(/^[\d]+\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*/, '').replace(/^[a-zA-Z]+\s*/, '');
+                    // Handle cases like "1. 2. 4. Text" or "a. b. c. Text" - remove all leading numbers/letters
+                    item = item.replace(/^[\d]+\.\s*[\d]+\.\s*[\d]+\.\s*/, '');
+                    item = item.replace(/^[\d]+\.\s*[\d]+\.\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                    processedLines.push(`<li>${item}</li>`);
+                }
+                // Regular paragraph
+                else if (line) {
+                    processedLines.push(`<p>${line}</p>`);
+                }
+            }
+            
+            formattedContent = processedLines.join('\n');
+            
+            // Wrap consecutive list items in unordered lists (bullets)
+            formattedContent = formattedContent.replace(/(<li>[^<]*<\/li>(?:\s*<li>[^<]*<\/li>)*)/g, (match) => {
+                if (!match.includes('<ol>') && !match.includes('<ul>')) {
+                    return `<ul>${match}</ul>`;
+                }
+                return match;
+            });
+        }
+        // Handle content that's wrapped in div tags (like from Quill)
+        else if (formattedContent.includes('<div>') && !formattedContent.includes('<p>') && !formattedContent.includes('<h2>')) {
+            console.log('📝 Processing div-wrapped content');
+            
+            // Extract text from div tags
+            const textContent = formattedContent.replace(/<div[^>]*>/g, '').replace(/<\/div>/g, '');
+            
+            // Split content into lines
+            const lines = textContent.split('\n').filter(line => line.trim());
+            const processedLines = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Check for section headers
+                if (line.match(/^(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients|RESULTS\s*&\s*IMPACT|Our Solution):\s*$/i)) {
+                    processedLines.push(`<h2>${line.replace(/:\s*$/, '')}</h2>`);
+                }
+                // Check for numbered list items (numbers and letters)
+                else if (line.match(/^[\d]+\.\s/) || line.match(/^[a-zA-Z]+\.\s/)) {
+                    // More aggressive removal of numbers/letters - handle various formats
+                    let item = line.replace(/^[\d]+\.\s*/, '').replace(/^[\d]+\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*/, '').replace(/^[a-zA-Z]+\s*/, '');
+                    // Handle cases like "1. 2. 4. Text" or "a. b. c. Text" - remove all leading numbers/letters
+                    item = item.replace(/^[\d]+\.\s*[\d]+\.\s*[\d]+\.\s*/, '');
+                    item = item.replace(/^[\d]+\.\s*[\d]+\.\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                    processedLines.push(`<li>${item}</li>`);
+                }
+                // Regular paragraph
+                else if (line) {
+                    processedLines.push(`<p>${line}</p>`);
+                }
+            }
+            
+            formattedContent = processedLines.join('\n');
+            
+            // Wrap consecutive list items in unordered lists (bullets)
+            formattedContent = formattedContent.replace(/(<li>[^<]*<\/li>(?:\s*<li>[^<]*<\/li>)*)/g, (match) => {
+                if (!match.includes('<ol>') && !match.includes('<ul>')) {
+                    return `<ul>${match}</ul>`;
+                }
+                return match;
+            });
+        }
+        // Handle plain text content (not wrapped in HTML)
+        else if (!formattedContent.includes('<p>') && !formattedContent.includes('<div>')) {
+            console.log('📝 Processing plain text content');
+            
+            // Split content into lines
+            const lines = formattedContent.split('\n').filter(line => line.trim());
+            const processedLines = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Check for section headers
+                if (line.match(/^(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients|RESULTS\s*&\s*IMPACT|Our Solution):\s*$/i)) {
+                    processedLines.push(`<h2>${line.replace(/:\s*$/, '')}</h2>`);
+                }
+                // Check for numbered list items (numbers and letters)
+                else if (line.match(/^[\d]+\.\s/) || line.match(/^[a-zA-Z]+\.\s/)) {
+                    // More aggressive removal of numbers/letters - handle various formats
+                    let item = line.replace(/^[\d]+\.\s*/, '').replace(/^[\d]+\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*/, '').replace(/^[a-zA-Z]+\s*/, '');
+                    // Handle cases like "1. 2. 4. Text" or "a. b. c. Text" - remove all leading numbers/letters
+                    item = item.replace(/^[\d]+\.\s*[\d]+\.\s*[\d]+\.\s*/, '');
+                    item = item.replace(/^[\d]+\.\s*[\d]+\.\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                    item = item.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
+                    processedLines.push(`<li>${item}</li>`);
+                }
+                // Regular paragraph
+                else if (line) {
+                    processedLines.push(`<p>${line}</p>`);
+                }
+            }
+            
+            formattedContent = processedLines.join('\n');
+            
+            // Wrap consecutive list items in unordered lists (bullets)
+            formattedContent = formattedContent.replace(/(<li>[^<]*<\/li>(?:\s*<li>[^<]*<\/li>)*)/g, (match) => {
+                if (!match.includes('<ol>') && !match.includes('<ul>')) {
+                    return `<ul>${match}</ul>`;
+                }
+                return match;
+            });
+        }
+        
+        // Convert section headers to proper HTML headers (comprehensive patterns)
+        formattedContent = formattedContent.replace(/<p>\s*(RESULTS\s*&\s*IMPACT|CONCLUSION|The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients):\s*<\/p>/gi, '<h2>$1</h2>');
+        formattedContent = formattedContent.replace(/<p>\s*([A-Z][^:]+):\s*<\/p>/g, '<h2>$1</h2>');
+        
+        // Convert plain text numbered lists to proper HTML lists (comprehensive)
+        formattedContent = formattedContent.replace(/(<p>\s*(\d+\.\s[^<\n]+)<\/p>)/g, (match, fullMatch, content) => {
+            const item = content.replace(/^\d+\.\s*/, '');
+            return `<li>${item}</li>`;
+        });
+        
+        // Wrap consecutive list items in ordered list
+        formattedContent = formattedContent.replace(/(<li>[^<]*<\/li>(?:\s*<li>[^<]*<\/li>)*)/g, (match) => {
+            if (!match.includes('<ol>') && !match.includes('<ul>')) {
+                return `<ol>${match}</ol>`;
+            }
+            return match;
+        });
+        
+        // Convert bold text patterns
+        formattedContent = formattedContent.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        formattedContent = formattedContent.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+        
+        // Clean up any remaining malformed HTML
+        formattedContent = formattedContent.replace(/<p>\s*<br\s*\/?>\s*<\/p>/g, '');
+        formattedContent = formattedContent.replace(/<p>\s*<\/p>/g, '');
+        
+        console.log('📝 Final formatted content:', formattedContent);
+        return formattedContent;
+    }
+
+    forceFormatContent() {
+        if (!this.quillEditor) {
+            console.log('❌ Quill editor not available');
+            return;
+        }
+        
+        console.log('🔧 Force formatting content...');
+        
+        // Get current content as plain text
+        const plainText = this.quillEditor.getText();
+        console.log('📝 Current plain text:', plainText);
+        
+        // Get current HTML content
+        const currentHTML = this.quillEditor.root.innerHTML;
+        console.log('📝 Current HTML:', currentHTML);
+        
+        // Apply comprehensive formatting
+        const formattedContent = this.comprehensiveFormatContent(currentHTML);
+        
+        console.log('📝 Formatted content:', formattedContent);
+        
+        // Clear the editor and insert formatted content
+        this.quillEditor.root.innerHTML = '';
+        
+        // Use Quill's clipboard to paste the formatted content
+        setTimeout(() => {
+            const delta = this.quillEditor.clipboard.convert(formattedContent);
+            this.quillEditor.setContents(delta);
+            console.log('✅ Content formatted and applied');
+        }, 100);
+    }
+
     setupEventListeners() {
         // Navigation - only handle items with data-section (dashboard)
         document.querySelectorAll('.nav-item[data-section]').forEach(item => {
@@ -636,6 +1464,9 @@ class EmmaCMS {
 
         // File upload handlers
         this.setupFileUploadHandlers();
+        
+        // Industry form handler
+        this.setupIndustryFormHandler();
     }
 
     setupFileUploadHandlers() {
@@ -657,6 +1488,61 @@ class EmmaCMS {
                 this.handleFileUpload(files, area);
             });
         });
+    }
+
+    setupIndustryFormHandler() {
+        // Handle industry form submission
+        document.addEventListener('submit', async (e) => {
+            if (e.target.id === 'industry-form') {
+                e.preventDefault();
+                await this.saveIndustry();
+            }
+        });
+    }
+
+    async saveIndustry() {
+        try {
+            const industryModal = document.getElementById('industry-modal');
+            const industryId = industryModal.dataset.industryId;
+            
+            const formData = {
+                name: document.getElementById('industry-name').value,
+                description: document.getElementById('industry-description').value,
+                color: document.getElementById('industry-color').value,
+                icon: document.getElementById('industry-icon').value,
+                sort_order: parseInt(document.getElementById('industry-sort-order').value) || 0
+            };
+
+            const url = industryId ? 
+                `${this.apiBase}/industries/${industryId}` : 
+                `${this.apiBase}/industries`;
+            
+            const method = industryId ? 'PUT' : 'POST';
+            
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Authorization': `Bearer ${this.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                this.closeIndustryModal();
+                this.showNotification('Industry saved successfully!', 'success');
+                await this.loadIndustriesManagement();
+                // Also reload industries for resource forms
+                await this.loadIndustries();
+            } else {
+                this.showNotification(data.error || data.message || 'Error saving industry', 'error');
+            }
+        } catch (error) {
+            console.error('Error saving industry:', error);
+            this.showNotification('Error saving industry', 'error');
+        }
     }
 
     async loadIndustries() {
@@ -1031,9 +1917,10 @@ class EmmaCMS {
             return;
         }
         
-        // Hide all sections
+        // Hide all sections - more aggressive hiding
         document.querySelectorAll('.section').forEach(section => {
             section.classList.remove('active');
+            section.style.display = 'none'; // Also hide with CSS
         });
         
         // Remove active class from nav items
@@ -1046,6 +1933,7 @@ class EmmaCMS {
         console.log('📦 Section element:', section);
         if (section) {
             section.classList.add('active');
+            section.style.display = 'block'; // Make sure it's visible
             const pageTitle = document.getElementById('page-title');
             if (pageTitle) {
                 pageTitle.textContent = this.getSectionTitle(sectionName);
@@ -1053,10 +1941,27 @@ class EmmaCMS {
             console.log('✅ Section activated');
         } else {
             console.error('❌ Section not found:', `${sectionName}-section`);
-            // Debug: Check what sections are available
-            const allSections = document.querySelectorAll('.section');
-            console.log('📋 Available sections:', Array.from(allSections).map(s => s.id));
-            console.log('🔍 Available section IDs:', Array.from(document.querySelectorAll('[id$="-section"]')).map(el => el.id));
+            
+            // For industries section, create it dynamically if it doesn't exist
+            if (sectionName === 'industries') {
+                console.log('🔧 Creating industries section dynamically...');
+                this.createIndustriesSection();
+                const newSection = document.getElementById('industries-section');
+                if (newSection) {
+                    newSection.classList.add('active');
+                    newSection.style.display = 'block'; // Make sure it's visible
+                    const pageTitle = document.getElementById('page-title');
+                    if (pageTitle) {
+                        pageTitle.textContent = this.getSectionTitle(sectionName);
+                    }
+                    console.log('✅ Industries section created and activated');
+                }
+            } else {
+                // Debug: Check what sections are available
+                const allSections = document.querySelectorAll('.section');
+                console.log('📋 Available sections:', Array.from(allSections).map(s => s.id));
+                console.log('🔍 Available section IDs:', Array.from(document.querySelectorAll('[id$="-section"]')).map(el => el.id));
+            }
         }
         
         // Add active class to nav item
@@ -1080,7 +1985,7 @@ class EmmaCMS {
             'blogs': 'Blog Posts',
             'case-studies': 'Case Studies',
             'use-cases': 'Use Cases',
-            'industries': 'Industries',
+            'industries': 'Industries Management',
             'tags': 'Tags',
             'media': 'Media Library',
             'settings': 'Settings',
@@ -1112,6 +2017,10 @@ class EmmaCMS {
                 console.log('🔧 Loading use cases...');
                 await this.loadResources('use-case');
                 break;
+            case 'industries':
+                console.log('🏭 Loading industries...');
+                await this.loadIndustriesManagement();
+                break;
             default:
                 console.log('⚠️ Unknown section:', sectionName);
         }
@@ -1125,10 +2034,13 @@ class EmmaCMS {
         form.reset();
         
         // Initialize Quill editor if not already done
-        if (!this.quillEditor && typeof Quill !== 'undefined') {
+        if (typeof Quill !== 'undefined') {
             // Wait a bit for the modal to be fully displayed
             setTimeout(() => {
-                this.initQuillEditor();
+                if (!this.quillEditor) {
+                    console.log('🔧 Initializing Quill editor for new resource...');
+                    this.initQuillEditor();
+                }
             }, 200);
         }
         
@@ -1155,13 +2067,31 @@ class EmmaCMS {
         if (authorImagePreview) authorImagePreview.innerHTML = '';
         if (galleryPreview) galleryPreview.innerHTML = '';
         
-        // Set type if provided
+        // Set type if provided, with proper default handling
         if (type) {
             document.getElementById('resource-type').value = type;
+        } else {
+            // Set default type based on current page context
+            const currentPath = window.location.pathname;
+            if (currentPath.includes('cms-blogs.html')) {
+                document.getElementById('resource-type').value = 'blog';
+            } else if (currentPath.includes('cms-case-studies.html')) {
+                document.getElementById('resource-type').value = 'case-study';
+            } else if (currentPath.includes('cms-use-cases.html')) {
+                document.getElementById('resource-type').value = 'use-case';
+            }
         }
         
-        // Update modal title
-        document.getElementById('modal-title').textContent = this.currentResourceId ? 'Edit Resource' : 'New Resource';
+        // Update modal title based on type
+        let modalTitle = 'New Resource';
+        if (type === 'blog') {
+            modalTitle = 'New Blog Post';
+        } else if (type === 'case-study') {
+            modalTitle = 'New Case Study';
+        } else if (type === 'use-case') {
+            modalTitle = 'New Use Case';
+        }
+        document.getElementById('modal-title').textContent = this.currentResourceId ? 'Edit Resource' : modalTitle;
         
         modal.classList.add('active');
         modal.style.display = 'flex';
@@ -1268,6 +2198,30 @@ class EmmaCMS {
                     if (textContent && textContent.trim() !== '') {
                         content = `<p>${textContent}</p>`;
                     }
+                }
+                
+                // Clean up content: remove Quill wrapper div and ensure proper formatting
+                if (content) {
+                    // Remove Quill editor wrapper div and other Quill-specific elements
+                    // Extract content from ql-editor if present
+                    if (content.includes('class="ql-editor"')) {
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = content;
+                        const qlEditor = tempDiv.querySelector('.ql-editor');
+                        if (qlEditor) {
+                            content = qlEditor.innerHTML;
+                            console.log('📝 Extracted content from ql-editor wrapper');
+                        }
+                    }
+                    
+                    // Remove other Quill artifacts (clipboard, tooltip divs)
+                    content = content.replace(/<div[^>]*class="ql-clipboard"[^>]*>.*?<\/div>/gs, '');
+                    content = content.replace(/<div[^>]*class="ql-tooltip"[^>]*>.*?<\/div>/gs, '');
+                    
+                    // Apply the same content processing logic used for blogs
+                    content = this.processContentForSaving(content);
+                    
+                    console.log('📝 Processed content for saving (first 200 chars):', content.substring(0, 200));
                 }
             }
             
@@ -1397,19 +2351,60 @@ class EmmaCMS {
 
     async editResource(id) {
         try {
+            console.log('🔍 Attempting to edit resource with ID:', id);
             const response = await this.apiCall(`/resources/${id}`);
+            console.log('📝 Resource data received:', response);
+            console.log('📝 Content field value:', response.content);
+            console.log('📝 Content length:', response.content ? response.content.length : 0);
             const resource = response;
+            
+            // Always reinitialize Quill editor to avoid double instances
+            if (typeof Quill !== 'undefined') {
+                console.log('🔧 Reinitializing Quill editor for edit...');
+                this.initQuillEditor();
+            } else {
+                console.error('❌ Quill is not available');
+            }
             
             // Populate form
             document.getElementById('resource-title').value = resource.title;
             document.getElementById('resource-type').value = resource.type;
             document.getElementById('resource-excerpt').value = resource.excerpt || '';
             document.getElementById('resource-author').value = resource.author || '';
-            if (this.quillEditor && this.quillEditor.setContents) {
-                this.quillEditor.setContents(resource.content);
-            } else if (this.quillEditor && this.quillEditor.root) {
-                this.quillEditor.root.innerHTML = resource.content;
-            }
+            
+            // Set content in editor with a delay to ensure it's ready
+            setTimeout(() => {
+                if (this.quillEditor && this.quillEditor.root) {
+                    // Content is stored as HTML, so set it directly
+                    console.log('📝 Loading content into editor:', resource.content);
+                    
+                    // Extract content from Quill wrapper if it exists
+                    let cleanContent = resource.content || '';
+                    if (cleanContent.includes('class="ql-editor"')) {
+                        // Extract content from the ql-editor div
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = cleanContent;
+                        const qlEditor = tempDiv.querySelector('.ql-editor');
+                        if (qlEditor) {
+                            cleanContent = qlEditor.innerHTML;
+                            console.log('📝 Extracted clean content from ql-editor wrapper');
+                        }
+                    }
+                    
+                    this.quillEditor.root.innerHTML = cleanContent;
+                    console.log('✅ Content loaded successfully');
+                    console.log('✅ Editor innerHTML now:', this.quillEditor.root.innerHTML.substring(0, 200));
+                } else {
+                    console.error('❌ Quill editor or root not available after timeout');
+                }
+            }, 500);
+            
+            // Format the loaded content after a short delay to ensure editor is ready
+            // DISABLED: Let blog logic handle formatting on save
+            // setTimeout(() => {
+            //     console.log('🎯 Formatting loaded content in edit mode');
+            //     this.forceFormatContent();
+            // }, 1000);
             document.getElementById('resource-industry').value = resource.industry_id || '';
             document.getElementById('resource-status').value = resource.status;
             document.getElementById('resource-meta-title').value = resource.meta_title || '';
@@ -1422,9 +2417,41 @@ class EmmaCMS {
                 document.getElementById('resource-tags').value = tags.join(', ');
             }
             
+            // Show existing images in preview
+            console.log('📸 Featured image URL:', resource.featured_image || resource.image_url);
+            console.log('📸 Author image URL:', resource.author_image || resource.authorImage);
+            
+            if (resource.featured_image || resource.image_url) {
+                const featuredImagePreview = document.getElementById('featured-image-preview');
+                if (featuredImagePreview) {
+                    let imageUrl = resource.featured_image || resource.image_url;
+                    // Ensure URL starts with /
+                    if (imageUrl && !imageUrl.startsWith('/') && !imageUrl.startsWith('http')) {
+                        imageUrl = '/' + imageUrl;
+                    }
+                    console.log('📸 Corrected featured image URL:', imageUrl);
+                    featuredImagePreview.innerHTML = `<img src="${imageUrl}" alt="Featured Image">`;
+                }
+            }
+            
+            if (resource.author_image || resource.authorImage) {
+                const authorImagePreview = document.getElementById('author-image-preview');
+                if (authorImagePreview) {
+                    let authorImageUrl = resource.author_image || resource.authorImage;
+                    // Ensure URL starts with /
+                    if (authorImageUrl && !authorImageUrl.startsWith('/') && !authorImageUrl.startsWith('http')) {
+                        authorImageUrl = '/' + authorImageUrl;
+                    }
+                    console.log('📸 Corrected author image URL:', authorImageUrl);
+                    authorImagePreview.innerHTML = `<img src="${authorImageUrl}" alt="Author Image">`;
+                }
+            }
+            
             this.currentResourceId = id;
             document.getElementById('modal-title').textContent = 'Edit Resource';
-            document.getElementById('resource-modal').classList.add('active');
+            const modal = document.getElementById('resource-modal');
+            modal.style.display = 'flex';
+            modal.classList.add('active');
         } catch (error) {
             console.error('Error loading resource:', error);
             this.showNotification('Error loading resource', 'error');
@@ -1619,10 +2646,298 @@ class EmmaCMS {
         }
     }
 
+    createIndustriesSection() {
+        // Create the industries section HTML structure
+        let industriesSection = document.getElementById('industries-section');
+        if (!industriesSection) {
+            industriesSection = document.createElement('div');
+            industriesSection.id = 'industries-section';
+            industriesSection.className = 'section';
+            document.querySelector('.content-area').appendChild(industriesSection);
+        }
+        
+        // Load the industries data
+        this.loadIndustriesManagement();
+    }
+
+    async loadIndustriesManagement() {
+        try {
+            console.log('🏭 Loading industries management...');
+            const response = await this.apiCall('/industries');
+            const industries = response;
+            
+            console.log('🏭 Industries loaded:', industries.length);
+            
+            // Create or update the industries section
+            let industriesSection = document.getElementById('industries-section');
+            if (!industriesSection) {
+                industriesSection = document.createElement('div');
+                industriesSection.id = 'industries-section';
+                industriesSection.className = 'section';
+                document.querySelector('.content-area').appendChild(industriesSection);
+            }
+            
+            industriesSection.innerHTML = `
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Industries Management</h3>
+                        <button class="btn btn-primary" onclick="cms.openIndustryModal()">
+                            <i class="fas fa-plus"></i>
+                            New Industry
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="loading" id="industries-loading" style="display: none;">
+                            <div class="spinner"></div>
+                            Loading industries...
+                        </div>
+                        <div id="industries-content">
+                            ${industries.length === 0 ? 
+                                '<p style="text-align: center; color: #64748b;">No industries found</p>' :
+                                `
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Description</th>
+                                            <th>Color</th>
+                                            <th>Icon</th>
+                                            <th>Resources</th>
+                                            <th>Created</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${industries.map(industry => `
+                                            <tr>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                                        <div style="width: 24px; height: 24px; background: ${industry.color || '#3b82f6'}; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.75rem;">
+                                                            ${industry.icon || '🏭'}
+                                                        </div>
+                                                        <span style="font-weight: 500;">${industry.name}</span>
+                                                    </div>
+                                                </td>
+                                                <td>${industry.description || '-'}</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                                        <div style="width: 20px; height: 20px; background: ${industry.color || '#3b82f6'}; border-radius: 50%; border: 1px solid #e2e8f0;"></div>
+                                                        <span style="font-size: 0.875rem; color: #64748b;">${industry.color || '#3b82f6'}</span>
+                                                    </div>
+                                                </td>
+                                                <td>${industry.icon || '-'}</td>
+                                                <td>
+                                                    <span class="badge badge-secondary">0 resources</span>
+                                                </td>
+                                                <td>${new Date(industry.created_at).toLocaleDateString()}</td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-secondary" onclick="cms.editIndustry(${industry.id})" title="Edit">
+                                                        <i class="fas fa-edit"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-danger" onclick="cms.deleteIndustry(${industry.id})" title="Delete">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                                `
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+        } catch (error) {
+            console.error('Error loading industries management:', error);
+        }
+    }
+
+    openIndustryModal(industryId = null) {
+        // Create industry modal if it doesn't exist
+        let industryModal = document.getElementById('industry-modal');
+        if (!industryModal) {
+            industryModal = document.createElement('div');
+            industryModal.id = 'industry-modal';
+            industryModal.className = 'modal';
+            industryModal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3 class="modal-title" id="industry-modal-title">New Industry</h3>
+                        <button class="modal-close" onclick="cms.closeIndustryModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="industry-form">
+                            <div class="form-group">
+                                <label class="form-label">Name *</label>
+                                <input type="text" class="form-input" id="industry-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Description</label>
+                                <textarea class="form-input form-textarea" id="industry-description" placeholder="Brief description of the industry"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Color</label>
+                                <input type="color" class="form-input" id="industry-color" value="#3b82f6">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Icon</label>
+                                <input type="text" class="form-input" id="industry-icon" placeholder="🏭 (emoji or icon name)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Sort Order</label>
+                                <input type="number" class="form-input" id="industry-sort-order" value="0">
+                            </div>
+                            <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                                <button type="button" class="btn btn-secondary" onclick="cms.closeIndustryModal()">Cancel</button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Save Industry
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(industryModal);
+        }
+        
+        // Reset form
+        document.getElementById('industry-form').reset();
+        document.getElementById('industry-color').value = '#3b82f6';
+        document.getElementById('industry-sort-order').value = '0';
+        
+        // Set title
+        document.getElementById('industry-modal-title').textContent = industryId ? 'Edit Industry' : 'New Industry';
+        
+        // Store industry ID for editing
+        industryModal.dataset.industryId = industryId || '';
+        
+        // Show modal
+        industryModal.style.display = 'flex';
+        industryModal.classList.add('active');
+    }
+
+    closeIndustryModal() {
+        const modal = document.getElementById('industry-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('active');
+        }
+    }
+
+    async editIndustry(industryId) {
+        try {
+            const response = await this.apiCall(`/industries/${industryId}`);
+            const industry = response;
+            
+            // Populate form
+            document.getElementById('industry-name').value = industry.name;
+            document.getElementById('industry-description').value = industry.description || '';
+            document.getElementById('industry-color').value = industry.color || '#3b82f6';
+            document.getElementById('industry-icon').value = industry.icon || '';
+            document.getElementById('industry-sort-order').value = industry.sort_order || 0;
+            
+            this.openIndustryModal(industryId);
+        } catch (error) {
+            console.error('Error loading industry:', error);
+            this.showNotification('Error loading industry', 'error');
+        }
+    }
+
+    async deleteIndustry(industryId) {
+        if (!confirm('Are you sure you want to delete this industry?')) {
+            return;
+        }
+        
+        try {
+            const response = await fetch(`${this.apiBase}/industries/${industryId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${this.token}`
+                }
+            });
+            
+            if (response.ok) {
+                this.showNotification('Industry deleted successfully!', 'success');
+                this.loadIndustriesManagement();
+                // Also reload industries for resource forms
+                await this.loadIndustries();
+            } else {
+                const data = await response.json();
+                this.showNotification(data.error || 'Error deleting industry', 'error');
+            }
+        } catch (error) {
+            console.error('Error deleting industry:', error);
+            this.showNotification('Error deleting industry', 'error');
+        }
+    }
+
     logout() {
         localStorage.removeItem('cms_token');
         localStorage.removeItem('cms_user');
         this.showLogin();
+    }
+
+    convertToBullets() {
+        console.log('✦ Converting to bullets...');
+        
+        if (!this.quillEditor) {
+            console.log('❌ Quill editor not available');
+            return;
+        }
+        
+        // Get all text content from the editor
+        const editorElement = this.quillEditor.root;
+        const allText = editorElement.innerText || editorElement.textContent || '';
+        
+        console.log('📝 Current text content:', allText);
+        
+        // Split into lines and process
+        const lines = allText.split('\n').filter(line => line.trim());
+        const processedLines = [];
+        let currentList = [];
+        
+        for (const line of lines) {
+            const trimmed = line.trim();
+            
+            // Check if it's a numbered item (digit or letter)
+            if (trimmed.match(/^[\d]+\./) || trimmed.match(/^[a-zA-Z]+\./)) {
+                // Extract text after number/letter and period
+                let itemText = trimmed.replace(/^[\d]+\.\s*/, '').replace(/^[a-zA-Z]+\.\s*/, '');
+                // Remove any remaining numbers/letters at the start
+                itemText = itemText.replace(/^[\d]+\.\s*/, '').replace(/^[a-zA-Z]+\.\s*/, '');
+                currentList.push(`<li>${itemText}</li>`);
+            } else if (trimmed && currentList.length > 0) {
+                // End of list, add the list and then the current line
+                if (currentList.length > 0) {
+                    processedLines.push(`<ul>${currentList.join('')}</ul>`);
+                    currentList = [];
+                }
+                processedLines.push(`<p>${trimmed}</p>`);
+            } else {
+                // Regular line
+                if (currentList.length > 0) {
+                    processedLines.push(`<ul>${currentList.join('')}</ul>`);
+                    currentList = [];
+                }
+                processedLines.push(`<p>${trimmed}</p>`);
+            }
+        }
+        
+        // Handle any remaining list items
+        if (currentList.length > 0) {
+            processedLines.push(`<ul>${currentList.join('')}</ul>`);
+        }
+        
+        const newContent = processedLines.join('');
+        console.log('📝 New content with bullets:', newContent);
+        
+        // Update the editor
+        editorElement.innerHTML = newContent;
+        
+        console.log('✅ Converted to bullets');
     }
 }
 

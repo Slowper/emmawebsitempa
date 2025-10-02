@@ -1480,6 +1480,45 @@
     
     <!-- Enhanced Homepage Scripts -->
     <script>
+        // Security: Disable all content editing on frontend
+        document.addEventListener('DOMContentLoaded', function() {
+            // Disable contenteditable on all elements
+            document.querySelectorAll('*').forEach(element => {
+                element.contentEditable = false;
+                element.setAttribute('contenteditable', 'false');
+            });
+            
+            // Prevent text selection and editing
+            document.addEventListener('keydown', function(e) {
+                // Disable F12, Ctrl+Shift+I, Ctrl+U, Ctrl+S
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    (e.ctrlKey && e.key === 'u') ||
+                    (e.ctrlKey && e.key === 's')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // Disable right-click context menu
+            document.addEventListener('contextmenu', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable drag and drop
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable text selection
+            document.addEventListener('selectstart', function(e) {
+                e.preventDefault();
+                return false;
+            });
+        });
+
         // Auto-update copyright year
         document.addEventListener('DOMContentLoaded', function() {
             const currentYearElement = document.getElementById('currentYear');

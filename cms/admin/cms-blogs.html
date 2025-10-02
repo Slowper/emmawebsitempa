@@ -652,7 +652,7 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Management</div>
-                <a href="#" class="nav-item">
+                <a href="/cms/admin/cms-admin-local.html#industries" class="nav-item">
                     <i class="fas fa-industry"></i>
                     Industries
                 </a>
@@ -856,6 +856,8 @@
     <script>
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
+            // Load industries for the dropdown
+            loadIndustriesForDropdown();
             // Load blog posts
             loadBlogPosts();
         });
@@ -878,6 +880,31 @@
         
         // Make loadBlogPosts available globally for CMS admin
         window.loadBlogPosts = loadBlogPosts;
+
+        // Load industries for dropdown
+        async function loadIndustriesForDropdown() {
+            try {
+                console.log('🏭 Loading industries for dropdown...');
+                const response = await fetch('http://localhost:3001/api/industries');
+                const industries = await response.json();
+                
+                const select = document.getElementById('resource-industry');
+                if (select) {
+                    select.innerHTML = '<option value="">Select industry</option>';
+                    if (industries && industries.length > 0) {
+                        industries.forEach(industry => {
+                            const option = document.createElement('option');
+                            option.value = industry.id;
+                            option.textContent = industry.name;
+                            select.appendChild(option);
+                        });
+                    }
+                    console.log('✅ Industries loaded for dropdown');
+                }
+            } catch (error) {
+                console.error('❌ Error loading industries for dropdown:', error);
+            }
+        }
 
         function displayBlogPosts(blogs) {
             const container = document.getElementById('blogs-content');
@@ -916,14 +943,13 @@
                                     <td>
                                         <div style="width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: #f3f4f6; display: flex; align-items: center; justify-content: center;">
                                             ${blog.image_url ? 
-                                                `<img src="${blog.image_url}" alt="${blog.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='<i class=\\"fas fa-image\\" style=\\"color: #9ca3af; font-size: 1.5rem;\\"></i>'">` :
+                                                `<img src="${blog.image_url}" alt="${blog.title}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.parentElement.innerHTML='&lt;i class=&quot;fas fa-image&quot; style=&quot;color: #9ca3af; font-size: 1.5rem;&quot;&gt;&lt;/i&gt;'">` :
                                                 `<i class="fas fa-image" style="color: #9ca3af; font-size: 1.5rem;"></i>`
                                             }
                                         </div>
                                     </td>
                                     <td>
                                         <div class="resource-title">${blog.title}</div>
-                                        <div class="resource-excerpt">${blog.excerpt || ''}</div>
                                     </td>
                                     <td>${blog.industry_name || 'Technology'}</td>
                                     <td>
@@ -943,7 +969,12 @@
                                         </div>
                                     </td>
                                     <td>${new Date(blog.created_at).toLocaleDateString()}</td>
-                                    <td>${blog.view_count || 0}</td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                            <i class="fas fa-eye" style="color: #64748b; font-size: 0.875rem;"></i>
+                                            <span style="font-weight: 500; color: #374151;">${blog.view_count || 0}</span>
+                                        </div>
+                                    </td>
                                     <td>
                                         <button class="action-btn edit" onclick="editResource(${blog.id})">
                                             <i class="fas fa-edit"></i>
@@ -1041,6 +1072,45 @@
             }
         }
 
+        // Editor functions for edit modal
+        function formatTextEdit(command) {
+            const editor = document.getElementById('edit-content');
+            if (editor) {
+                editor.focus();
+                document.execCommand(command, false, null);
+            }
+        }
+
+        function insertHeadingEdit() {
+            const editor = document.getElementById('edit-content');
+            if (editor) {
+                editor.focus();
+                const heading = prompt('Enter heading text:');
+                if (heading) {
+                    document.execCommand('insertHTML', false, `<h2>${heading}</h2>`);
+                }
+            }
+        }
+
+        function insertListEdit() {
+            const editor = document.getElementById('edit-content');
+            if (editor) {
+                editor.focus();
+                document.execCommand('insertUnorderedList', false, null);
+            }
+        }
+
+        function insertLinkEdit() {
+            const editor = document.getElementById('edit-content');
+            if (editor) {
+                editor.focus();
+                const url = prompt('Enter URL:');
+                if (url) {
+                    document.execCommand('createLink', false, url);
+                }
+            }
+        }
+
         function handleImageUpload(input, previewId) {
             const file = input.files[0];
             if (file) {
@@ -1129,6 +1199,30 @@
                                 <label>Author</label>
                                 <input type="text" id="edit-author" class="form-input">
                             </div>
+                            <div class="form-group">
+                                <label>Content *</label>
+                                <div class="editor-toolbar">
+                                    <button type="button" class="editor-btn" onclick="formatTextEdit('bold')" title="Bold">
+                                        <i class="fas fa-bold"></i>
+                                    </button>
+                                    <button type="button" class="editor-btn" onclick="formatTextEdit('italic')" title="Italic">
+                                        <i class="fas fa-italic"></i>
+                                    </button>
+                                    <button type="button" class="editor-btn" onclick="formatTextEdit('underline')" title="Underline">
+                                        <i class="fas fa-underline"></i>
+                                    </button>
+                                    <button type="button" class="editor-btn" onclick="insertHeadingEdit()" title="Heading">
+                                        <i class="fas fa-heading"></i>
+                                    </button>
+                                    <button type="button" class="editor-btn" onclick="insertListEdit()" title="List">
+                                        <i class="fas fa-list-ul"></i>
+                                    </button>
+                                    <button type="button" class="editor-btn" onclick="insertLinkEdit()" title="Link">
+                                        <i class="fas fa-link"></i>
+                                    </button>
+                                </div>
+                                <div id="edit-content" class="simple-editor" contenteditable="true" style="min-height: 200px; padding: 1rem; border: 1px solid #d1d5db; border-radius: 0 0 6px 6px; background: white; outline: none;"></div>
+                            </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -1144,6 +1238,7 @@
             document.getElementById('edit-status').value = blog.status;
             document.getElementById('edit-excerpt').value = blog.excerpt || '';
             document.getElementById('edit-author').value = blog.author || '';
+            document.getElementById('edit-content').innerHTML = blog.content || '';
             
             // Store the blog ID for saving
             editModal.dataset.blogId = blog.id;
@@ -1179,7 +1274,8 @@
                             title: document.getElementById('edit-title').value,
                             status: document.getElementById('edit-status').value,
                             excerpt: document.getElementById('edit-excerpt').value,
-                            author: document.getElementById('edit-author').value
+                            author: document.getElementById('edit-author').value,
+                            content: document.getElementById('edit-content').innerHTML
                         };
                         
                         console.log('💾 Saving blog changes:', formData);
@@ -1187,7 +1283,8 @@
                         const response = await fetch(`http://localhost:3001/api/resources/${blogId}`, {
                             method: 'PUT',
                             headers: {
-                                'Content-Type': 'application/json'
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${localStorage.getItem('cms_token')}`
                             },
                             body: JSON.stringify(formData)
                         });
