@@ -5,26 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- Primary Meta Tags -->
-    <title>About Emma AI - Intelligent AI Assistant Platform | KodeFast</title>
-    <meta name="title" content="About Emma AI - Intelligent AI Assistant Platform | KodeFast">
-    <meta name="description" content="Learn about Emma AI's mission to revolutionize operations through intelligent automation. Discover our AI solutions for Healthcare, Banking, and Education industries.">
-    <meta name="keywords" content="about Emma AI, AI company, artificial intelligence solutions, healthcare AI, banking AI, education AI, KodeFast, AI automation">
+    <title>About Hi Emma - Intelligent AI Assistant Platform | KodeFast</title>
+    <meta name="title" content="About Hi Emma - Intelligent AI Assistant Platform | KodeFast">
+    <meta name="description" content="Learn about Hi Emma's mission to revolutionize operations through intelligent automation. Discover our AI solutions for Healthcare, Banking, and Education industries.">
+    <meta name="keywords" content="about Hi Emma, AI company, artificial intelligence solutions, healthcare AI, banking AI, education AI, KodeFast, AI automation">
     <meta name="author" content="KodeFast">
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://emma.kodefast.com/about">
-    <meta property="og:title" content="About Emma AI - Intelligent AI Assistant Platform | KodeFast">
-    <meta property="og:description" content="Learn about Emma AI's mission to revolutionize operations through intelligent automation. Discover our AI solutions for Healthcare, Banking, and Education industries.">
+    <meta property="og:title" content="About Hi Emma - Intelligent AI Assistant Platform | KodeFast">
+    <meta property="og:description" content="Learn about Hi Emma's mission to revolutionize operations through intelligent automation. Discover our AI solutions for Healthcare, Banking, and Education industries.">
     <meta property="og:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
-    <meta property="og:site_name" content="Emma AI by KodeFast">
+    <meta property="og:site_name" content="Hi Emma by KodeFast">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://emma.kodefast.com/about">
-    <meta property="twitter:title" content="About Emma AI - Intelligent AI Assistant Platform | KodeFast">
-    <meta property="twitter:description" content="Learn about Emma AI's mission to revolutionize operations through intelligent automation. Discover our AI solutions for Healthcare, Banking, and Education industries.">
+    <meta property="twitter:title" content="About Hi Emma - Intelligent AI Assistant Platform | KodeFast">
+    <meta property="twitter:description" content="Learn about Hi Emma's mission to revolutionize operations through intelligent automation. Discover our AI solutions for Healthcare, Banking, and Education industries.">
     <meta property="twitter:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
     
     <!-- Canonical URL -->
@@ -36,7 +36,7 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/styles.css?v=2">
     
     <!-- Critical CSS -->
     <style>
@@ -134,17 +134,18 @@
         }
         
         .logo-image {
-            height: 32px;
-            width: 32px;
+            height: 60px;
+            width: 60px;
             border-radius: 50%;
             transition: all 0.3s ease;
-            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4));
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.6));
             position: relative;
             z-index: 2;
             object-fit: cover;
             display: block;
             background: #f0f0f0;
-            border: 2px solid #3b82f6;
+            border: 3px solid #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
         
         .logo-text {
@@ -160,8 +161,9 @@
         }
         
         .logo-container:hover .logo-image {
-            transform: scale(1.1) rotate(5deg);
-            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.6));
+            transform: scale(1.15) rotate(8deg);
+            filter: drop-shadow(0 6px 16px rgba(59, 130, 246, 0.8));
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
         }
         
         .logo-container:hover .logo-text {
@@ -516,6 +518,14 @@
                 max-width: 300px !important;
             }
         }
+        
+        /* Ensure all elements are visible by default */
+        h1, h2, h3, .section h2, .card h3, .hero-content h1, .hero-content p {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: translateY(0) translateX(0) scale(1) !important;
+            transition: all 0.6s ease-out;
+        }
     </style>
     
     <!-- JSON-LD Structured Data -->
@@ -523,12 +533,12 @@
     {
         "@context": "https://schema.org",
         "@type": "AboutPage",
-        "name": "About Emma AI",
-        "description": "Learn about Emma AI's mission to revolutionize operations through intelligent automation",
+        "name": "About Hi Emma",
+        "description": "Learn about Hi Emma's mission to revolutionize operations through intelligent automation",
         "url": "https://emma.kodefast.com/about",
         "mainEntity": {
             "@type": "SoftwareApplication",
-            "name": "Emma AI",
+            "name": "Hi Emma",
             "description": "Intelligent AI Assistant Platform",
             "provider": {
                 "@type": "Organization",
@@ -540,79 +550,10 @@
     </script>
 </head>
     <body>
-        <!-- Loading Screen -->
-        <div class="loading-screen" id="loadingScreen">
-            <div class="loading-content">
-                <!-- Animated Background Particles -->
-                <div class="particles-container">
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                </div>
-
-                <!-- Floating Code Elements -->
-                <div class="floating-code">
-                    <div class="code-snippet">&lt;AI&gt;</div>
-                    <div class="code-snippet">neural_network()</div>
-                    <div class="code-snippet">autonomous_agent()</div>
-                    <div class="code-snippet">machine_learning()</div>
-                    <div class="code-snippet">deep_learning()</div>
-                    <div class="code-snippet">artificial_intelligence()</div>
-                </div>
-
-                <!-- 3D Rotating Logo -->
-                <div class="logo-3d">
-                    <div class="logo-cube">
-                        <div class="cube-face front">E</div>
-                        <div class="cube-face back">M</div>
-                        <div class="cube-face right">M</div>
-                        <div class="cube-face left">A</div>
-                        <div class="cube-face top">AI</div>
-                        <div class="cube-face bottom">AI</div>
-                    </div>
-                </div>
-
-                <!-- Glitch Text Effect -->
-                <div class="glitch-text" data-text="EMMA AI">EMMA AI</div>
-
-                <!-- Typewriter Effect -->
-                <div class="typewriter">Building the future of autonomous AI agents...</div>
-
-                <!-- Loading Spinner -->
-                <div class="loading-spinner">
-                    <div class="spinner-ring"></div>
-                    <div class="spinner-ring"></div>
-                    <div class="spinner-ring"></div>
-                </div>
-
-                <!-- Loading Text -->
-                <div class="loading-text">Initializing Neural Networks...</div>
-            </div>
-        </div>
 
         <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <div class="logo-container">
-                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
-                    <span class="logo-text">Emma AI</span>
-                </div>
-            </div>
-            <div class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/about" class="nav-link active">About</a>
-                <a href="/pricing" class="nav-link">Pricing</a>
-                <a href="/resources" class="nav-link">Resources</a>
-                <a href="/contact" class="nav-link">Contact</a>
-            </div>
-        </div>
-    </nav>
+    <!-- Header Component -->
+    <div id="header-placeholder"></div>
 
     <!-- Hero Section -->
     <section class="hero">
@@ -629,7 +570,7 @@
         </div>
         <div class="hero-content">
             <div class="hero-text">
-                <h1>About Emma AI</h1>
+                <h1>About Hi Emma</h1>
                 <p>Revolutionizing operations through intelligent automation and cutting-edge AI technology</p>
             </div>
             <div class="hero-visual">
@@ -656,14 +597,14 @@
         <!-- Mission Section -->
         <section class="section">
             <h2>Our Mission</h2>
-            <p>At Emma AI, we believe that artificial intelligence should be accessible, intelligent, and transformative. Our mission is to empower organizations across industries with AI solutions that not only automate processes but also learn, adapt, and evolve with your business needs.</p>
+            <p>At Hi Emma, we believe that artificial intelligence should be accessible, intelligent, and transformative. Our mission is to empower organizations across industries with AI solutions that not only automate processes but also learn, adapt, and evolve with your business needs.</p>
             <p>We're building the future where AI agents work alongside human teams, enhancing productivity, reducing errors, and enabling organizations to focus on what matters most - innovation and growth.</p>
         </section>
 
         <!-- What We Do Section -->
         <section class="section">
             <h2>What We Do</h2>
-            <p>Emma AI specializes in creating intelligent automation solutions that understand context, make decisions, and continuously improve. Our platform delivers:</p>
+            <p>Hi Emma specializes in creating intelligent automation solutions that understand context, make decisions, and continuously improve. Our platform delivers:</p>
             
             <div class="grid">
                 <div class="card">
@@ -696,7 +637,7 @@
         <!-- Industries Section -->
         <section class="section">
             <h2>Industries We Serve</h2>
-            <p>Emma AI's intelligent automation solutions are transforming operations across key industries:</p>
+            <p>Hi Emma's intelligent automation solutions are transforming operations across key industries:</p>
             
             <div class="grid">
                 <div class="card">
@@ -717,7 +658,7 @@
         <!-- Technology Section -->
         <section class="section">
             <h2>Our Technology</h2>
-            <p>Emma AI is built on cutting-edge technologies and best practices:</p>
+            <p>Hi Emma is built on cutting-edge technologies and best practices:</p>
             <ul style="color: #cbd5e1; font-size: 1.1rem; line-height: 1.8;">
                 <li><strong>Advanced Machine Learning:</strong> State-of-the-art ML models for natural language processing, computer vision, and predictive analytics</li>
                 <li><strong>Cloud-Native Architecture:</strong> Scalable, secure, and reliable infrastructure built for enterprise requirements</li>
@@ -785,7 +726,7 @@
 
         <!-- Leadership Team Section -->
         <section class="section">
-            <h2>Meet the Leadership Team</h2>
+            <h2 data-translate="false">Meet the Leadership Team</h2>
             <p>The visionaries leading Emma's mission to democratize AI</p>
             
             <div class="team-grid leadership-grid" style="display: flex; flex-wrap: nowrap; justify-content: space-between; gap: 1rem; margin: 2rem 0;">
@@ -898,186 +839,30 @@
         <!-- CTA Section -->
         <section class="section" style="text-align: center; background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(10px); padding: 2.5rem; border-radius: 0.75rem; border: 1px solid rgba(59, 130, 246, 0.2);">
             <h2 style="color: #3b82f6; margin-bottom: 1rem; font-size: 2rem;">Ready to Transform Your Organization?</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 2rem; color: #cbd5e1; max-width: 600px; margin-left: auto; margin-right: auto;">Let's discuss how Emma AI can revolutionize your operations with intelligent automation.</p>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; color: #cbd5e1; max-width: 600px; margin-left: auto; margin-right: auto;">Let's discuss how Hi Emma can revolutionize your operations with intelligent automation.</p>
             <a href="/contact" style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);">Get Started Today</a>
         </section>
     </div>
 
     <!-- World-Class Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <!-- Footer Top Section -->
-            <div class="footer-top">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <div class="logo-container">
-                            <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
-                        </div>
-                        <div class="brand-info">
-                            <h2 class="brand-name">Emma AI</h2>
-                            <p class="brand-tagline">Intelligent AI Assistant Platform</p>
-                        </div>
-                    </div>
-                    <p class="brand-description">
-                        Building the future of autonomous AI agents. Transform your operations with intelligent automation across Healthcare, Banking, Education, and more.
-                    </p>
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Twitter">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="LinkedIn">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 c0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="GitHub">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="YouTube">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="footer-links-grid">
-                    <div class="footer-column">
-                        <h3 class="column-title">Product</h3>
-                        <ul class="footer-links">
-                            <li><a href="/features" class="footer-link">Features</a></li>
-                            <li><a href="/pricing" class="footer-link">Pricing</a></li>
-                            <li><a href="/integrations" class="footer-link">Integrations</a></li>
-                            <li><a href="/api" class="footer-link">API</a></li>
-                            <li><a href="/security" class="footer-link">Security</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3 class="column-title">Industries</h3>
-                        <ul class="footer-links">
-                            <li><a href="/healthcare" class="footer-link">Healthcare</a></li>
-                            <li><a href="/banking" class="footer-link">Banking & Finance</a></li>
-                            <li><a href="/education" class="footer-link">Education</a></li>
-                            <li><a href="/manufacturing" class="footer-link">Manufacturing</a></li>
-                            <li><a href="/retail" class="footer-link">Retail</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3 class="column-title">Company</h3>
-                        <ul class="footer-links">
-                            <li><a href="/about" class="footer-link">About Us</a></li>
-                            <li><a href="/careers" class="footer-link">Careers</a></li>
-                            <li><a href="/blog" class="footer-link">Blog</a></li>
-                            <li><a href="/press" class="footer-link">Press</a></li>
-                            <li><a href="/partners" class="footer-link">Partners</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3 class="column-title">Support</h3>
-                        <ul class="footer-links">
-                            <li><a href="/help" class="footer-link">Help Center</a></li>
-                            <li><a href="/contact" class="footer-link">Contact Us</a></li>
-                            <li><a href="/status" class="footer-link">System Status</a></li>
-                            <li><a href="/documentation" class="footer-link">Documentation</a></li>
-                            <li><a href="/community" class="footer-link">Community</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Newsletter Section -->
-            <div class="footer-newsletter">
-                <div class="newsletter-content">
-                    <div class="newsletter-text">
-                        <h3 class="newsletter-title">Stay Updated</h3>
-                        <p class="newsletter-description">Get the latest AI insights and product updates delivered to your inbox.</p>
-                    </div>
-                    <div class="newsletter-form">
-                        <div class="form-group">
-                            <input type="email" placeholder="Enter your email" class="newsletter-input" required>
-                            <button type="submit" class="newsletter-button">
-                                <span>Subscribe</span>
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <p class="newsletter-disclaimer">We respect your privacy. Unsubscribe at any time.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Bottom Section -->
-            <div class="footer-bottom">
-                <div class="footer-bottom-content">
-                    <div class="copyright">
-                        <p>&copy; <span id="currentYear">2024</span> KodeFast. All rights reserved. Building the future of autonomous AI agents.</p>
-                    </div>
-                    <div class="footer-bottom-links">
-                        <a href="/privacy" class="bottom-link">Privacy Policy</a>
-                        <a href="/terms" class="bottom-link">Terms of Service</a>
-                        <a href="/cookies" class="bottom-link">Cookie Policy</a>
-                        <a href="/accessibility" class="bottom-link">Accessibility</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer Background Effects -->
-        <div class="footer-bg-effects">
-            <div class="footer-particles"></div>
-            <div class="footer-gradient"></div>
-        </div>
-    </footer>
+    <!-- Footer Component -->
+    <div id="footer-placeholder"></div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="/particles.min.js"></script>
+    
+    <!-- Component Loader -->
+    <script src="/components/load-components.js"></script>
+    
+    <!-- Translation System -->
+    <script src="/js/translations.js"></script>
+    <script src="/js/language-manager.js"></script>
+    <script src="/loading-screen.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     
     <!-- Enhanced About Page Scripts -->
     <script>
-        // Loading Screen Script
-        window.addEventListener('load', function() {
-            const loadingScreen = document.getElementById('loadingScreen');
-            const loadingText = document.querySelector('.loading-text');
-            
-            // Simulate loading progress
-            const loadingMessages = [
-                'Initializing Neural Networks...',
-                'Loading AI Models...',
-                'Connecting to Cloud Services...',
-                'Calibrating Autonomous Systems...',
-                'Preparing Emma AI...',
-                'Almost Ready...'
-            ];
-            
-            let messageIndex = 0;
-            const messageInterval = setInterval(() => {
-                if (messageIndex < loadingMessages.length - 1) {
-                    messageIndex++;
-                    loadingText.textContent = loadingMessages[messageIndex];
-                } else {
-                    clearInterval(messageInterval);
-                }
-            }, 800);
-            
-            // Hide loading screen after 50 milliseconds
-            setTimeout(() => {
-                loadingScreen.classList.add('fade-out');
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 50);
-            }, 50);
-        });
 
         // Initialize GSAP ScrollTrigger
         gsap.registerPlugin(ScrollTrigger);
@@ -1136,21 +921,46 @@
                 });
             });
 
-            // Section headers animation
-            gsap.utils.toArray('.section h2').forEach(header => {
-                gsap.from(header, {
-                    duration: 0.8,
-                    x: -50,
-                    opacity: 0,
-                    ease: "power2.out",
-                    scrollTrigger: {
-                        trigger: header,
-                        start: "top 80%",
-                        end: "bottom 20%",
-                        toggleActions: "play none none reverse"
+            // Simple scroll detection - show elements once and keep them visible
+            function isElementNearViewport(el) {
+                const rect = el.getBoundingClientRect();
+                return rect.top <= window.innerHeight * 0.8 && rect.bottom >= 0;
+            }
+
+            function showElement(el) {
+                el.style.opacity = '1';
+                el.style.visibility = 'visible';
+                el.style.transform = 'translateY(0) translateX(0) scale(1)';
+                el.style.transition = 'all 0.6s ease-out';
+                // Mark element as shown so it won't be hidden again
+                el.setAttribute('data-shown', 'true');
+            }
+
+            function handleScroll() {
+                // Show all elements that are near the viewport and haven't been shown yet
+                const allElements = document.querySelectorAll('h1, h2, h3, .section h2, .card h3, .hero-content h1, .hero-content p');
+                allElements.forEach(el => {
+                    // Only show if not already shown and is near viewport
+                    if (!el.getAttribute('data-shown') && isElementNearViewport(el)) {
+                        showElement(el);
                     }
                 });
-            });
+            }
+
+            // Initial check - show elements that are already in view
+            handleScroll();
+
+            // Listen for scroll events
+            window.addEventListener('scroll', handleScroll);
+            window.addEventListener('resize', handleScroll);
+
+            // Fallback: Show all elements after 1 second regardless of scroll
+            setTimeout(() => {
+                const allElements = document.querySelectorAll('h1, h2, h3, .section h2, .card h3, .hero-content h1, .hero-content p');
+                allElements.forEach(el => {
+                    showElement(el);
+                });
+            }, 1000);
 
             // Parallax effect for hero
             gsap.to('.hero-visual', {
@@ -1306,6 +1116,64 @@
                     // You can add analytics tracking here
                 });
             });
+        });
+
+        // Mobile Menu Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const navLinks = document.getElementById('navLinks');
+            
+            console.log('Mobile menu elements:', { mobileMenuToggle, navLinks });
+            
+            if (mobileMenuToggle && navLinks) {
+                mobileMenuToggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    console.log('Mobile menu clicked');
+                    
+                    // Toggle mobile menu
+                    navLinks.classList.toggle('mobile-open');
+                    mobileMenuToggle.classList.toggle('active');
+                    
+                    // Force display style as fallback
+                    if (navLinks.classList.contains('mobile-open')) {
+                        navLinks.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        navLinks.style.display = 'none';
+                        document.body.style.overflow = '';
+                    }
+                });
+                
+                // Close mobile menu when clicking on a link
+                const navLinkElements = navLinks.querySelectorAll('.nav-link');
+                navLinkElements.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navLinks.classList.remove('mobile-open');
+                        mobileMenuToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!mobileMenuToggle.contains(event.target) && !navLinks.contains(event.target)) {
+                        navLinks.classList.remove('mobile-open');
+                        mobileMenuToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+                
+                // Close mobile menu on window resize to desktop size
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768) {
+                        navLinks.classList.remove('mobile-open');
+                        mobileMenuToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
         });
     </script>
 </body>

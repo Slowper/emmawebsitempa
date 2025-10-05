@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Switching Test - Hi Emma</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .test-section {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .language-switcher {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(139, 92, 246, 0.4);
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .lang-switch-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .lang-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .lang-label.active {
+            background: rgba(139, 92, 246, 0.3);
+            color: white;
+        }
+        
+        .lang-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .lang-switch:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.4);
+        }
+        
+        .lang-switch-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.9), rgba(236, 72, 153, 0.9));
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        
+        .lang-switch.ar .lang-switch-slider {
+            transform: translateX(30px);
+        }
+        
+        .lang-switch.en .lang-switch-slider {
+            transform: translateX(0);
+        }
+        
+        .test-content {
+            margin: 20px 0;
+        }
+        
+        .test-item {
+            background: rgba(15, 23, 42, 0.5);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: 600;
+        }
+        
+        .status.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #10b981;
+        }
+        
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+        }
+        
+        .status.info {
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.4);
+            color: #3b82f6;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 Language Switching Test</h1>
+        <p>This page tests the new robust language switching system.</p>
+        
+        <!-- Language Switcher -->
+        <div class="language-switcher" id="language-switcher">
+            <div class="lang-switch-container">
+                <span class="lang-label" data-lang="en">EN</span>
+                <div class="lang-switch" id="lang-switch" onclick="toggleLanguage()">
+                    <div class="lang-switch-slider">
+                        <span class="lang-flag">🇺🇸</span>
+                    </div>
+                </div>
+                <span class="lang-label" data-lang="ar">AR</span>
+            </div>
+        </div>
+        
+        <!-- Test Content -->
+        <div class="test-content">
+            <div class="test-section">
+                <h2 data-translate="test.title">Language Test</h2>
+                <p data-translate="test.description">This content should change when you switch languages.</p>
+                
+                <div class="test-item">
+                    <h3 data-translate="test.navigation">Navigation Test</h3>
+                    <a href="#" data-translate="nav.home">Home</a> |
+                    <a href="#" data-translate="nav.about">About</a> |
+                    <a href="#" data-translate="nav.contact">Contact</a>
+                </div>
+                
+                <div class="test-item">
+                    <h3 data-translate="test.buttons">Button Test</h3>
+                    <button data-translate="common.get_started">Get Started</button>
+                    <button data-translate="common.learn_more">Learn More</button>
+                    <button data-translate="common.contact_us">Contact Us</button>
+                </div>
+                
+                <div class="test-item">
+                    <h3 data-translate="test.hero">Hero Section Test</h3>
+                    <h1 data-translate="hero.title">Meet Emma</h1>
+                    <p data-translate="hero.description">Transform your business with AI that understands, learns, and adapts.</p>
+                </div>
+            </div>
+            
+            <!-- Status Display -->
+            <div id="status-display">
+                <div class="status info">Initializing language system...</div>
+            </div>
+            
+            <!-- Test Controls -->
+            <div class="test-section">
+                <h3>Test Controls</h3>
+                <button onclick="testLanguageSwitch()">Test Language Switch</button>
+                <button onclick="testRTLSupport()">Test RTL Support</button>
+                <button onclick="testPersistence()">Test Language Persistence</button>
+                <button onclick="resetLanguage()">Reset to English</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scripts -->
+    <script src="/js/translations.js"></script>
+    <script src="/js/language-manager.js"></script>
+    
+    <script>
+        // Add test translations
+        if (typeof translations !== 'undefined') {
+            translations.en.test = {
+                title: "Language Test",
+                description: "This content should change when you switch languages.",
+                navigation: "Navigation Test",
+                buttons: "Button Test",
+                hero: "Hero Section Test"
+            };
+            
+            translations.ar.test = {
+                title: "اختبار اللغة",
+                description: "يجب أن يتغير هذا المحتوى عند تبديل اللغة.",
+                navigation: "اختبار التنقل",
+                buttons: "اختبار الأزرار",
+                hero: "اختبار قسم البطل"
+            };
+        }
+        
+        // Test functions
+        function testLanguageSwitch() {
+            const currentLang = window.getCurrentLanguage();
+            const newLang = currentLang === 'en' ? 'ar' : 'en';
+            updateStatus(`Switching from ${currentLang} to ${newLang}...`, 'info');
+            window.setLanguage(newLang);
+            setTimeout(() => {
+                updateStatus(`Language switched to ${newLang} successfully!`, 'success');
+            }, 500);
+        }
+        
+        function testRTLSupport() {
+            const currentLang = window.getCurrentLanguage();
+            const isRTL = currentLang === 'ar';
+            const dir = document.documentElement.getAttribute('dir');
+            updateStatus(`Current language: ${currentLang}, RTL: ${isRTL}, Dir: ${dir}`, 'info');
+        }
+        
+        function testPersistence() {
+            const savedLang = localStorage.getItem('emma-language');
+            const currentLang = window.getCurrentLanguage();
+            updateStatus(`Saved: ${savedLang}, Current: ${currentLang}`, 'info');
+        }
+        
+        function resetLanguage() {
+            updateStatus('Resetting to English...', 'info');
+            window.setLanguage('en');
+            setTimeout(() => {
+                updateStatus('Reset to English complete!', 'success');
+            }, 500);
+        }
+        
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status-display');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        // Monitor language changes
+        window.addEventListener('languageChanged', function(event) {
+            const { language, isRTL } = event.detail;
+            updateStatus(`Language changed to: ${language} (RTL: ${isRTL})`, 'success');
+        });
+        
+        // Initial status
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const currentLang = window.getCurrentLanguage();
+                updateStatus(`Language system initialized. Current language: ${currentLang}`, 'success');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

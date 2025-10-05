@@ -211,6 +211,24 @@
                 min-width: 100px;
                 height: 70px;
             }
+            
+            /* Extra small screen logo adjustments */
+            .logo-container {
+                gap: 0.75rem;
+                padding: 0.6rem 1rem;
+                min-height: 55px;
+            }
+            
+            .logo-image {
+                height: 44px;
+                width: 44px;
+                border: 2px solid #3b82f6;
+            }
+            
+            .logo-text {
+                font-size: 1.25rem;
+                font-weight: 700;
+            }
         }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
         
@@ -224,15 +242,15 @@
             position: relative;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            backdrop-filter: blur(10px);
+            gap: 1.25rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1));
+            padding: 1rem 2rem;
+            border-radius: 1.5rem;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            backdrop-filter: blur(15px);
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
-            min-height: 48px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2), 0 0 0 1px rgba(59, 130, 246, 0.1);
+            min-height: 75px;
         }
         
         .logo-container::before {
@@ -253,47 +271,53 @@
         }
         
         .logo-container:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
-            border-color: rgba(59, 130, 246, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.3), 0 0 0 1px rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.5);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15));
         }
         
         .logo-image {
-            height: 32px;
-            width: 32px;
+            height: 60px;
+            width: 60px;
             border-radius: 50%;
             transition: all 0.3s ease;
-            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4));
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.6));
             position: relative;
             z-index: 2;
             object-fit: cover;
             display: block;
             background: #f0f0f0;
-            border: 2px solid #3b82f6;
+            border: 3px solid #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
         }
         
         .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            font-size: 1.75rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             position: relative;
             z-index: 2;
             letter-spacing: -0.025em;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.3));
         }
         
         .logo-container:hover .logo-image {
-            transform: scale(1.1) rotate(5deg);
-            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.6));
+            transform: scale(1.15) rotate(8deg);
+            filter: drop-shadow(0 6px 16px rgba(59, 130, 246, 0.8));
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
         }
         
         .logo-container:hover .logo-text {
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            filter: drop-shadow(0 4px 12px rgba(59, 130, 246, 0.5));
         }
         
         .nav-links { 
@@ -436,6 +460,24 @@
             .hero-content p {
                 font-size: 1rem;
                 max-width: 90%;
+            }
+            
+            /* Mobile logo adjustments */
+            .logo-container {
+                gap: 1rem;
+                padding: 0.75rem 1.25rem;
+                min-height: 60px;
+            }
+            
+            .logo-image {
+                height: 50px;
+                width: 50px;
+                border: 2px solid #3b82f6;
+            }
+            
+            .logo-text {
+                font-size: 1.4rem;
+                font-weight: 700;
             }
         }
         
@@ -581,94 +623,10 @@
     </script>
 </head>
     <body>
-        <!-- Loading Screen -->
-        <div class="loading-screen" id="loadingScreen">
-            <div class="loading-content">
-                <!-- Animated Background Particles - COMMENTED OUT -->
-                <!-- <div class="particles-container">
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                    <div class="particle"></div>
-                </div> -->
-
-                <!-- Floating Code Elements -->
-                <div class="floating-code">
-                    <div class="code-snippet">&lt;AI&gt;</div>
-                    <div class="code-snippet">neural_network()</div>
-                    <div class="code-snippet">autonomous_agent()</div>
-                    <div class="code-snippet">machine_learning()</div>
-                    <div class="code-snippet">deep_learning()</div>
-                    <div class="code-snippet">artificial_intelligence()</div>
-                </div>
-
-                <!-- 3D Rotating Logo -->
-                <div class="logo-3d">
-                    <div class="logo-cube">
-                        <div class="cube-face front">E</div>
-                        <div class="cube-face back">M</div>
-                        <div class="cube-face right">M</div>
-                        <div class="cube-face left">A</div>
-                        <div class="cube-face top">AI</div>
-                        <div class="cube-face bottom">AI</div>
-                    </div>
-                </div>
-
-                <!-- Glitch Text Effect -->
-                <div class="glitch-text" data-text="EMMA AI">EMMA AI</div>
-
-                <!-- Typewriter Effect -->
-                <div class="typewriter">Building the future of autonomous AI agents...</div>
-
-                <!-- Loading Spinner -->
-                <div class="loading-spinner">
-                    <div class="spinner-ring"></div>
-                    <div class="spinner-ring"></div>
-                    <div class="spinner-ring"></div>
-                </div>
-
-                <!-- Loading Text -->
-                <div class="loading-text">Initializing Neural Networks...</div>
-                
-                <!-- Skip Loading Button -->
-                <button id="skipLoading" style="
-                    margin-top: 2rem;
-                    padding: 0.5rem 1rem;
-                    background: rgba(255, 255, 255, 0.1);
-                    border: 1px solid rgba(255, 255, 255, 0.3);
-                    color: white;
-                    border-radius: 0.5rem;
-                    cursor: pointer;
-                    font-size: 0.9rem;
-                    transition: all 0.3s ease;
-                " onmouseover="this.style.background='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'">
-                    Skip Loading
-                </button>
-            </div>
-        </div>
 
         <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <div class="logo-container">
-                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
-                    <span class="logo-text">Emma AI</span>
-                </div>
-            </div>
-            <div class="nav-links">
-                <a href="/" class="nav-link active">Home</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/pricing" class="nav-link">Pricing</a>
-                <a href="/resources" class="nav-link">Resources</a>
-                <a href="/contact" class="nav-link">Contact</a>
-            </div>
-        </div>
-    </nav>
+    <!-- Header Component -->
+    <div id="header-placeholder"></div>
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -745,7 +703,7 @@
                         <div class="new-avatar-section">
                             <!-- Comment above the avatar box -->
                             <div class="avatar-comment">
-                                <p id="avatar-comment-text">Emma - Enterprise AI Solution</p>
+                                <p id="avatar-comment-text">Hi!<br>I Am Emma Your Virtual Voice Assistant</p>
                             </div>
                             
                             <!-- Avatar Box -->
@@ -807,13 +765,13 @@
                 <div class="hero-text">
                     <!-- Main Hero Title -->
                     <h1 class="hero-title" id="hero-title">
-                        <span class="title-line-1">Meet Emma</span>
-                        <span class="title-line-2">Your <span class="highlight-text">Intelligent</span> AI Assistant</span>
+                        <span class="title-line-1" data-translate="hero.title">Meet Emma</span>
+                        <span class="title-line-2" data-translate="hero.subtitle">Your <span class="highlight-text">Intelligent</span> AI Assistant</span>
                     </h1>
                     
                     
                     <!-- Hero Description -->
-                    <p class="hero-description" id="hero-description">
+                    <p class="hero-description" id="hero-description" data-translate="hero.description">
                         Transform your business with AI that understands, learns, and adapts. 
                         From healthcare to banking to education - Emma delivers results across every industry.
                     </p>
@@ -821,8 +779,8 @@
                     <!-- Dynamic Use Case Showcase -->
                     <div class="use-case-showcase">
                         <div class="use-case-header">
-                            <h3>Trusted by Industry Leaders</h3>
-                            <p>See how Emma transforms operations across sectors</p>
+                            <h3 data-translate="hero.trusted_by">Trusted by Industry Leaders</h3>
+                            <p data-translate="hero.see_how">See how Emma transforms operations across sectors</p>
                         </div>
                         
                         <div class="use-case-cards">
@@ -835,12 +793,12 @@
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
-                                        <h4>Healthcare</h4>
-                                        <p>Patient scheduling, medical records, and diagnostic assistance</p>
+                                        <h4 data-translate="use_cases.healthcare.title">Healthcare</h4>
+                                        <p data-translate="use_cases.healthcare.description">Patient scheduling, medical records, and diagnostic assistance</p>
                                     </div>
                                     <div class="use-case-stats">
-                                        <span class="stat">60% efficiency</span>
-                                        <span class="stat">HIPAA compliant</span>
+                                        <span class="stat" data-translate="use_cases.healthcare.stats.efficiency">60% efficiency</span>
+                                        <span class="stat" data-translate="use_cases.healthcare.stats.compliance">HIPAA compliant</span>
                                     </div>
                                 </div>
                                 
@@ -851,12 +809,12 @@
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
-                                        <h4>Manufacturing</h4>
-                                        <p>Smart production, predictive maintenance, and supply chain optimization</p>
+                                        <h4 data-translate="use_cases.manufacturing.title">Manufacturing</h4>
+                                        <p data-translate="use_cases.manufacturing.description">Smart production, predictive maintenance, and supply chain optimization</p>
                                     </div>
                                     <div class="use-case-stats">
-                                        <span class="stat">45% cost reduction</span>
-                                        <span class="stat">Real-time monitoring</span>
+                                        <span class="stat" data-translate="use_cases.manufacturing.stats.cost_reduction">45% cost reduction</span>
+                                        <span class="stat" data-translate="use_cases.manufacturing.stats.monitoring">Real-time monitoring</span>
                                     </div>
                                 </div>
                                 
@@ -867,12 +825,12 @@
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
-                                        <h4>Retail</h4>
-                                        <p>Personalized shopping, virtual assistants, and demand forecasting</p>
+                                        <h4 data-translate="use_cases.retail.title">Retail</h4>
+                                        <p data-translate="use_cases.retail.description">Personalized shopping, virtual assistants, and demand forecasting</p>
                                     </div>
                                     <div class="use-case-stats">
-                                        <span class="stat">70% conversion</span>
-                                        <span class="stat">Smart inventory</span>
+                                        <span class="stat" data-translate="use_cases.retail.stats.conversion">70% conversion</span>
+                                        <span class="stat" data-translate="use_cases.retail.stats.inventory">Smart inventory</span>
                                     </div>
                                 </div>
                             </div>
@@ -887,12 +845,12 @@
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
-                                        <h4>Banking</h4>
-                                        <p>Customer service automation, fraud detection, and financial advisory</p>
+                                        <h4 data-translate="use_cases.banking.title">Banking</h4>
+                                        <p data-translate="use_cases.banking.description">Customer service automation, fraud detection, and financial advisory</p>
                                     </div>
                                     <div class="use-case-stats">
-                                        <span class="stat">40% faster</span>
-                                        <span class="stat">99.9% accurate</span>
+                                        <span class="stat" data-translate="use_cases.banking.stats.faster">40% faster</span>
+                                        <span class="stat" data-translate="use_cases.banking.stats.accurate">99.9% accurate</span>
                                     </div>
                                 </div>
                                 
@@ -904,12 +862,12 @@
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
-                                        <h4>Education</h4>
-                                        <p>Student support, course management, and personalized learning</p>
+                                        <h4 data-translate="use_cases.education.title">Education</h4>
+                                        <p data-translate="use_cases.education.description">Student support, course management, and personalized learning</p>
                                     </div>
                                     <div class="use-case-stats">
-                                        <span class="stat">85% engagement</span>
-                                        <span class="stat">24/7 support</span>
+                                        <span class="stat" data-translate="use_cases.education.stats.engagement">85% engagement</span>
+                                        <span class="stat" data-translate="use_cases.education.stats.support">24/7 support</span>
                                     </div>
                                 </div>
                                 
@@ -923,12 +881,12 @@
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
-                                        <h4>Customer Service</h4>
-                                        <p>24/7 support, ticket management, and customer satisfaction</p>
+                                        <h4 data-translate="use_cases.customer_service.title">Customer Service</h4>
+                                        <p data-translate="use_cases.customer_service.description">24/7 support, ticket management, and customer satisfaction</p>
                                     </div>
                                     <div class="use-case-stats">
-                                        <span class="stat">95% satisfaction</span>
-                                        <span class="stat">Instant response</span>
+                                        <span class="stat" data-translate="use_cases.customer_service.stats.satisfaction">95% satisfaction</span>
+                                        <span class="stat" data-translate="use_cases.customer_service.stats.response">Instant response</span>
                                     </div>
                                 </div>
                             </div>
@@ -944,8 +902,8 @@
     <section id="capabilities" class="capabilities section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" id="capabilities-title">Emma's Core Capabilities</h2>
-                <p class="section-subtitle" id="capabilities-subtitle">Intelligent automation that adapts, learns, and takes initiative</p>
+                <h2 class="section-title" id="capabilities-title" data-translate="capabilities.title">Emma's Core Capabilities</h2>
+                <p class="section-subtitle" id="capabilities-subtitle" data-translate="capabilities.subtitle">Intelligent automation that adapts, learns, and takes initiative</p>
             </div>
 
         
@@ -959,11 +917,11 @@
                         <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
                 </div>
-                <h3>Conversational Scheduling</h3>
-                <p>Manages bookings, reschedules, and sends reminders across WhatsApp, SMS, email, and voice</p>
+                <h3 data-translate="capabilities.scheduling.title">Conversational Scheduling</h3>
+                <p data-translate="capabilities.scheduling.description">Manages bookings, reschedules, and sends reminders across WhatsApp, SMS, email, and voice</p>
                 <div class="capability-demo">
-                    <div class="demo-bubble">"Schedule a meeting for tomorrow at 2 PM"</div>
-                    <div class="demo-bubble emma-response">"I've scheduled your meeting and sent confirmations!"</div>
+                    <div class="demo-bubble" data-translate="capabilities.scheduling.demo_user">"Schedule a meeting for tomorrow at 2 PM"</div>
+                    <div class="demo-bubble emma-response" data-translate="capabilities.scheduling.demo_emma">"I've scheduled your meeting and sent confirmations!"</div>
                 </div>
             </div>
 
@@ -978,11 +936,11 @@
                         <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"/>
                     </svg>
                 </div>
-                <h3>Smart Pre-Qualification</h3>
-                <p>Gathers input, prioritizes urgent needs, and routes requests to the right place automatically</p>
+                <h3 data-translate="capabilities.intelligence.title">Smart Pre-Qualification</h3>
+                <p data-translate="capabilities.intelligence.description">Gathers input, prioritizes urgent needs, and routes requests to the right place automatically</p>
                 <div class="capability-demo">
-                    <div class="demo-bubble">"I need help with my account"</div>
-                    <div class="demo-bubble emma-response">"I'll gather some details and connect you with the right specialist"</div>
+                    <div class="demo-bubble" data-translate="capabilities.intelligence.demo_user">"I need help with my account"</div>
+                    <div class="demo-bubble emma-response" data-translate="capabilities.intelligence.demo_emma">"I'll gather some details and connect you with the right specialist"</div>
                 </div>
             </div>
 
@@ -994,11 +952,11 @@
                         <circle cx="12" cy="7" r="4"/>
                     </svg>
                 </div>
-                <h3>Hyper-Personalized Engagement</h3>
-                <p>Delivers relevant nudges and follow-ups in multiple languages and tones</p>
+                <h3 data-translate="capabilities.personalization.title">Hyper-Personalized Engagement</h3>
+                <p data-translate="capabilities.personalization.description">Delivers relevant nudges and follow-ups in multiple languages and tones</p>
                 <div class="capability-demo">
-                    <div class="demo-bubble">"Follow up with our VIP clients"</div>
-                    <div class="demo-bubble emma-response">"Personalized messages sent in their preferred language!"</div>
+                    <div class="demo-bubble" data-translate="capabilities.personalization.demo_user">"Follow up with our VIP clients"</div>
+                    <div class="demo-bubble emma-response" data-translate="capabilities.personalization.demo_emma">"Personalized messages sent in their preferred language!"</div>
                 </div>
             </div>
             
@@ -1010,8 +968,8 @@
     <section id="industries" class="industries section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" id="industries-title">Industry Solutions</h2>
-                <p class="section-subtitle" id="industries-subtitle">Tailored AI agents for your specific industry needs</p>
+                <h2 class="section-title" id="industries-title" data-translate="industries.title">Industry Solutions</h2>
+                <p class="section-subtitle" id="industries-subtitle" data-translate="industries.subtitle">Tailored AI agents for your specific industry needs</p>
             </div>
         
         <div class="industries-grid">
@@ -1023,35 +981,35 @@
                             <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
                         </svg>
                     </div>
-                    <h3 class="card-title">Healthcare</h3>
+                    <h3 class="card-title" data-translate="industries.healthcare.title">Healthcare</h3>
                 </div>
                 <div class="card-content">
                     <div class="feature-list">
                         <div class="feature-item">
                             <div class="feature-icon">🏥</div>
                             <div class="feature-text">
-                                <h4>Virtual Health Assistant</h4>
-                                <p>24/7 patient support and symptom assessment</p>
+                                <h4 data-translate="industries.healthcare.features.virtual_assistant.title">Virtual Health Assistant</h4>
+                                <p data-translate="industries.healthcare.features.virtual_assistant.description">24/7 patient support and symptom assessment</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">📊</div>
                             <div class="feature-text">
-                                <h4>Patient Management</h4>
-                                <p>Intelligent care coordination and monitoring</p>
+                                <h4 data-translate="industries.healthcare.features.patient_management.title">Patient Management</h4>
+                                <p data-translate="industries.healthcare.features.patient_management.description">Intelligent care coordination and monitoring</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">🔍</div>
                             <div class="feature-text">
-                                <h4>Symptom Checker</h4>
-                                <p>AI-powered diagnostic assistance</p>
+                                <h4 data-translate="industries.healthcare.features.symptom_checker.title">Symptom Checker</h4>
+                                <p data-translate="industries.healthcare.features.symptom_checker.description">AI-powered diagnostic assistance</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-outline">Learn More</button>
+                    <button class="btn btn-outline" data-translate="common.learn_more">Learn More</button>
                 </div>
             </div>
 
@@ -1065,35 +1023,35 @@
                             <line x1="12" y1="17" x2="12" y2="21"></line>
                         </svg>
                     </div>
-                    <h3 class="card-title">Banking</h3>
+                    <h3 class="card-title" data-translate="industries.banking.title">Banking</h3>
                 </div>
                 <div class="card-content">
                     <div class="feature-list">
                         <div class="feature-item">
                             <div class="feature-icon">🛡️</div>
                             <div class="feature-text">
-                                <h4>Fraud Detection</h4>
-                                <p>Real-time transaction monitoring and protection</p>
+                                <h4 data-translate="industries.banking.features.fraud_detection.title">Fraud Detection</h4>
+                                <p data-translate="industries.banking.features.fraud_detection.description">Real-time transaction monitoring and protection</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">💰</div>
                             <div class="feature-text">
-                                <h4>Personal Finance Agent</h4>
-                                <p>Intelligent budgeting and investment advice</p>
+                                <h4 data-translate="industries.banking.features.personal_finance.title">Personal Finance Agent</h4>
+                                <p data-translate="industries.banking.features.personal_finance.description">Intelligent budgeting and investment advice</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">💬</div>
                             <div class="feature-text">
-                                <h4>Chatbot Banker</h4>
-                                <p>24/7 customer service and account management</p>
+                                <h4 data-translate="industries.banking.features.chatbot_banker.title">Chatbot Banker</h4>
+                                <p data-translate="industries.banking.features.chatbot_banker.description">24/7 customer service and account management</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-outline">Learn More</button>
+                    <button class="btn btn-outline" data-translate="common.learn_more">Learn More</button>
                 </div>
             </div>
 
@@ -1106,35 +1064,35 @@
                             <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
                         </svg>
                     </div>
-                    <h3 class="card-title">Education</h3>
+                    <h3 class="card-title" data-translate="industries.education.title">Education</h3>
                 </div>
                 <div class="card-content">
                     <div class="feature-list">
                         <div class="feature-item">
                             <div class="feature-icon">🎓</div>
                             <div class="feature-text">
-                                <h4>AI Tutor</h4>
-                                <p>Personalized learning experiences and guidance</p>
+                                <h4 data-translate="industries.education.features.ai_tutor.title">AI Tutor</h4>
+                                <p data-translate="industries.education.features.ai_tutor.description">Personalized learning experiences and guidance</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">📝</div>
                             <div class="feature-text">
-                                <h4>Adaptive Testing</h4>
-                                <p>Dynamic assessment based on student performance</p>
+                                <h4 data-translate="industries.education.features.adaptive_testing.title">Adaptive Testing</h4>
+                                <p data-translate="industries.education.features.adaptive_testing.description">Dynamic assessment based on student performance</p>
                             </div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">📚</div>
                             <div class="feature-text">
-                                <h4>Curriculum Design</h4>
-                                <p>AI-powered educational content creation</p>
+                                <h4 data-translate="industries.education.features.curriculum_design.title">Curriculum Design</h4>
+                                <p data-translate="industries.education.features.curriculum_design.description">AI-powered educational content creation</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer">
-                    <button class="btn btn-outline">Learn More</button>
+                    <button class="btn btn-outline" data-translate="common.learn_more">Learn More</button>
                 </div>
             </div>
         </div>
@@ -1329,9 +1287,9 @@
     <!-- CTA Section -->
     <section style="padding: 4rem 2rem; background: #0f172a; text-align: center;">
         <div style="max-width: 800px; margin: 0 auto;">
-            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Transform Your Operations?</h2>
-            <p style="font-size: 1.25rem; margin-bottom: 2rem; color: #94a3b8;">Let's work together to create the perfect AI solution for your organization.</p>
-            <a href="/contact" class="btn btn-primary">Get Started Today</a>
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;" data-translate="cta.title">Ready to Transform Your Operations?</h2>
+            <p style="font-size: 1.25rem; margin-bottom: 2rem; color: #94a3b8;" data-translate="cta.description">Let's work together to create the perfect AI solution for your organization.</p>
+            <a href="/contact" class="btn btn-primary" data-translate="cta.button">Get Started Today</a>
         </div>
     </section>
 
@@ -1339,144 +1297,46 @@
     <div class="footer-separator"></div>
 
     <!-- World-Class Footer -->
-    <footer class="footer">
-        <div class="footer-container">
-            <!-- Footer Top Section -->
-            <div class="footer-top">
-                <div class="footer-brand">
-                    <div class="footer-logo">
-                        <div class="logo-container">
-                            <img src="/Logo And Recording/cropped_circle_image.png" alt="Emma AI Logo" class="logo-image">
-                        </div>
-                        <div class="brand-info">
-                            <h2 class="brand-name">Emma AI</h2>
-                            <p class="brand-tagline">Intelligent AI Assistant Platform</p>
-                        </div>
-                    </div>
-                    <p class="brand-description">
-                        Building the future of autonomous AI agents. Transform your operations with intelligent automation across Healthcare, Banking, Education, and more.
-                    </p>
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Twitter">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="LinkedIn">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 c0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="GitHub">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 0C5.374 0 0 5.373 0 12 0 17.302 3.438 21.8 8.207 23.387c.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/>
-                            </svg>
-                        </a>
-                        <a href="#" class="social-link" aria-label="YouTube">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                            </svg>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="footer-links-grid">
-                    <div class="footer-column">
-                        <h3 class="column-title">Product</h3>
-                        <ul class="footer-links">
-                            <li><a href="/features" class="footer-link">Features</a></li>
-                            <li><a href="/pricing" class="footer-link">Pricing</a></li>
-                            <li><a href="/integrations" class="footer-link">Integrations</a></li>
-                            <li><a href="/api" class="footer-link">API</a></li>
-                            <li><a href="/security" class="footer-link">Security</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3 class="column-title">Industries</h3>
-                        <ul class="footer-links">
-                            <li><a href="/healthcare" class="footer-link">Healthcare</a></li>
-                            <li><a href="/banking" class="footer-link">Banking & Finance</a></li>
-                            <li><a href="/education" class="footer-link">Education</a></li>
-                            <li><a href="/manufacturing" class="footer-link">Manufacturing</a></li>
-                            <li><a href="/retail" class="footer-link">Retail</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3 class="column-title">Company</h3>
-                        <ul class="footer-links">
-                            <li><a href="/about" class="footer-link">About Us</a></li>
-                            <li><a href="/careers" class="footer-link">Careers</a></li>
-                            <li><a href="/blog" class="footer-link">Blog</a></li>
-                            <li><a href="/press" class="footer-link">Press</a></li>
-                            <li><a href="/partners" class="footer-link">Partners</a></li>
-                        </ul>
-                    </div>
-
-                    <div class="footer-column">
-                        <h3 class="column-title">Support</h3>
-                        <ul class="footer-links">
-                            <li><a href="/help" class="footer-link">Help Center</a></li>
-                            <li><a href="/contact" class="footer-link">Contact Us</a></li>
-                            <li><a href="/status" class="footer-link">System Status</a></li>
-                            <li><a href="/documentation" class="footer-link">Documentation</a></li>
-                            <li><a href="/community" class="footer-link">Community</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Newsletter Section -->
-            <div class="footer-newsletter">
-                <div class="newsletter-content">
-                    <div class="newsletter-text">
-                        <h3 class="newsletter-title">Stay Updated</h3>
-                        <p class="newsletter-description">Get the latest AI insights and product updates delivered to your inbox.</p>
-                    </div>
-                    <div class="newsletter-form">
-                        <div class="form-group">
-                            <input type="email" placeholder="Enter your email" class="newsletter-input" required>
-                            <button type="submit" class="newsletter-button">
-                                <span>Subscribe</span>
-                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-                                </svg>
-                            </button>
-                        </div>
-                        <p class="newsletter-disclaimer">We respect your privacy. Unsubscribe at any time.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer Bottom Section -->
-            <div class="footer-bottom">
-                <div class="footer-bottom-content">
-                    <div class="copyright">
-                        <p>&copy; <span id="currentYear">2024</span> KodeFast. All rights reserved. Building the future of autonomous AI agents.</p>
-                    </div>
-                    <div class="footer-bottom-links">
-                        <a href="/privacy" class="bottom-link">Privacy Policy</a>
-                        <a href="/terms" class="bottom-link">Terms of Service</a>
-                        <a href="/cookies" class="bottom-link">Cookie Policy</a>
-                        <a href="/accessibility" class="bottom-link">Accessibility</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer Background Effects -->
-        <div class="footer-bg-effects">
-            <div class="footer-particles"></div>
-            <div class="footer-gradient"></div>
-        </div>
-    </footer>
+    <!-- Footer Component -->
+    <div id="footer-placeholder"></div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <!-- <script src="/particles.min.js"></script> --> <!-- COMMENTED OUT - particles disabled -->
+    
+    <!-- Component Loader -->
+    <script src="/components/load-components.js"></script>
     <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    
+    <!-- Translation System -->
+    <script src="/js/translations.js"></script>
+    <script src="/js/language-manager.js"></script>
+    <script src="/loading-screen.js"></script>
+    <script src="/hero-section-fix.js"></script>
+    <script src="/test-language-switching.js"></script>
+    
+    <!-- Translation Debug Script -->
+    <script>
+        // Ensure translation engine is working on home page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Home page loaded, checking translation engine...');
+            
+            // Wait a bit for translation engine to initialize
+            setTimeout(() => {
+                if (window.translationEngine) {
+                    console.log('Translation engine found on home page');
+                    console.log('Current language:', window.translationEngine.currentLanguage);
+                    console.log('RTL mode:', window.translationEngine.isRTL());
+                    console.log('Document dir:', document.documentElement.getAttribute('dir'));
+                } else {
+                    console.error('Translation engine not found on home page');
+                    // Try to initialize manually
+                    window.translationEngine = new TranslationEngine();
+                }
+            }, 1000);
+        });
+    </script>
     
     <!-- Enhanced Homepage Scripts -->
     <script>
@@ -1527,83 +1387,57 @@
             }
         });
 
-        // Loading Screen Script
-        window.addEventListener('load', function() {
-            const loadingScreen = document.getElementById('loadingScreen');
-            const loadingText = document.querySelector('.loading-text');
-            const mainContent = document.querySelector('.hero-section');
-            
-            // Ensure main content is initially hidden
-            if (mainContent) {
-                mainContent.style.opacity = '0';
-                mainContent.style.visibility = 'hidden';
-            }
-            
-            // Simulate loading progress
-            const loadingMessages = [
-                'Initializing Neural Networks...',
-                'Loading AI Models...',
-                'Connecting to Cloud Services...',
-                'Calibrating Autonomous Systems...',
-                'Preparing Emma AI...',
-                'Almost Ready...'
-            ];
-            
-            let messageIndex = 0;
-            const messageInterval = setInterval(() => {
-                if (messageIndex < loadingMessages.length - 1) {
-                    messageIndex++;
-                    if (loadingText) {
-                        loadingText.textContent = loadingMessages[messageIndex];
-                    }
-                } else {
-                    clearInterval(messageInterval);
-                }
-            }, 800);
-            
-            // Hide loading screen after 4 seconds
-            setTimeout(() => {
-                if (loadingScreen) {
-                    loadingScreen.classList.add('fade-out');
-                    setTimeout(() => {
-                        loadingScreen.style.display = 'none';
-                        // Show main content
-                        if (mainContent) {
-                            mainContent.style.opacity = '1';
-                            mainContent.style.visibility = 'visible';
-                            mainContent.style.transition = 'opacity 0.5s ease-in-out, visibility 0.5s ease-in-out';
-                        }
-                    }, 500);
-                }
-            }, 4000);
-        });
-
-        // Skip loading button functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const skipButton = document.getElementById('skipLoading');
-            if (skipButton) {
-                skipButton.addEventListener('click', function() {
-                    const loadingScreen = document.getElementById('loadingScreen');
-                    const mainContent = document.querySelector('.hero-section');
-                    
-                    if (loadingScreen) {
-                        loadingScreen.classList.add('fade-out');
-                        setTimeout(() => {
-                            loadingScreen.style.display = 'none';
-                            // Show main content
-                            if (mainContent) {
-                                mainContent.style.opacity = '1';
-                                mainContent.style.visibility = 'visible';
-                                mainContent.style.transition = 'opacity 0.5s ease-in-out, visibility 0.5s ease-in-out';
-                            }
-                        }, 100);
-                    }
-                });
-            }
-        });
 
         // Initialize GSAP ScrollTrigger
         gsap.registerPlugin(ScrollTrigger);
+
+        // Function to ensure all main content is visible
+        function ensureMainContentVisible() {
+            // Show all main content sections
+            const mainSections = [
+                '.hero-section',
+                '#capabilities',
+                '#industries', 
+                '.badges-section',
+                'section[style*="background: #0f172a"]'
+            ];
+            
+            mainSections.forEach(selector => {
+                const section = document.querySelector(selector);
+                if (section) {
+                    section.style.opacity = '1';
+                    section.style.visibility = 'visible';
+                    section.style.transition = 'opacity 0.5s ease-in-out, visibility 0.5s ease-in-out';
+                }
+            });
+            
+            // Ensure all cards are visible with simple animation
+            const allCards = document.querySelectorAll('.industry-card, .capability-card, .use-case-card');
+            allCards.forEach((card, index) => {
+                // Remove any existing GSAP animations
+                gsap.killTweensOf(card);
+                
+                // Simple fade-in animation
+                gsap.fromTo(card, 
+                    {
+                        opacity: 0,
+                        y: 20
+                    },
+                    {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.6,
+                        delay: index * 0.1,
+                        ease: "power2.out"
+                    }
+                );
+            });
+        }
+
+        // Immediate fallback to show content if loading screen doesn't work
+        setTimeout(() => {
+            ensureMainContentVisible();
+        }, 6000);
 
         // Enhanced Hero Animations
         document.addEventListener('DOMContentLoaded', function() {
@@ -1614,50 +1448,103 @@
                 .from('.hero-description', { duration: 0.8, y: 30, opacity: 0, ease: "power2.out" }, "-=0.3")
                 .from('.hero-actions', { duration: 0.8, y: 30, opacity: 0, ease: "power2.out" }, "-=0.2");
 
-            // Industry cards animation
+            // Immediate fallback: Show all cards after 500ms regardless of scroll
+            setTimeout(() => {
+                ensureMainContentVisible();
+            }, 500);
+            
+            // Additional fallback: Show cards immediately if they're not visible after 2 seconds
+            setTimeout(() => {
+                const hiddenCards = document.querySelectorAll('.industry-card, .capability-card, .use-case-card');
+                hiddenCards.forEach(card => {
+                    if (card.style.opacity === '0' || getComputedStyle(card).opacity === '0') {
+                        gsap.set(card, { opacity: 1, y: 0, x: 0, scale: 1 });
+                    }
+                });
+            }, 2000);
+
+            // Ensure all headings are visible immediately - fallback for ScrollTrigger
+            setTimeout(() => {
+                const allHeadings = document.querySelectorAll('h2, h3, .section-title, .section-subtitle');
+                allHeadings.forEach(heading => {
+                    gsap.set(heading, { 
+                        opacity: 1, 
+                        y: 0, 
+                        x: 0, 
+                        scale: 1,
+                        visibility: 'visible'
+                    });
+                });
+            }, 1000);
+
+            // Industry cards animation with improved timing
             gsap.utils.toArray('.industry-card').forEach((card, index) => {
-                gsap.from(card, {
+                // Set initial state
+                gsap.set(card, { opacity: 0, y: 30 });
+                
+                gsap.to(card, {
                     duration: 0.8,
-                    y: 50,
-                    opacity: 0,
+                    y: 0,
+                    opacity: 1,
                     ease: "power2.out",
+                    delay: index * 0.1,
                     scrollTrigger: {
                         trigger: card,
-                        start: "top 80%",
-                        end: "bottom 20%",
-                        toggleActions: "play none none reverse"
+                        start: "top 90%",
+                        end: "bottom 10%",
+                        toggleActions: "play none none reverse",
+                        onEnter: () => gsap.to(card, { duration: 0.8, y: 0, opacity: 1, ease: "power2.out" }),
+                        onLeave: () => gsap.to(card, { duration: 0.3, opacity: 0.8, ease: "power2.out" }),
+                        onEnterBack: () => gsap.to(card, { duration: 0.8, y: 0, opacity: 1, ease: "power2.out" }),
+                        onLeaveBack: () => gsap.to(card, { duration: 0.3, opacity: 0.8, ease: "power2.out" })
                     }
                 });
             });
 
-            // Capability cards animation
+            // Capability cards animation with improved timing
             gsap.utils.toArray('.capability-card').forEach((card, index) => {
-                gsap.from(card, {
+                // Set initial state
+                gsap.set(card, { opacity: 0, x: index % 2 === 0 ? -30 : 30 });
+                
+                gsap.to(card, {
                     duration: 0.8,
-                    x: index % 2 === 0 ? -50 : 50,
-                    opacity: 0,
+                    x: 0,
+                    opacity: 1,
                     ease: "power2.out",
+                    delay: index * 0.1,
                     scrollTrigger: {
                         trigger: card,
-                        start: "top 80%",
-                        end: "bottom 20%",
-                        toggleActions: "play none none reverse"
+                        start: "top 90%",
+                        end: "bottom 10%",
+                        toggleActions: "play none none reverse",
+                        onEnter: () => gsap.to(card, { duration: 0.8, x: 0, opacity: 1, ease: "power2.out" }),
+                        onLeave: () => gsap.to(card, { duration: 0.3, opacity: 0.8, ease: "power2.out" }),
+                        onEnterBack: () => gsap.to(card, { duration: 0.8, x: 0, opacity: 1, ease: "power2.out" }),
+                        onLeaveBack: () => gsap.to(card, { duration: 0.3, opacity: 0.8, ease: "power2.out" })
                     }
                 });
             });
 
-            // Use case cards animation
+            // Use case cards animation with improved timing
             gsap.utils.toArray('.use-case-card').forEach((card, index) => {
-                gsap.from(card, {
+                // Set initial state
+                gsap.set(card, { opacity: 0, scale: 0.9 });
+                
+                gsap.to(card, {
                     duration: 0.6,
-                    scale: 0.8,
-                    opacity: 0,
+                    scale: 1,
+                    opacity: 1,
                     ease: "back.out(1.7)",
+                    delay: index * 0.1,
                     scrollTrigger: {
                         trigger: card,
-                        start: "top 85%",
-                        end: "bottom 15%",
-                        toggleActions: "play none none reverse"
+                        start: "top 90%",
+                        end: "bottom 10%",
+                        toggleActions: "play none none reverse",
+                        onEnter: () => gsap.to(card, { duration: 0.6, scale: 1, opacity: 1, ease: "back.out(1.7)" }),
+                        onLeave: () => gsap.to(card, { duration: 0.3, opacity: 0.8, ease: "power2.out" }),
+                        onEnterBack: () => gsap.to(card, { duration: 0.6, scale: 1, opacity: 1, ease: "back.out(1.7)" }),
+                        onLeaveBack: () => gsap.to(card, { duration: 0.3, opacity: 0.8, ease: "power2.out" })
                     }
                 });
             });
@@ -1711,6 +1598,189 @@
                 repeat: -1,
                 stagger: 0.2
             });
+
+            // Section Headings ScrollTrigger Animations
+            // Capabilities section heading
+            gsap.fromTo('#capabilities-title, #capabilities-subtitle', 
+                {
+                    opacity: 0,
+                    y: 50,
+                    scale: 0.9
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: '#capabilities',
+                        start: "top 85%",
+                        end: "bottom 15%",
+                        toggleActions: "play none none reverse",
+                        onEnter: () => {
+                            gsap.to('#capabilities-title, #capabilities-subtitle', {
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                duration: 1,
+                                ease: "power3.out"
+                            });
+                        },
+                        onLeave: () => {
+                            gsap.to('#capabilities-title, #capabilities-subtitle', {
+                                opacity: 0.3,
+                                y: -20,
+                                scale: 0.95,
+                                duration: 0.5,
+                                ease: "power2.out"
+                            });
+                        },
+                        onEnterBack: () => {
+                            gsap.to('#capabilities-title, #capabilities-subtitle', {
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                duration: 0.8,
+                                ease: "power3.out"
+                            });
+                        },
+                        onLeaveBack: () => {
+                            gsap.to('#capabilities-title, #capabilities-subtitle', {
+                                opacity: 0.3,
+                                y: 20,
+                                scale: 0.95,
+                                duration: 0.5,
+                                ease: "power2.out"
+                            });
+                        }
+                    }
+                }
+            );
+
+            // Industries section heading
+            gsap.fromTo('#industries-title, #industries-subtitle', 
+                {
+                    opacity: 0,
+                    y: 50,
+                    scale: 0.9
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: '#industries',
+                        start: "top 85%",
+                        end: "bottom 15%",
+                        toggleActions: "play none none reverse",
+                        onEnter: () => {
+                            gsap.to('#industries-title, #industries-subtitle', {
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                duration: 1,
+                                ease: "power3.out"
+                            });
+                        },
+                        onLeave: () => {
+                            gsap.to('#industries-title, #industries-subtitle', {
+                                opacity: 0.3,
+                                y: -20,
+                                scale: 0.95,
+                                duration: 0.5,
+                                ease: "power2.out"
+                            });
+                        },
+                        onEnterBack: () => {
+                            gsap.to('#industries-title, #industries-subtitle', {
+                                opacity: 1,
+                                y: 0,
+                                scale: 1,
+                                duration: 0.8,
+                                ease: "power3.out"
+                            });
+                        },
+                        onLeaveBack: () => {
+                            gsap.to('#industries-title, #industries-subtitle', {
+                                opacity: 0.3,
+                                y: 20,
+                                scale: 0.95,
+                                duration: 0.5,
+                                ease: "power2.out"
+                            });
+                        }
+                    }
+                }
+            );
+
+            // Trusted & Certified section heading
+            gsap.fromTo('.badges-section h2, .badges-section p', 
+                {
+                    opacity: 0,
+                    y: 30,
+                    scale: 0.95
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 0.8,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: '.badges-section',
+                        start: "top 85%",
+                        end: "bottom 15%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+
+            // CTA section heading
+            gsap.fromTo('section[style*="background: #0f172a"] h2, section[style*="background: #0f172a"] p', 
+                {
+                    opacity: 0,
+                    y: 40,
+                    scale: 0.9
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    duration: 1.2,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: 'section[style*="background: #0f172a"]',
+                        start: "top 80%",
+                        end: "bottom 20%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+
+            // Use case showcase heading
+            gsap.fromTo('.use-case-header h3, .use-case-header p', 
+                {
+                    opacity: 0,
+                    y: 30,
+                    x: -20
+                },
+                {
+                    opacity: 1,
+                    y: 0,
+                    x: 0,
+                    duration: 0.8,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: '.use-case-showcase',
+                        start: "top 85%",
+                        end: "bottom 15%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
         });
 
         // Interactive hover effects
@@ -1734,7 +1804,7 @@
                 
                 // Update avatar comment
                 const langName = this.querySelector('.lang-name').textContent;
-                document.getElementById('avatar-comment-text').textContent = `Emma - ${langName} AI Assistant`;
+                document.getElementById('avatar-comment-text').innerHTML = `Hi!<br>I Am Emma Your ${langName} Virtual Voice Assistant`;
                 
                 // Update avatar image based on language
                 const flag = this.querySelector('.flag').textContent;
@@ -2034,6 +2104,58 @@
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
+
+        // Mobile Menu Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (mobileMenuToggle && navLinks) {
+                mobileMenuToggle.addEventListener('click', function() {
+                    // Toggle mobile menu
+                    navLinks.classList.toggle('mobile-open');
+                    mobileMenuToggle.classList.toggle('active');
+                    
+                    // Prevent body scroll when menu is open
+                    if (navLinks.classList.contains('mobile-open')) {
+                        document.body.style.overflow = 'hidden';
+                    } else {
+                        document.body.style.overflow = '';
+                    }
+                });
+                
+                // Close mobile menu when clicking on a link
+                const navLinkElements = navLinks.querySelectorAll('.nav-link');
+                navLinkElements.forEach(link => {
+                    link.addEventListener('click', function() {
+                        navLinks.classList.remove('mobile-open');
+                        mobileMenuToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!mobileMenuToggle.contains(event.target) && !navLinks.contains(event.target)) {
+                        navLinks.classList.remove('mobile-open');
+                        mobileMenuToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+                
+                // Close mobile menu on window resize to desktop size
+                window.addEventListener('resize', function() {
+                    if (window.innerWidth > 768) {
+                        navLinks.classList.remove('mobile-open');
+                        mobileMenuToggle.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+        });
     </script>
+    
+    <!-- Language Debug Script -->
+    <script src="/debug-language.js"></script>
 </body>
 </html>

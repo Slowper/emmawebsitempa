@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translation Debug - Hi Emma</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #f8fafc;
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .debug-panel {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 2rem;
+            margin: 1rem 0;
+            border-radius: 1rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        .debug-title {
+            color: #3b82f6;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .debug-info {
+            background: rgba(59, 130, 246, 0.1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            font-family: monospace;
+        }
+        .test-button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            margin: 0.5rem;
+            font-size: 1rem;
+        }
+        .test-button:hover {
+            background: #2563eb;
+        }
+        .status {
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin: 0.5rem 0;
+        }
+        .status.success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        .status.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .status.warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Translation System Debug</h1>
+        
+        <div class="debug-panel">
+            <h2 class="debug-title">System Status</h2>
+            <div id="system-status">
+                <div class="status warning">Loading...</div>
+            </div>
+        </div>
+
+        <div class="debug-panel">
+            <h2 class="debug-title">Language Switcher Test</h2>
+            <div class="debug-info">
+                <p><strong>Current Language:</strong> <span id="current-lang">Loading...</span></p>
+                <p><strong>RTL Mode:</strong> <span id="rtl-status">Loading...</span></p>
+                <p><strong>Language Switcher Found:</strong> <span id="switcher-status">Loading...</span></p>
+                <p><strong>Translations Loaded:</strong> <span id="translations-status">Loading...</span></p>
+            </div>
+            <button class="test-button" onclick="testLanguageSwitch()">Test Language Switch</button>
+            <button class="test-button" onclick="forceCreateSwitcher()">Force Create Switcher</button>
+            <button class="test-button" onclick="testTranslations()">Test Translations</button>
+        </div>
+
+        <div class="debug-panel">
+            <h2 class="debug-title">Translation Test</h2>
+            <div class="debug-info">
+                <h3 data-translate="hero.title">Meet Emma</h3>
+                <p data-translate="hero.description">Transform your business with AI...</p>
+                <a href="#" data-translate="nav.home">Home</a> | 
+                <a href="#" data-translate="nav.about">About</a>
+            </div>
+        </div>
+
+        <div class="debug-panel">
+            <h2 class="debug-title">Console Logs</h2>
+            <div id="console-logs" class="debug-info" style="max-height: 200px; overflow-y: auto;">
+                <p>Console logs will appear here...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Translation System -->
+    <script src="/js/translations.js"></script>
+    <script src="/js/translation-engine.js"></script>
+    
+    <script>
+        let originalConsoleLog = console.log;
+        let originalConsoleError = console.error;
+        let originalConsoleWarn = console.warn;
+        
+        // Capture console logs
+        function addLog(message, type = 'log') {
+            const logsContainer = document.getElementById('console-logs');
+            const logEntry = document.createElement('p');
+            logEntry.textContent = `[${type.toUpperCase()}] ${message}`;
+            logEntry.style.color = type === 'error' ? '#ef4444' : type === 'warn' ? '#f59e0b' : '#f8fafc';
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            addLog(args.join(' '), 'log');
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            addLog(args.join(' '), 'error');
+        };
+        
+        console.warn = function(...args) {
+            originalConsoleWarn.apply(console, args);
+            addLog(args.join(' '), 'warn');
+        };
+
+        function updateStatus() {
+            const systemStatus = document.getElementById('system-status');
+            const currentLang = document.getElementById('current-lang');
+            const rtlStatus = document.getElementById('rtl-status');
+            const switcherStatus = document.getElementById('switcher-status');
+            const translationsStatus = document.getElementById('translations-status');
+            
+            // Check if translation engine is loaded
+            if (window.translationEngine) {
+                currentLang.textContent = window.translationEngine.getCurrentLanguage().toUpperCase();
+                rtlStatus.textContent = window.translationEngine.isRTL() ? 'Yes' : 'No';
+                systemStatus.innerHTML = '<div class="status success">Translation Engine Loaded</div>';
+            } else {
+                currentLang.textContent = 'Not Loaded';
+                rtlStatus.textContent = 'Unknown';
+                systemStatus.innerHTML = '<div class="status error">Translation Engine Not Loaded</div>';
+            }
+            
+            // Check if language switcher exists
+            const switcher = document.getElementById('language-switcher');
+            if (switcher) {
+                switcherStatus.textContent = 'Yes';
+            } else {
+                switcherStatus.textContent = 'No';
+            }
+            
+            // Check if translations are loaded
+            if (window.translations && window.translations.en && window.translations.ar) {
+                translationsStatus.textContent = 'Yes (EN + AR)';
+            } else {
+                translationsStatus.textContent = 'No';
+            }
+        }
+
+        function testLanguageSwitch() {
+            if (window.translationEngine) {
+                const currentLang = window.translationEngine.getCurrentLanguage();
+                const newLang = currentLang === 'en' ? 'ar' : 'en';
+                console.log(`Testing language switch from ${currentLang} to ${newLang}`);
+                window.translationEngine.setLanguage(newLang);
+            } else {
+                console.error('Translation engine not available');
+            }
+        }
+
+        function forceCreateSwitcher() {
+            if (window.translationEngine) {
+                console.log('Forcing creation of language switcher...');
+                window.translationEngine.createLanguageSwitcher();
+                window.translationEngine.initDropdown();
+                updateStatus();
+            } else {
+                console.error('Translation engine not available');
+            }
+        }
+
+        function testTranslations() {
+            if (window.translationEngine) {
+                console.log('Testing translations...');
+                const elements = document.querySelectorAll('[data-translate]');
+                console.log(`Found ${elements.length} translatable elements`);
+                
+                elements.forEach((el, index) => {
+                    const key = el.getAttribute('data-translate');
+                    const text = el.textContent;
+                    console.log(`Element ${index + 1}: ${key} = "${text}"`);
+                });
+            } else {
+                console.error('Translation engine not available');
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Debug page loaded');
+            updateStatus();
+            
+            // Update status every second
+            setInterval(updateStatus, 1000);
+            
+            // Listen for language changes
+            window.addEventListener('languageChanged', function(e) {
+                console.log('Language changed event received:', e.detail);
+                updateStatus();
+            });
+        });
+    </script>
+</body>
+</html>

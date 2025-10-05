@@ -1,0 +1,105 @@
+<!-- Loading Screen Component -->
+<style>
+    .loading-screen {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 99999 !important;
+        background: 
+            radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+            linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 30%, #16213e 70%, #0f172a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+        overflow: hidden;
+        cursor: default;
+        pointer-events: auto;
+    }
+    
+    .loading-screen.fade-out {
+        opacity: 0;
+        pointer-events: none;
+    }
+    
+    /* Prevent body scroll when loading screen is active */
+    body.loading-screen-active {
+        overflow: hidden !important;
+        height: 100vh !important;
+    }
+</style>
+
+<div class="loading-screen" id="loadingScreen">
+    <div class="loading-content">
+        <!-- Animated Background Particles -->
+        <div class="particles-container">
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+            <div class="particle"></div>
+        </div>
+
+        <!-- Floating Code Elements -->
+        <div class="floating-code">
+            <div class="code-snippet">&lt;AI&gt;</div>
+            <div class="code-snippet">neural_network()</div>
+            <div class="code-snippet">autonomous_agent()</div>
+            <div class="code-snippet">machine_learning()</div>
+            <div class="code-snippet">deep_learning()</div>
+            <div class="code-snippet">artificial_intelligence()</div>
+        </div>
+
+        <!-- 3D Rotating Logo -->
+        <div class="logo-3d">
+            <div class="logo-cube">
+                <div class="cube-face front">E</div>
+                <div class="cube-face back">M</div>
+                <div class="cube-face right">M</div>
+                <div class="cube-face left">A</div>
+                <div class="cube-face top">AI</div>
+                <div class="cube-face bottom">AI</div>
+            </div>
+        </div>
+
+        <!-- Glitch Text Effect -->
+        <div class="glitch-text" data-text="Hi Emma">Hi Emma</div>
+
+        <!-- Typewriter Effect -->
+        <div class="typewriter">Building the future of autonomous AI agents...</div>
+
+        <!-- Loading Spinner -->
+        <div class="loading-spinner">
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+            <div class="spinner-ring"></div>
+        </div>
+
+        <!-- Loading Text -->
+        <div class="loading-text">Initializing Neural Networks...</div>
+        
+        <!-- Skip Loading Button (only for home page) -->
+        <button id="skipLoading" class="skip-loading-btn" style="
+            margin-top: 2rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: none;
+        " onmouseover="this.style.background='rgba(255, 255, 255, 0.2)'" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'">
+            Skip Loading
+        </button>
+    </div>
+</div>

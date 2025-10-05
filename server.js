@@ -2869,6 +2869,10 @@ app.get('/contact', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages', 'contact.html'));
 });
 
+app.get('/schedule-demo', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'schedule-demo.html'));
+});
+
 // Enhanced Resource Routes with SEO-friendly URLs
 // SEO-friendly blog URLs
 app.get('/blog/:slug', async (req, res) => {
