@@ -10,11 +10,22 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static('.'));
 
-// CORS
+// CORS and CSP
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    
+    // Content Security Policy to allow TinyMCE CDN
+    res.header('Content-Security-Policy', 
+        "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tiny.cloud https://cdnjs.cloudflare.com; " +
+        "style-src 'self' 'unsafe-inline' https://cdn.tiny.cloud https://cdnjs.cloudflare.com; " +
+        "img-src 'self' data: https: blob:; " +
+        "font-src 'self' https://cdn.tiny.cloud; " +
+        "connect-src 'self' https://cdn.tiny.cloud;"
+    );
+    
     if (req.method === 'OPTIONS') {
         res.sendStatus(200);
     } else {

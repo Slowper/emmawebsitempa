@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced TinyMCE Editor Demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.0/tinymce.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-content {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .demo-content h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1>🎨 Enhanced TinyMCE Editor Demo</h1>
+        
+        <div class="demo-content">
+            <h3>✨ Features Available:</h3>
+            <ul>
+                <li><strong>Beautiful Bullet Points</strong> - Custom styled with your brand colors</li>
+                <li><strong>Professional Typography</strong> - Multiple font families and sizes</li>
+                <li><strong>Rich Formatting</strong> - Bold, italic, colors, alignment</li>
+                <li><strong>Custom Elements</strong> - Highlight boxes and special bullet styles</li>
+                <li><strong>Tables & Media</strong> - Insert images, videos, and tables</li>
+                <li><strong>Code Support</strong> - Syntax highlighting for code blocks</li>
+            </ul>
+        </div>
+        
+        <h2>📝 Try the Enhanced Editor:</h2>
+        <textarea id="demo-editor" style="min-height: 400px;">
+<h2>For Business:</h2>
+
+<p>Here are the key challenges that businesses face with manual appointment booking:</p>
+
+<ul>
+<li><strong>High call volumes & staff overload</strong> - Manual appointment booking was time-consuming and was overwhelming for staff, especially during peak hours.</li>
+<li><strong>Missed calls & Lost opportunities</strong> - Calls outside hospital hours or when staff are busy often went unanswered, leading to lost appointments and potential revenue.</li>
+<li><strong>Human error & Inaccuracies</strong> - Manual scheduling was prone to mistakes like double bookings, incorrect timings, or forgotten details.</li>
+<li><strong>Operational costs</strong> - Hiring and training staff solely for appointment booking is expensive.</li>
+<li><strong>Inconsistent service quality</strong> - Human agents can have varying levels of service, mood, or knowledge, leading to bad patient experience.</li>
+<li><strong>Lack of data & insights</strong> - Manually tracked appointments often lacked comprehensive data for analysis.</li>
+<li><strong>Human capital misallocation</strong> - Valuable staff time & resources are diverted towards routine scheduling tasks rather than the operations that are more pertinent to the business.</li>
+</ul>
+
+<div class="highlight-box">
+<h3>💡 Solution</h3>
+<p>Our AI-powered appointment booking system solves all these challenges by providing automated, accurate, and efficient scheduling that works 24/7.</p>
+</div>
+        </textarea>
+    </div>
+
+    <script>
+        tinymce.init({
+            selector: '#demo-editor',
+            height: 500,
+            menubar: 'edit view insert format tools table help',
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste',
+                'emoticons', 'template', 'codesample', 'hr', 'pagebreak', 'nonbreaking',
+                'toc', 'imagetools', 'textpattern', 'noneditable', 'quickbars', 'accordion'
+            ],
+            toolbar: [
+                'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough',
+                'forecolor backcolor | alignleft aligncenter alignright alignjustify',
+                'bullist numlist outdent indent | removeformat | pagebreak | charmap emoticons',
+                'fullscreen preview save | insertfile image media table link anchor codesample',
+                'ltr rtl | code'
+            ],
+            toolbar_mode: 'sliding',
+            content_style: `
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+                    font-size: 16px; 
+                    line-height: 1.6; 
+                    color: #333; 
+                    margin: 0; 
+                    padding: 20px;
+                }
+                
+                /* Enhanced bullet styling */
+                ul {
+                    margin: 16px 0;
+                    padding-left: 0;
+                }
+                
+                li {
+                    margin: 12px 0;
+                    padding-left: 30px;
+                    position: relative;
+                    line-height: 1.6;
+                }
+                
+                /* Custom bullet points */
+                ul li::before {
+                    content: "•";
+                    color: #667eea;
+                    font-weight: bold;
+                    font-size: 18px;
+                    position: absolute;
+                    left: 0;
+                    top: 0;
+                }
+                
+                /* Numbered lists */
+                ol {
+                    margin: 16px 0;
+                    padding-left: 30px;
+                }
+                
+                ol li {
+                    margin: 12px 0;
+                    padding-left: 10px;
+                    position: relative;
+                }
+                
+                /* Headings styling */
+                h1, h2, h3, h4, h5, h6 {
+                    color: #1e293b;
+                    margin: 24px 0 16px 0;
+                    font-weight: 600;
+                    line-height: 1.3;
+                }
+                
+                h1 { font-size: 32px; }
+                h2 { font-size: 28px; }
+                h3 { font-size: 24px; }
+                h4 { font-size: 20px; }
+                h5 { font-size: 18px; }
+                h6 { font-size: 16px; }
+                
+                /* Paragraph styling */
+                p {
+                    margin: 16px 0;
+                    line-height: 1.6;
+                }
+                
+                /* Links */
+                a {
+                    color: #667eea;
+                    text-decoration: underline;
+                }
+                
+                a:hover {
+                    color: #5a67d8;
+                }
+                
+                /* Blockquotes */
+                blockquote {
+                    border-left: 4px solid #667eea;
+                    margin: 20px 0;
+                    padding: 16px 20px;
+                    background: #f8fafc;
+                    font-style: italic;
+                    color: #64748b;
+                }
+                
+                /* Code blocks */
+                pre {
+                    background: #f1f5f9;
+                    border: 1px solid #e2e8f0;
+                    border-radius: 6px;
+                    padding: 16px;
+                    overflow-x: auto;
+                    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                    font-size: 14px;
+                }
+                
+                code {
+                    background: #f1f5f9;
+                    padding: 2px 6px;
+                    border-radius: 3px;
+                    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                    font-size: 14px;
+                }
+                
+                /* Tables */
+                table {
+                    border-collapse: collapse;
+                    width: 100%;
+                    margin: 20px 0;
+                }
+                
+                th, td {
+                    border: 1px solid #e2e8f0;
+                    padding: 12px;
+                    text-align: left;
+                }
+                
+                th {
+                    background: #f8fafc;
+                    font-weight: 600;
+                    color: #374151;
+                }
+                
+                /* Highlighted content boxes */
+                .highlight-box {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    color: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    margin: 20px 0;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                }
+                
+                .highlight-box h3 {
+                    color: white;
+                    margin-top: 0;
+                }
+                
+                /* Custom bullet styles */
+                .custom-bullet {
+                    background: #f0f4ff;
+                    border-left: 4px solid #667eea;
+                    padding: 16px 20px;
+                    margin: 16px 0;
+                    border-radius: 0 6px 6px 0;
+                }
+            `,
+            paste_data_images: true,
+            paste_as_text: false,
+            paste_auto_cleanup_on_paste: true,
+            paste_remove_styles_if_webkit: false,
+            paste_merge_formats: true,
+            paste_convert_word_fake_lists: true,
+            paste_enable_default_filters: true,
+            paste_webkit_styles: "all",
+            paste_retain_style_properties: "color font-size font-family background-color text-align padding margin border",
+            font_family_formats: 'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
+            font_size_formats: '8px 10px 12px 14px 16px 18px 20px 24px 28px 32px 36px 48px 60px 72px 96px',
+            block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Preformatted=pre; Blockquote=blockquote; Div=div',
+            setup: function (editor) {
+                editor.on('init', function () {
+                    console.log('✅ Enhanced TinyMCE demo editor initialized successfully');
+                });
+                
+                // Add custom buttons for special formatting
+                editor.ui.registry.addButton('highlightbox', {
+                    text: 'Highlight Box',
+                    tooltip: 'Insert Highlight Box',
+                    onAction: function () {
+                        editor.insertContent('<div class="highlight-box"><h3>Important Information</h3><p>Your highlighted content goes here...</p></div><p></p>');
+                    }
+                });
+                
+                editor.ui.registry.addButton('custombullet', {
+                    text: 'Custom Bullet',
+                    tooltip: 'Insert Custom Bullet Point',
+                    onAction: function () {
+                        editor.insertContent('<div class="custom-bullet"><strong>Custom Bullet Point</strong><br>Your custom bullet content goes here...</div><p></p>');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

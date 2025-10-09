@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blog Posts - Emma CMS</title>
+    <title>Create Post - Emma CMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Quill Editor -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
+    <!-- TinyMCE Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.0/tinymce.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -623,7 +622,7 @@
                     <i class="fas fa-robot"></i>
                     Emma CMS
                 </div>
-                <div class="sidebar-subtitle">Resources Management</div>
+                <div class="sidebar-subtitle">Content Creation</div>
             </div>
 
             <div class="nav-section">
@@ -638,15 +637,7 @@
                 </a>
                 <a href="cms-blogs.html" class="nav-item active">
                     <i class="fas fa-blog"></i>
-                    Blog Posts
-                </a>
-                <a href="cms-case-studies.html" class="nav-item">
-                    <i class="fas fa-chart-line"></i>
-                    Case Studies
-                </a>
-                <a href="cms-use-cases.html" class="nav-item">
-                    <i class="fas fa-cogs"></i>
-                    Use Cases
+                    Create Post
                 </a>
             </div>
 
@@ -682,7 +673,7 @@
         <!-- Main Content -->
         <main class="main-content">
             <div class="header">
-                <h1 class="page-title">Blog Posts</h1>
+                <h1 class="page-title">Create Post</h1>
                 <div class="user-info">
                     <div class="user-avatar" id="user-avatar">A</div>
                     <span id="user-name">Admin User</span>
@@ -695,10 +686,10 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Blog Posts</h3>
+                    <h3 class="card-title">Create Post</h3>
                     <button class="btn btn-primary" onclick="openResourceModal('blog')">
                         <i class="fas fa-plus"></i>
-                        New Blog Post
+                        New Post
                     </button>
                 </div>
                 <div class="card-body">
@@ -732,7 +723,7 @@
                         <label class="form-label">Type *</label>
                         <select class="form-input form-select" id="resource-type" required>
                             <option value="">Select type</option>
-                            <option value="blog">Blog Post</option>
+                            <option value="blog">Blog</option>
                             <option value="case-study">Case Study</option>
                             <option value="use-case">Use Case</option>
                         </select>
@@ -745,27 +736,7 @@
 
                     <div class="form-group">
                         <label class="form-label">Content *</label>
-                        <div class="editor-toolbar">
-                            <button type="button" class="editor-btn" onclick="formatText('bold')" title="Bold">
-                                <i class="fas fa-bold"></i>
-                            </button>
-                            <button type="button" class="editor-btn" onclick="formatText('italic')" title="Italic">
-                                <i class="fas fa-italic"></i>
-                            </button>
-                            <button type="button" class="editor-btn" onclick="formatText('underline')" title="Underline">
-                                <i class="fas fa-underline"></i>
-                            </button>
-                            <button type="button" class="editor-btn" onclick="insertHeading()" title="Heading">
-                                <i class="fas fa-heading"></i>
-                            </button>
-                            <button type="button" class="editor-btn" onclick="insertList()" title="List">
-                                <i class="fas fa-list-ul"></i>
-                            </button>
-                            <button type="button" class="editor-btn" onclick="insertLink()" title="Link">
-                                <i class="fas fa-link"></i>
-                            </button>
-                        </div>
-                        <div id="resource-editor" style="height: 300px;"></div>
+                        <textarea id="resource-editor" class="form-input form-textarea" style="min-height: 400px;" placeholder="Enter your content here..."></textarea>
                     </div>
 
                     <div class="form-group">
@@ -773,6 +744,7 @@
                         <select class="form-input form-select" id="resource-industry">
                             <option value="">Select industry</option>
                         </select>
+                        <button type="button" onclick="loadIndustriesForDropdown()" style="margin-top: 5px; padding: 5px 10px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer;">🔄 Reload Industries</button>
                     </div>
 
                     <div class="form-group">
@@ -852,10 +824,12 @@
         </div>
     </div>
 
-    <script src="/cms-admin.js"></script>
+    <script src="/cms/admin/cms-admin.js"></script>
+    <script src="/content-formatter.js"></script>
     <script>
         // Initialize the page
         document.addEventListener('DOMContentLoaded', () => {
+            console.log('🚀 DOM Content Loaded - Initializing blog page...');
             // Load industries for the dropdown
             loadIndustriesForDropdown();
             // Load blog posts
@@ -886,7 +860,11 @@
             try {
                 console.log('🏭 Loading industries for dropdown...');
                 const response = await fetch('http://localhost:3001/api/industries');
-                const industries = await response.json();
+                const data = await response.json();
+                
+                // Handle both response formats: direct array or {industries: [...]}
+                const industries = Array.isArray(data) ? data : (data.industries || []);
+                console.log('📊 Industries data:', industries);
                 
                 const select = document.getElementById('resource-industry');
                 if (select) {
@@ -898,8 +876,12 @@
                             option.textContent = industry.name;
                             select.appendChild(option);
                         });
+                        console.log('✅ Industries loaded for dropdown:', industries.length, 'industries');
+                    } else {
+                        console.log('⚠️ No industries found');
                     }
-                    console.log('✅ Industries loaded for dropdown');
+                } else {
+                    console.error('❌ Industry select element not found');
                 }
             } catch (error) {
                 console.error('❌ Error loading industries for dropdown:', error);
@@ -1007,11 +989,11 @@
                 }
                 modal.style.display = 'block';
                 
-                // Initialize Quill editor after modal is shown
+                // Initialize TinyMCE editor after modal is shown
                 setTimeout(() => {
-                    if (typeof Quill !== 'undefined' && !window.cms.quillEditor) {
-                        console.log('🔧 Initializing Quill from HTML...');
-                        window.cms.initQuillEditor();
+                    if (typeof tinymce !== 'undefined' && !tinymce.get('resource-editor')) {
+                        console.log('🔧 Initializing TinyMCE from HTML...');
+                        initTinyMCEEditor();
                     }
                 }, 300);
             } else {
@@ -1026,88 +1008,413 @@
                 modal.classList.remove('active');
             }
             
-            // Clean up Quill editor if it exists
-            if (window.cms && window.cms.quillEditor) {
-                console.log('🧹 Cleaning up Quill editor...');
-                const editorElement = document.getElementById('resource-editor');
-                if (editorElement) {
-                    // Remove Quill toolbar and editor
-                    const toolbar = editorElement.querySelector('.ql-toolbar');
-                    const editor = editorElement.querySelector('.ql-editor');
-                    if (toolbar) toolbar.remove();
-                    if (editor) {
-                        // Move content back to the original element
-                        editorElement.innerHTML = editor.innerHTML;
+            // Clean up TinyMCE editor if it exists
+            if (typeof tinymce !== 'undefined' && tinymce.get('resource-editor')) {
+                console.log('🧹 Cleaning up TinyMCE editor...');
+                tinymce.remove('#resource-editor');
+            }
+        }
+
+        // TinyMCE Editor Initialization with Enhanced Styling
+        function initTinyMCEEditor() {
+            console.log('🔧 Initializing enhanced TinyMCE editor...');
+            
+            tinymce.init({
+                selector: '#resource-editor',
+                height: 500,
+                menubar: 'edit view insert format tools table help',
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste',
+                    'emoticons', 'codesample', 'pagebreak', 'nonbreaking', 'quickbars'
+                ],
+                toolbar: [
+                    'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough',
+                    'forecolor backcolor | alignleft aligncenter alignright alignjustify',
+                    'bullist convertToBullets | outdent indent | removeformat | cleanSpacing | formatContent | pagebreak | charmap emoticons',
+                    'fullscreen preview save | insertfile image media table link anchor codesample',
+                    'ltr rtl | code'
+                ],
+                toolbar_mode: 'sliding',
+                content_style: `
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+                        font-size: 16px; 
+                        line-height: 1.6; 
+                        color: #333; 
+                        margin: 0; 
+                        padding: 20px;
                     }
-                    // Reset the element
-                    editorElement.className = '';
-                    editorElement.style.height = '300px';
+                    
+                    /* Enhanced bullet styling */
+                    ul {
+                        margin: 16px 0;
+                        padding-left: 0;
+                    }
+                    
+                    li {
+                        margin: 12px 0;
+                        padding-left: 30px;
+                        position: relative;
+                        line-height: 1.6;
+                    }
+                    
+                    /* Custom bullet points */
+                    ul li::before {
+                        content: "•";
+                        color: #667eea;
+                        font-weight: bold;
+                        font-size: 18px;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                    }
+                    
+                    /* Professional bullet styling */
+                    .professional-bullet-list {
+                        list-style: none;
+                        padding: 0;
+                        margin: 1.5rem 0;
+                    }
+                    
+                    .professional-bullet-item {
+                        position: relative;
+                        padding: 0.75rem 0 0.75rem 3rem;
+                        margin-bottom: 0.75rem;
+                        background: #f8fafc;
+                        border-left: 4px solid #3b82f6;
+                        border-radius: 0 8px 8px 0;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                        line-height: 1.6;
+                        color: #374151;
+                        font-weight: 500;
+                    }
+                    
+                    .professional-bullet-item::before {
+                        content: "●";
+                        position: absolute;
+                        left: 1rem;
+                        top: 0.75rem;
+                        color: #3b82f6;
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                    }
+                    
+                    .professional-bullet-item:hover {
+                        background: #f1f5f9;
+                        transform: translateX(4px);
+                        transition: all 0.2s ease;
+                    }
+                    
+                    /* Numbered lists */
+                    ol {
+                        margin: 16px 0;
+                        padding-left: 30px;
+                    }
+                    
+                    ol li {
+                        margin: 12px 0;
+                        padding-left: 10px;
+                        position: relative;
+                    }
+                    
+                    /* Headings styling */
+                    h1, h2, h3, h4, h5, h6 {
+                        color: #1e293b;
+                        margin: 24px 0 16px 0;
+                        font-weight: 600;
+                        line-height: 1.3;
+                    }
+                    
+                    h1 { font-size: 32px; }
+                    h2 { font-size: 28px; }
+                    h3 { font-size: 24px; }
+                    h4 { font-size: 20px; }
+                    h5 { font-size: 18px; }
+                    h6 { font-size: 16px; }
+                    
+                    /* Paragraph styling */
+                    p {
+                        margin: 8px 0;
+                        line-height: 1.6;
+                    }
+                    
+                    /* Reduce spacing between paragraphs */
+                    p + p {
+                        margin-top: 4px;
+                    }
+                    
+                    /* Links */
+                    a {
+                        color: #667eea;
+                        text-decoration: underline;
+                    }
+                    
+                    a:hover {
+                        color: #5a67d8;
+                    }
+                    
+                    /* Blockquotes */
+                    blockquote {
+                        border-left: 4px solid #667eea;
+                        margin: 20px 0;
+                        padding: 16px 20px;
+                        background: #f8fafc;
+                        font-style: italic;
+                        color: #64748b;
+                    }
+                    
+                    /* Code blocks */
+                    pre {
+                        background: #f1f5f9;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 6px;
+                        padding: 16px;
+                        overflow-x: auto;
+                        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                        font-size: 14px;
+                    }
+                    
+                    code {
+                        background: #f1f5f9;
+                        padding: 2px 6px;
+                        border-radius: 3px;
+                        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                        font-size: 14px;
+                    }
+                    
+                    /* Tables */
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        margin: 20px 0;
+                    }
+                    
+                    th, td {
+                        border: 1px solid #e2e8f0;
+                        padding: 12px;
+                        text-align: left;
+                    }
+                    
+                    th {
+                        background: #f8fafc;
+                        font-weight: 600;
+                        color: #374151;
+                    }
+                    
+                    /* Highlighted content boxes */
+                    .highlight-box {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }
+                    
+                    .highlight-box h3 {
+                        color: white;
+                        margin-top: 0;
+                    }
+                    
+                    /* Custom bullet styles */
+                    .custom-bullet {
+                        background: #f0f4ff;
+                        border-left: 4px solid #667eea;
+                        padding: 16px 20px;
+                        margin: 16px 0;
+                        border-radius: 0 6px 6px 0;
+                    }
+                `,
+                paste_data_images: true,
+                paste_as_text: false,
+                paste_auto_cleanup_on_paste: true,
+                paste_remove_styles_if_webkit: false,
+                paste_merge_formats: true,
+                paste_webkit_styles: "all",
+                paste_postprocess: function (plugin, args) {
+                    // Gentle cleanup - only fix obvious spacing issues
+                    if (!args || !args.content) {
+                        return; // Skip if no content to process
+                    }
+                    
+                    let content = args.content;
+                    
+                    // Only remove excessive line breaks (3 or more consecutive)
+                    content = content.replace(/\n\s*\n\s*\n+/g, '\n\n');
+                    
+                    // Only remove truly empty paragraphs (no content at all)
+                    content = content.replace(/(<p[^>]*>)\s*<\/p>/g, '');
+                    
+                    // Don't be too aggressive with other changes
+                    args.content = content;
+                },
+                font_family_formats: 'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
+                font_size_formats: '8px 10px 12px 14px 16px 18px 20px 24px 28px 32px 36px 48px 60px 72px 96px',
+                block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Preformatted=pre; Blockquote=blockquote; Div=div',
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        console.log('✅ Enhanced TinyMCE editor initialized successfully');
+                        
+                        // Auto-format content after initialization
+                        setTimeout(() => {
+                            autoFormatEditorContent();
+                        }, 500);
+                    });
+                    
+                    editor.on('paste', function (e) {
+                        console.log('📋 Paste event in TinyMCE:', e);
+                        
+                        // Auto-format pasted content
+                        setTimeout(() => {
+                            autoFormatEditorContent();
+                        }, 100);
+                    });
+                    
+                    // Add custom buttons for special formatting
+                    editor.ui.registry.addButton('highlightbox', {
+                        text: 'Highlight Box',
+                        tooltip: 'Insert Highlight Box',
+                        onAction: function () {
+                            editor.insertContent('<div class="highlight-box"><h3>Important Information</h3><p>Your highlighted content goes here...</p></div><p></p>');
+                        }
+                    });
+                    
+                    editor.ui.registry.addButton('custombullet', {
+                        text: 'Custom Bullet',
+                        tooltip: 'Insert Custom Bullet Point',
+                        onAction: function () {
+                            editor.insertContent('<div class="custom-bullet"><strong>Custom Bullet Point</strong><br>Your custom bullet content goes here...</div><p></p>');
+                        }
+                    });
+                    
+                    // Add auto-format button
+                    editor.ui.registry.addButton('autoformat', {
+                        text: 'Auto Format',
+                        tooltip: 'Auto-format content to bullet points',
+                        onAction: function () {
+                            autoFormatEditorContent();
+                        }
+                    });
+                    
+                    // Add convert to bullets button
+                    editor.ui.registry.addButton('convertToBullets', {
+                        text: '• Bullets',
+                        tooltip: 'Convert numbered lists to bullet points',
+                        onAction: function () {
+                            convertNumbersToBullets();
+                        }
+                    });
+                    
+                    // Add clean spacing button
+                    editor.ui.registry.addButton('cleanSpacing', {
+                        text: '🧹 Clean',
+                        tooltip: 'Remove extra spacing and gaps',
+                        onAction: function () {
+                            const content = editor.getContent();
+                            const cleaned = cleanupExtraSpacing(content);
+                            if (cleaned !== content) {
+                                editor.setContent(cleaned);
+                                console.log('✅ Extra spacing cleaned up');
+                            }
+                        }
+                    });
+                    
+                    // Add professional format button
+                    editor.ui.registry.addButton('formatContent', {
+                        text: '✨ Format',
+                        tooltip: 'Apply professional formatting and styling',
+                        onAction: function () {
+                            formatContent();
+                        }
+                    });
+                },
+                init_instance_callback: function (editor) {
+                    console.log('🎯 Enhanced TinyMCE instance ready:', editor.id);
                 }
-                window.cms.quillEditor = null;
-            }
+            });
         }
 
-        // Simple rich text editor functions (fallback for when Quill is not available)
-        function formatText(command) {
-            document.execCommand(command, false, null);
-            const editor = document.getElementById('resource-editor');
-            if (editor) editor.focus();
-        }
-
-        function insertHeading() {
-            const heading = prompt('Enter heading text:');
-            if (heading) {
-                document.execCommand('insertHTML', false, `<h2>${heading}</h2>`);
-            }
-        }
-
-        function insertList() {
-            document.execCommand('insertUnorderedList', false, null);
-        }
-
-        function insertLink() {
-            const url = prompt('Enter URL:');
-            if (url) {
-                document.execCommand('createLink', false, url);
-            }
-        }
-
-        // Editor functions for edit modal
-        function formatTextEdit(command) {
-            const editor = document.getElementById('edit-content');
+        // Professional Content Formatting Function
+        function formatContent() {
+            const editor = tinymce.get('resource-editor');
             if (editor) {
-                editor.focus();
-                document.execCommand(command, false, null);
-            }
-        }
-
-        function insertHeadingEdit() {
-            const editor = document.getElementById('edit-content');
-            if (editor) {
-                editor.focus();
-                const heading = prompt('Enter heading text:');
-                if (heading) {
-                    document.execCommand('insertHTML', false, `<h2>${heading}</h2>`);
-                }
-            }
-        }
-
-        function insertListEdit() {
-            const editor = document.getElementById('edit-content');
-            if (editor) {
-                editor.focus();
-                document.execCommand('insertUnorderedList', false, null);
-            }
-        }
-
-        function insertLinkEdit() {
-            const editor = document.getElementById('edit-content');
-            if (editor) {
-                editor.focus();
-                const url = prompt('Enter URL:');
-                if (url) {
-                    document.execCommand('createLink', false, url);
-                }
+                console.log('🎨 Formatting content with professional styling...');
+                
+                // Get the content
+                let content = editor.getContent();
+                console.log('📝 Original content:', content);
+                
+                // Step 1: Clean up excessive spacing and line breaks
+                content = content.replace(/\n\s*\n\s*\n+/g, '\n\n'); // Remove excessive line breaks
+                content = content.replace(/(<br[^>]*>\s*){3,}/g, '<br><br>'); // Remove multiple br tags
+                content = content.replace(/(<p[^>]*>)\s*<\/p>/g, ''); // Remove empty paragraphs
+                
+                // Step 2: Convert section headers to proper headings
+                const headerPatterns = [
+                    /<p[^>]*>(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients|RESULTS\s*&\s*IMPACT|Our Solution|Problem|Solution|Benefits|Impact|Outcome|Results|Challenges|Implementation|Business Impact|Patient Benefits|Introduction|Overview|Summary|Conclusion|Key Points|Main Points|Important|Note|Warning|Tip|Best Practices):\s*<\/p>/gi,
+                    /<div[^>]*>(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation|For Business|For Patients|RESULTS\s*&\s*IMPACT|Our Solution|Problem|Solution|Benefits|Impact|Outcome|Results|Challenges|Implementation|Business Impact|Patient Benefits|Introduction|Overview|Summary|Conclusion|Key Points|Main Points|Important|Note|Warning|Tip|Best Practices):\s*<\/div>/gi
+                ];
+                
+                headerPatterns.forEach(pattern => {
+                    content = content.replace(pattern, (match, header) => {
+                        return `<h2 style="color: #1e293b; font-weight: 700; margin: 2rem 0 1rem 0; font-size: 1.5rem; border-bottom: 2px solid #3b82f6; padding-bottom: 0.5rem;">${header}</h2>`;
+                    });
+                });
+                
+                // Step 3: Handle numbered lists and convert to professional bullet points
+                // Convert numbered lists to unordered lists with custom styling
+                content = content.replace(/<ol[^>]*>(.*?)<\/ol>/gs, (match, listContent) => {
+                    const items = listContent.match(/<li[^>]*>(.*?)<\/li>/g);
+                    if (items) {
+                        return `<ul class="professional-bullet-list">${items.join('')}</ul>`;
+                    }
+                    return match;
+                });
+                
+                // Convert plain text numbered items
+                content = content.replace(/(\d+)\.\s*([^<\n]+)/g, '<li class="professional-bullet-item">$2</li>');
+                content = content.replace(/<p[^>]*>(\d+)\.\s*([^<]+)<\/p>/g, '<li class="professional-bullet-item">$2</li>');
+                content = content.replace(/<div[^>]*>(\d+)\.\s*([^<]+)<\/div>/g, '<li class="professional-bullet-item">$2</li>');
+                
+                // Step 4: Handle bullet points and dashes
+                content = content.replace(/<p[^>]*>-\s*([^<]+)<\/p>/g, '<li class="professional-bullet-item">$1</li>');
+                content = content.replace(/<div[^>]*>-\s*([^<]+)<\/div>/g, '<li class="professional-bullet-item">$1</li>');
+                
+                // Step 5: Wrap consecutive list items in professional bullet list
+                content = content.replace(/(<li[^>]*class="professional-bullet-item"[^>]*>.*?<\/li>(?:\s*<li[^>]*class="professional-bullet-item"[^>]*>.*?<\/li>)*)/g, (match) => {
+                    if (!match.includes('professional-bullet-list')) {
+                        return `<ul class="professional-bullet-list">${match}</ul>`;
+                    }
+                    return match;
+                });
+                
+                // Step 6: Convert existing unordered lists to professional styling
+                content = content.replace(/<ul[^>]*(?!professional-bullet-list)[^>]*>(.*?)<\/ul>/gs, (match, listContent) => {
+                    return `<ul class="professional-bullet-list">${listContent}</ul>`;
+                });
+                
+                // Step 7: Format paragraphs with proper spacing
+                content = content.replace(/<p[^>]*>(.*?)<\/p>/g, (match, text) => {
+                    if (text.trim() && !text.includes('<li') && !text.includes('<h')) {
+                        return `<p style="margin: 1rem 0; line-height: 1.6; color: #374151;">${text}</p>`;
+                    }
+                    return match;
+                });
+                
+                // Step 8: Clean up any remaining paragraph tags around list items
+                content = content.replace(/<p[^>]*><li[^>]*>(.*?)<\/li><\/p>/g, '<li class="professional-bullet-item">$1</li>');
+                
+                // Step 9: Add professional styling to bold text
+                content = content.replace(/\*\*(.*?)\*\*/g, '<strong style="color: #1e293b; font-weight: 600;">$1</strong>');
+                
+                console.log('📝 Formatted content:', content);
+                
+                // Update the editor content
+                editor.setContent(content);
+                
+                console.log('✅ Content formatted with professional styling');
             }
         }
 
@@ -1176,7 +1483,7 @@
                 editModal.innerHTML = `
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h2>Edit Blog Post</h2>
+                            <h2>Edit Post</h2>
                             <button class="close-btn" onclick="closeEditModal()">&times;</button>
                         </div>
                         <form id="edit-form">
@@ -1201,27 +1508,7 @@
                             </div>
                             <div class="form-group">
                                 <label>Content *</label>
-                                <div class="editor-toolbar">
-                                    <button type="button" class="editor-btn" onclick="formatTextEdit('bold')" title="Bold">
-                                        <i class="fas fa-bold"></i>
-                                    </button>
-                                    <button type="button" class="editor-btn" onclick="formatTextEdit('italic')" title="Italic">
-                                        <i class="fas fa-italic"></i>
-                                    </button>
-                                    <button type="button" class="editor-btn" onclick="formatTextEdit('underline')" title="Underline">
-                                        <i class="fas fa-underline"></i>
-                                    </button>
-                                    <button type="button" class="editor-btn" onclick="insertHeadingEdit()" title="Heading">
-                                        <i class="fas fa-heading"></i>
-                                    </button>
-                                    <button type="button" class="editor-btn" onclick="insertListEdit()" title="List">
-                                        <i class="fas fa-list-ul"></i>
-                                    </button>
-                                    <button type="button" class="editor-btn" onclick="insertLinkEdit()" title="Link">
-                                        <i class="fas fa-link"></i>
-                                    </button>
-                                </div>
-                                <div id="edit-content" class="simple-editor" contenteditable="true" style="min-height: 200px; padding: 1rem; border: 1px solid #d1d5db; border-radius: 0 0 6px 6px; background: white; outline: none;"></div>
+                                <textarea id="edit-content" class="form-input form-textarea" style="min-height: 300px;" placeholder="Enter your content here..."></textarea>
                             </div>
                             <div class="form-actions">
                                 <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
@@ -1238,13 +1525,20 @@
             document.getElementById('edit-status').value = blog.status;
             document.getElementById('edit-excerpt').value = blog.excerpt || '';
             document.getElementById('edit-author').value = blog.author || '';
-            document.getElementById('edit-content').innerHTML = blog.content || '';
             
             // Store the blog ID for saving
             editModal.dataset.blogId = blog.id;
             
             // Show modal
             editModal.style.display = 'flex';
+            
+            // Initialize TinyMCE for edit modal after it's shown
+            setTimeout(() => {
+                if (typeof tinymce !== 'undefined' && !tinymce.get('edit-content')) {
+                    console.log('🔧 Initializing TinyMCE for edit modal...');
+                    initTinyMCEEditorForEdit(blog.content || '');
+                }
+            }, 300);
         }
         
         function closeEditModal() {
@@ -1252,6 +1546,326 @@
             if (editModal) {
                 editModal.style.display = 'none';
             }
+            
+            // Clean up TinyMCE editor for edit modal if it exists
+            if (typeof tinymce !== 'undefined' && tinymce.get('edit-content')) {
+                console.log('🧹 Cleaning up TinyMCE edit editor...');
+                tinymce.remove('#edit-content');
+            }
+        }
+        
+        // TinyMCE Editor Initialization for Edit Modal with Enhanced Styling
+        function initTinyMCEEditorForEdit(content) {
+            console.log('🔧 Initializing enhanced TinyMCE editor for edit modal...');
+            
+            tinymce.init({
+                selector: '#edit-content',
+                height: 400,
+                menubar: 'edit view insert format tools table help',
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste',
+                    'emoticons', 'codesample', 'pagebreak', 'nonbreaking', 'quickbars'
+                ],
+                toolbar: [
+                    'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough',
+                    'forecolor backcolor | alignleft aligncenter alignright alignjustify',
+                    'bullist convertToBullets | outdent indent | removeformat | cleanSpacing | formatContent | pagebreak | charmap emoticons',
+                    'fullscreen preview save | insertfile image media table link anchor codesample',
+                    'ltr rtl | code'
+                ],
+                toolbar_mode: 'sliding',
+                content_style: `
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+                        font-size: 16px; 
+                        line-height: 1.6; 
+                        color: #333; 
+                        margin: 0; 
+                        padding: 20px;
+                    }
+                    
+                    /* Enhanced bullet styling */
+                    ul {
+                        margin: 16px 0;
+                        padding-left: 0;
+                    }
+                    
+                    li {
+                        margin: 12px 0;
+                        padding-left: 30px;
+                        position: relative;
+                        line-height: 1.6;
+                    }
+                    
+                    /* Custom bullet points */
+                    ul li::before {
+                        content: "•";
+                        color: #667eea;
+                        font-weight: bold;
+                        font-size: 18px;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                    }
+                    
+                    /* Professional bullet styling */
+                    .professional-bullet-list {
+                        list-style: none;
+                        padding: 0;
+                        margin: 1.5rem 0;
+                    }
+                    
+                    .professional-bullet-item {
+                        position: relative;
+                        padding: 0.75rem 0 0.75rem 3rem;
+                        margin-bottom: 0.75rem;
+                        background: #f8fafc;
+                        border-left: 4px solid #3b82f6;
+                        border-radius: 0 8px 8px 0;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                        line-height: 1.6;
+                        color: #374151;
+                        font-weight: 500;
+                    }
+                    
+                    .professional-bullet-item::before {
+                        content: "●";
+                        position: absolute;
+                        left: 1rem;
+                        top: 0.75rem;
+                        color: #3b82f6;
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                    }
+                    
+                    .professional-bullet-item:hover {
+                        background: #f1f5f9;
+                        transform: translateX(4px);
+                        transition: all 0.2s ease;
+                    }
+                    
+                    /* Numbered lists */
+                    ol {
+                        margin: 16px 0;
+                        padding-left: 30px;
+                    }
+                    
+                    ol li {
+                        margin: 12px 0;
+                        padding-left: 10px;
+                        position: relative;
+                    }
+                    
+                    /* Headings styling */
+                    h1, h2, h3, h4, h5, h6 {
+                        color: #1e293b;
+                        margin: 24px 0 16px 0;
+                        font-weight: 600;
+                        line-height: 1.3;
+                    }
+                    
+                    h1 { font-size: 32px; }
+                    h2 { font-size: 28px; }
+                    h3 { font-size: 24px; }
+                    h4 { font-size: 20px; }
+                    h5 { font-size: 18px; }
+                    h6 { font-size: 16px; }
+                    
+                    /* Paragraph styling */
+                    p {
+                        margin: 8px 0;
+                        line-height: 1.6;
+                    }
+                    
+                    /* Reduce spacing between paragraphs */
+                    p + p {
+                        margin-top: 4px;
+                    }
+                    
+                    /* Links */
+                    a {
+                        color: #667eea;
+                        text-decoration: underline;
+                    }
+                    
+                    a:hover {
+                        color: #5a67d8;
+                    }
+                    
+                    /* Blockquotes */
+                    blockquote {
+                        border-left: 4px solid #667eea;
+                        margin: 20px 0;
+                        padding: 16px 20px;
+                        background: #f8fafc;
+                        font-style: italic;
+                        color: #64748b;
+                    }
+                    
+                    /* Code blocks */
+                    pre {
+                        background: #f1f5f9;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 6px;
+                        padding: 16px;
+                        overflow-x: auto;
+                        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                        font-size: 14px;
+                    }
+                    
+                    code {
+                        background: #f1f5f9;
+                        padding: 2px 6px;
+                        border-radius: 3px;
+                        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                        font-size: 14px;
+                    }
+                    
+                    /* Tables */
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        margin: 20px 0;
+                    }
+                    
+                    th, td {
+                        border: 1px solid #e2e8f0;
+                        padding: 12px;
+                        text-align: left;
+                    }
+                    
+                    th {
+                        background: #f8fafc;
+                        font-weight: 600;
+                        color: #374151;
+                    }
+                    
+                    /* Highlighted content boxes */
+                    .highlight-box {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }
+                    
+                    .highlight-box h3 {
+                        color: white;
+                        margin-top: 0;
+                    }
+                    
+                    /* Custom bullet styles */
+                    .custom-bullet {
+                        background: #f0f4ff;
+                        border-left: 4px solid #667eea;
+                        padding: 16px 20px;
+                        margin: 16px 0;
+                        border-radius: 0 6px 6px 0;
+                    }
+                `,
+                paste_data_images: true,
+                paste_as_text: false,
+                paste_auto_cleanup_on_paste: true,
+                paste_remove_styles_if_webkit: false,
+                paste_merge_formats: true,
+                paste_webkit_styles: "all",
+                paste_postprocess: function (plugin, args) {
+                    // Gentle cleanup - only fix obvious spacing issues
+                    if (!args || !args.content) {
+                        return; // Skip if no content to process
+                    }
+                    
+                    let content = args.content;
+                    
+                    // Only remove excessive line breaks (3 or more consecutive)
+                    content = content.replace(/\n\s*\n\s*\n+/g, '\n\n');
+                    
+                    // Only remove truly empty paragraphs (no content at all)
+                    content = content.replace(/(<p[^>]*>)\s*<\/p>/g, '');
+                    
+                    // Don't be too aggressive with other changes
+                    args.content = content;
+                },
+                font_family_formats: 'Andale Mono=andale mono,times; Arial=arial,helvetica,sans-serif; Arial Black=arial black,avant garde; Book Antiqua=book antiqua,palatino; Comic Sans MS=comic sans ms,sans-serif; Courier New=courier new,courier; Georgia=georgia,palatino; Helvetica=helvetica; Impact=impact,chicago; Symbol=symbol; Tahoma=tahoma,arial,helvetica,sans-serif; Terminal=terminal,monaco; Times New Roman=times new roman,times; Trebuchet MS=trebuchet ms,geneva; Verdana=verdana,geneva; Webdings=webdings; Wingdings=wingdings,zapf dingbats',
+                font_size_formats: '8px 10px 12px 14px 16px 18px 20px 24px 28px 32px 36px 48px 60px 72px 96px',
+                block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2; Heading 3=h3; Heading 4=h4; Heading 5=h5; Heading 6=h6; Preformatted=pre; Blockquote=blockquote; Div=div',
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        console.log('✅ Enhanced TinyMCE edit editor initialized successfully');
+                        // Set the content after initialization
+                        editor.setContent(content);
+                        
+                        // Auto-format content after setting it
+                        setTimeout(() => {
+                            autoFormatEditEditorContent();
+                        }, 500);
+                    });
+                    
+                    editor.on('paste', function (e) {
+                        console.log('📋 Paste event in TinyMCE edit:', e);
+                        
+                        // Auto-format pasted content
+                        setTimeout(() => {
+                            autoFormatEditEditorContent();
+                        }, 100);
+                    });
+                    
+                    // Add custom buttons for special formatting
+                    editor.ui.registry.addButton('highlightbox', {
+                        text: 'Highlight Box',
+                        tooltip: 'Insert Highlight Box',
+                        onAction: function () {
+                            editor.insertContent('<div class="highlight-box"><h3>Important Information</h3><p>Your highlighted content goes here...</p></div><p></p>');
+                        }
+                    });
+                    
+                    editor.ui.registry.addButton('custombullet', {
+                        text: 'Custom Bullet',
+                        tooltip: 'Insert Custom Bullet Point',
+                        onAction: function () {
+                            editor.insertContent('<div class="custom-bullet"><strong>Custom Bullet Point</strong><br>Your custom bullet content goes here...</div><p></p>');
+                        }
+                    });
+                    
+                    // Add auto-format button
+                    editor.ui.registry.addButton('autoformat', {
+                        text: 'Auto Format',
+                        tooltip: 'Auto-format content to bullet points',
+                        onAction: function () {
+                            autoFormatEditEditorContent();
+                        }
+                    });
+                    
+                    // Add convert to bullets button
+                    editor.ui.registry.addButton('convertToBullets', {
+                        text: '• Bullets',
+                        tooltip: 'Convert numbered lists to bullet points',
+                        onAction: function () {
+                            convertNumbersToBulletsEdit();
+                        }
+                    });
+                    
+                    // Add clean spacing button
+                    editor.ui.registry.addButton('cleanSpacing', {
+                        text: '🧹 Clean',
+                        tooltip: 'Remove extra spacing and gaps',
+                        onAction: function () {
+                            const content = editor.getContent();
+                            const cleaned = cleanupExtraSpacing(content);
+                            if (cleaned !== content) {
+                                editor.setContent(cleaned);
+                                console.log('✅ Extra spacing cleaned up in edit modal');
+                            }
+                        }
+                    });
+                },
+                init_instance_callback: function (editor) {
+                    console.log('🎯 Enhanced TinyMCE edit instance ready:', editor.id);
+                }
+            });
         }
         
         // Handle edit form submission
@@ -1270,12 +1884,20 @@
                     }
                     
                     try {
+                        // Get content from TinyMCE editor
+                        let content = '';
+                        if (typeof tinymce !== 'undefined' && tinymce.get('edit-content')) {
+                            content = tinymce.get('edit-content').getContent();
+                        } else {
+                            content = document.getElementById('edit-content').value;
+                        }
+                        
                         const formData = {
                             title: document.getElementById('edit-title').value,
                             status: document.getElementById('edit-status').value,
                             excerpt: document.getElementById('edit-excerpt').value,
                             author: document.getElementById('edit-author').value,
-                            content: document.getElementById('edit-content').innerHTML
+                            content: content
                         };
                         
                         console.log('💾 Saving blog changes:', formData);

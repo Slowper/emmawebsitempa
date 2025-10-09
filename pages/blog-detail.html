@@ -48,8 +48,20 @@
             background: #0f172a !important;
             color: #f8fafc !important;
             margin: 0;
-            padding: 0;
-            line-height: 1.6;
+        }
+
+        /* Global content visibility override */
+        #article-body * {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        #article-body {
+            background: #1e293b !important;
+            padding: 2rem !important;
+            border-radius: 1rem !important;
+            border: 2px solid #3b82f6 !important;
+            margin: 1rem 0 !important;
         }
 
         /* Override any conflicting styles from main stylesheet */
@@ -188,7 +200,7 @@
         .main-content {
             max-width: 800px;
             margin: 0 auto;
-            padding: 8rem 2rem 4rem; /* Reduced bottom padding since no footer */
+            padding: 8rem 2rem 4rem;
             position: relative;
             z-index: 10;
             min-height: auto; /* Let content determine height */
@@ -292,6 +304,60 @@
             padding-bottom: 2rem;
             min-height: auto; /* Dynamic height based on content */
             width: 100%; /* Full width for content */
+        }
+
+        /* Enhanced content styling for better visibility */
+        .article-content-enhanced {
+            background: #1e293b !important;
+            border: 2px solid #3b82f6 !important;
+            border-radius: 1rem !important;
+            padding: 2rem !important;
+            margin: 1rem 0 !important;
+            min-height: 200px !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+        }
+
+        .article-content-enhanced * {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced p {
+            color: #ffffff !important;
+            margin-bottom: 1rem !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced div {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced span {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced h1,
+        .article-content-enhanced h2,
+        .article-content-enhanced h3,
+        .article-content-enhanced h4,
+        .article-content-enhanced h5,
+        .article-content-enhanced h6 {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced ul,
+        .article-content-enhanced ol {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced li {
+            color: #ffffff !important;
+            background: transparent !important;
         }
 
         .article-content h1,
@@ -725,24 +791,8 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <div class="logo-container">
-                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Hi Emma Logo" class="logo-image">
-                    <span class="logo-text">Hi Emma</span>
-                </div>
-            </div>
-            <div class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/pricing" class="nav-link">Pricing</a>
-                <a href="/resources" class="nav-link">Resources</a>
-                <a href="/contact" class="nav-link">Contact</a>
-            </div>
-        </div>
-    </nav>
+    <!-- Header Component -->
+    <div id="header-placeholder"></div>
 
     <!-- Main Content -->
     <main class="main-content">
@@ -776,11 +826,10 @@
                         <span id="author-name">Emma AI Team</span>
                     </div>
                     <span id="article-date">Loading...</span>
-                    <span id="read-time">5 min read</span>
+                    <span id="read-time">Loading...</span>
         <span id="view-count" style="display: flex; align-items: center; gap: 0.25rem; color: #64748b; font-size: 0.875rem;">
             <i class="fas fa-eye"></i>
             <span id="view-count-number">0</span> views
-            <!-- DEBUG: view_count -->
         </span>
                 </div>
             </article>
@@ -800,6 +849,9 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Components -->
+    <script src="/components/load-components.js"></script>
     
     <!-- Translation Engine -->
     <script src="/js/translations.js"></script>

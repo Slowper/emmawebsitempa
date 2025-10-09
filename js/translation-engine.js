@@ -241,7 +241,7 @@ class TranslationEngine {
         }
         
         const heroTrustedBy = document.querySelector('[data-translate="hero.trusted_by"]');
-        if (heroTrustedBy) heroTrustedBy.textContent = 'Trusted by Industry Leaders';
+        if (heroTrustedBy) heroTrustedBy.textContent = 'Made For Industry Leaders';
         
         const heroSeeHow = document.querySelector('[data-translate="hero.see_how"]');
         if (heroSeeHow) heroSeeHow.textContent = 'See how Emma transforms operations across sectors';
@@ -291,7 +291,7 @@ class TranslationEngine {
         
         const healthcareDesc = document.querySelector('[data-translate="use_cases.healthcare.description"]');
         if (healthcareDesc) {
-            healthcareDesc.textContent = 'Patient scheduling, medical records, and diagnostic assistance';
+            healthcareDesc.textContent = 'Automates patient calls, bookings, and reminders with 24/7 voice support.';
         }
         
         // Reset CTA section
@@ -868,7 +868,7 @@ class TranslationEngine {
             'الرعاية الصحية': 'Healthcare',
             'هل أنت مستعد لتحويل عملياتك؟': 'Ready to Transform Your Operations?',
             'هل أنت مستعد لتحويل صناعتك؟': 'Ready to Transform Your Industry?',
-            'موثوق من قادة الصناعة': 'Trusted by Industry Leaders',
+            'موثوق من قادة الصناعة': 'Made For Industry Leaders',
             'تعرف على إيما': 'Meet Emma',
             'مساعدك الذكي للذكاء الاصطناعي': 'Your Intelligent AI Assistant'
         };
@@ -1192,7 +1192,7 @@ class TranslationEngine {
             // Home page specific mappings
             'Meet Emma': 'تعرف على إيما',
             'Your Intelligent AI Assistant': 'مساعدك الذكي للذكاء الاصطناعي',
-            'Trusted by Industry Leaders': 'موثوق من قادة الصناعة',
+            'Made For Industry Leaders': 'موثوق من قادة الصناعة',
             'Emma\'s Core Capabilities': 'قدرات إيما الأساسية',
             'Intelligent automation that adapts, learns, and takes initiative': 'أتمتة ذكية تتكيف وتتعلم وتتخذ المبادرة',
             'Industry Solutions': 'حلول الصناعة',
@@ -1404,9 +1404,17 @@ class TranslationEngine {
         // Update hero title
         const heroTitle = document.getElementById('hero-title');
         if (heroTitle) {
+            // Preserve the highlight-text span for "Intelligent" in both English and Arabic
+            let subtitleWithHighlight = hero.subtitle;
+            if (lang === 'en') {
+                subtitleWithHighlight = hero.subtitle.replace('Intelligent', '<span class="highlight-text">Intelligent</span>');
+            } else if (lang === 'ar') {
+                subtitleWithHighlight = hero.subtitle.replace('الذكي', '<span class="highlight-text">الذكي</span>');
+            }
+            
             heroTitle.innerHTML = `
                 <span class="title-line-1">${hero.title}</span>
-                <span class="title-line-2">${hero.subtitle}</span>
+                <span class="title-line-2">${subtitleWithHighlight}</span>
             `;
         }
 
@@ -2129,7 +2137,7 @@ window.forceTranslateArabicText = function() {
         'الرعاية الصحية': 'Healthcare',
         'هل أنت مستعد لتحويل عملياتك؟': 'Ready to Transform Your Operations?',
         'هل أنت مستعد لتحويل صناعتك؟': 'Ready to Transform Your Industry?',
-        'موثوق من قادة الصناعة': 'Trusted by Industry Leaders',
+        'موثوق من قادة الصناعة': 'Made For Industry Leaders',
         'تعرف على إيما': 'Meet Emma',
         'مساعدك الذكي للذكاء الاصطناعي': 'Your Intelligent AI Assistant'
     };

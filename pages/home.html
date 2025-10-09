@@ -115,6 +115,59 @@
             100% { transform: translateX(100%); }
         }
 
+        /* Enhanced Audio Language Button Styles */
+        .audio-language {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .audio-language::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .audio-language:hover::before {
+            left: 100%;
+        }
+        
+        .audio-language.active {
+            background: linear-gradient(135deg, 
+                rgba(139, 92, 246, 0.8) 0%, 
+                rgba(236, 72, 153, 0.8) 50%, 
+                rgba(6, 182, 212, 0.8) 100%) !important;
+            border-color: rgba(255, 255, 255, 0.8) !important;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.7) !important;
+            transform: translateY(-3px) scale(1.05) !important;
+        }
+        
+        .audio-language.playing {
+            background: linear-gradient(135deg, 
+                rgba(16, 185, 129, 0.9) 0%, 
+                rgba(5, 150, 105, 0.9) 50%, 
+                rgba(4, 120, 87, 0.9) 100%) !important;
+            border-color: rgba(16, 185, 129, 1) !important;
+            animation: pulse-audio 1.5s ease-in-out infinite !important;
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.8) !important;
+            transform: translateY(-3px) scale(1.05) !important;
+        }
+        
+        @keyframes pulse-audio {
+            0%, 100% {
+                transform: translateY(-3px) scale(1.05);
+                box-shadow: 0 0 35px rgba(16, 185, 129, 0.6);
+            }
+            50% {
+                transform: translateY(-3px) scale(1.08);
+                box-shadow: 0 0 45px rgba(16, 185, 129, 1);
+            }
+        }
+
         /* Badges Scroller Styles */
         .badges-scroller-container {
             position: relative;
@@ -369,12 +422,12 @@
             opacity: 0;
         }
         .hero-section { 
-            min-height: 85vh; 
+            min-height: 70vh; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             text-align: center; 
-            padding: 120px 2rem 60px 2rem; 
+            padding: 140px 2rem 40px 2rem; 
             opacity: 1;
             visibility: visible;
             transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
@@ -383,6 +436,7 @@
             contain: layout style paint;
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
+            z-index: 1;
         }
         
         .particles-container {
@@ -452,7 +506,7 @@
         @media (max-width: 768px) {
             .hero-section {
                 min-height: 75vh;
-                padding: 100px 1rem 40px 1rem;
+                padding: 120px 1rem 40px 1rem;
             }
             .hero-content h1 {
                 font-size: 2.2rem;
@@ -490,7 +544,7 @@
         /* Extra small screens */
         @media (max-width: 480px) {
             .hero-section {
-                padding: 90px 1rem 30px 1rem;
+                padding: 110px 1rem 30px 1rem;
             }
             .hero-content h1 {
                 font-size: 2rem;
@@ -519,6 +573,429 @@
             z-index: 10;
         }
         .hero-content h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 0.8rem; background: linear-gradient(135deg, #3b82f6, #8b5cf6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* Coming Soon Popup Styles */
+        .coming-soon-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            box-sizing: border-box;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+        }
+        
+        .coming-soon-popup.show {
+            display: flex;
+            animation: popupFadeIn 0.4s ease-out;
+        }
+        
+        .popup-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            animation: backdropFadeIn 0.4s ease-out;
+        }
+        
+        .popup-container {
+            position: relative;
+            z-index: 10001;
+            max-width: 500px;
+            width: 100%;
+            margin: auto;
+            animation: popupSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transform: translateY(0);
+        }
+        
+        .popup-content {
+            background: linear-gradient(145deg, 
+                rgba(15, 23, 42, 0.95) 0%, 
+                rgba(30, 41, 59, 0.95) 50%, 
+                rgba(15, 23, 42, 0.95) 100%);
+            border-radius: 24px;
+            padding: 0;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.6),
+                0 0 50px rgba(139, 92, 246, 0.3),
+                0 0 100px rgba(236, 72, 153, 0.2);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .popup-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, 
+                rgba(139, 92, 246, 0.1) 0%, 
+                transparent 25%, 
+                transparent 75%, 
+                rgba(236, 72, 153, 0.1) 100%);
+            pointer-events: none;
+        }
+        
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem 2rem 1rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .popup-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: iconPulse 2s ease-in-out infinite;
+        }
+        
+        .popup-icon svg {
+            width: 30px;
+            height: 30px;
+            color: white;
+        }
+        
+        .popup-close {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .popup-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .popup-body {
+            padding: 0 2rem 2rem 2rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .popup-title {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0 0 0.5rem 0;
+            text-align: center;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+        
+        .popup-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin: 0 0 1.5rem 0;
+            font-weight: 500;
+        }
+        
+        .popup-message {
+            margin-bottom: 2rem;
+        }
+        
+        .popup-message p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin: 0 0 1.5rem 0;
+            text-align: center;
+            font-size: 1rem;
+        }
+        
+        .popup-features {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.4);
+            transform: translateX(5px);
+        }
+        
+        .feature-icon {
+            font-size: 1.5rem;
+            width: 30px;
+            text-align: center;
+        }
+        
+        .feature-item span:last-child {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        
+        .popup-cta {
+            text-align: center;
+        }
+        
+        .email-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .email-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+        
+        .email-input:focus {
+            outline: none;
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+        
+        .email-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .notification-status {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+        
+        .notification-status.success {
+            background: rgba(34, 197, 94, 0.2);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: #22c55e;
+            display: block;
+        }
+        
+        .notification-status.error {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #ef4444;
+            display: block;
+        }
+        
+        .no-spam-assurance {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+        
+        .privacy-icon {
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        
+        .privacy-text {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.4;
+        }
+        
+        .popup-notify-btn {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border: none;
+            border-radius: 50px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .popup-notify-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .popup-notify-btn:hover::before {
+            left: 100%;
+        }
+        
+        .popup-notify-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(139, 92, 246, 0.6);
+        }
+        
+        .popup-notify-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Animations */
+        @keyframes popupFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes backdropFadeIn {
+            from { 
+                opacity: 0;
+                backdrop-filter: blur(0px);
+            }
+            to { 
+                opacity: 1;
+                backdrop-filter: blur(10px);
+            }
+        }
+        
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        @keyframes iconPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(139, 92, 246, 0.1);
+            }
+        }
+        
+        @keyframes titleGlow {
+            0% {
+                filter: drop-shadow(0 0 5px rgba(139, 92, 246, 0.3));
+            }
+            100% {
+                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
+            }
+        }
+        
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .coming-soon-popup {
+                padding: 1rem;
+            }
+            
+            .popup-container {
+                max-width: 100%;
+            }
+            
+            .popup-content {
+                border-radius: 20px;
+            }
+            
+            .popup-header {
+                padding: 1.5rem 1.5rem 1rem 1.5rem;
+            }
+            
+            .popup-body {
+                padding: 0 1.5rem 1.5rem 1.5rem;
+            }
+            
+            .popup-title {
+                font-size: 1.5rem;
+            }
+            
+            .popup-subtitle {
+                font-size: 1rem;
+            }
+            
+            .popup-message p {
+                font-size: 0.9rem;
+            }
+            
+            .feature-item {
+                padding: 0.5rem 0.75rem;
+            }
+            
+            .popup-notify-btn {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .email-input {
+                padding: 0.75rem;
+                font-size: 0.9rem;
+            }
+            
+            .email-input-container {
+                gap: 0.75rem;
+            }
+            
+            .no-spam-assurance {
+                padding: 0.5rem;
+                font-size: 0.8rem;
+            }
+            
+            .privacy-text {
+                font-size: 0.8rem;
+            }
+        }
         
         /* Ensure proper spacing for sections below navbar */
         .capabilities.section {
@@ -555,6 +1032,697 @@
             75% { 
                 transform: translateY(-30px) translateX(5px) rotate(270deg); 
                 opacity: 0.9; 
+            }
+        }
+
+        /* Emma Features Section Header Styles */
+        .features-header {
+            text-align: left;
+            margin-bottom: 3rem;
+        }
+
+        .features-title-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .features-gradient-bar {
+            width: 4px;
+            height: 3rem;
+            background: linear-gradient(180deg, #ec4899 0%, #8b5cf6 100%);
+            border-radius: 2px;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .features-header .section-title {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .features-header .section-subtitle {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            margin: 0;
+            margin-left: 1.5rem;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        /* Responsive Design for Features Header */
+        @media (max-width: 768px) {
+            .features-header {
+                text-align: center;
+            }
+
+            .features-title-container {
+                justify-content: center;
+            }
+
+            .features-header .section-title {
+                font-size: 2rem;
+            }
+
+            .features-header .section-subtitle {
+                margin-left: 0;
+                margin-top: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .features-header .section-title {
+                font-size: 1.8rem;
+            }
+
+            .features-header .section-subtitle {
+                font-size: 1rem;
+            }
+
+            .features-gradient-bar {
+                height: 2.5rem;
+            }
+        }
+
+        /* Feature Cards Styling - Alternating Layout */
+        .feature-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 6rem;
+            padding: 0;
+            background: none;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item.feature-left {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .feature-item.feature-right {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .feature-item.feature-right .feature-content {
+            order: 1;
+        }
+
+        .feature-item.feature-right .feature-visual {
+            order: 2;
+        }
+
+        .feature-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .feature-animation {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .feature-content {
+            color: white;
+            padding: 2rem;
+        }
+
+        .feature-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .feature-subtitle {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 1.5rem;
+            line-height: 1.4;
+        }
+
+        .feature-description {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        /* Language Flow Animation */
+        .language-flow {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .language-bubble {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: floatBubble 3s infinite ease-in-out;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .bubble-1 { top: 20px; left: 20px; animation-delay: 0s; }
+        .bubble-2 { top: 20px; right: 20px; animation-delay: 0.5s; }
+        .bubble-3 { bottom: 20px; left: 20px; animation-delay: 1s; }
+        .bubble-4 { bottom: 20px; right: 20px; animation-delay: 1.5s; }
+        .bubble-5 { top: 50%; left: 10px; animation-delay: 2s; }
+        .bubble-6 { top: 50%; right: 10px; animation-delay: 2.5s; }
+
+        @keyframes floatBubble {
+            0%, 100% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-20px) scale(1.1); }
+        }
+
+        /* Conversation Flow Animation */
+        .conversation-flow {
+            position: relative;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .message-bubble {
+            padding: 1rem 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 1rem;
+            animation: messageSlide 4s infinite ease-in-out;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            margin-left: 2rem;
+            animation-delay: 0s;
+        }
+
+        .emma-message {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            margin-right: 2rem;
+            animation-delay: 1s;
+        }
+
+        @keyframes messageSlide {
+            0%, 25% { opacity: 0; transform: translateX(-20px); }
+            50%, 75% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(20px); }
+        }
+
+        /* Avatar Showcase Animation */
+        .avatar-showcase {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .avatar-option {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            animation: avatarRotate 4s infinite ease-in-out;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .avatar-1 { top: 20px; left: 20px; animation-delay: 0s; }
+        .avatar-2 { top: 20px; right: 20px; animation-delay: 1s; }
+        .avatar-3 { bottom: 20px; left: 20px; animation-delay: 2s; }
+        .avatar-4 { bottom: 20px; right: 20px; animation-delay: 3s; }
+
+        @keyframes avatarRotate {
+            0%, 25% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+            75%, 100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+
+        /* Security Shield Animation */
+        .security-shield {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .shield-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: shieldPulse 3s infinite ease-in-out;
+        }
+
+        .layer-1 { animation-delay: 0s; }
+        .layer-2 { animation-delay: 1s; }
+        .layer-3 { animation-delay: 2s; }
+
+        @keyframes shieldPulse {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        /* Industry Grid Animation */
+        .industry-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            width: 200px;
+        }
+
+        .industry-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            animation: industryBounce 2s infinite ease-in-out;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .industry-icon:nth-child(1) { animation-delay: 0s; }
+        .industry-icon:nth-child(2) { animation-delay: 0.5s; }
+        .industry-icon:nth-child(3) { animation-delay: 1s; }
+        .industry-icon:nth-child(4) { animation-delay: 1.5s; }
+
+        @keyframes industryBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Clock Animation */
+        .clock-animation {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .clock-face {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: clockTick 2s infinite ease-in-out;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .clock-face:nth-child(1) { top: 20px; left: 20px; animation-delay: 0s; }
+        .clock-face:nth-child(2) { top: 20px; right: 20px; animation-delay: 0.5s; }
+        .clock-face:nth-child(3) { bottom: 20px; left: 20px; animation-delay: 1s; }
+        .clock-face:nth-child(4) { bottom: 20px; right: 20px; animation-delay: 1.5s; }
+
+        @keyframes clockTick {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        /* Integration Flow Animation */
+        .integration-flow {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .integration-node {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: integrationFlow 4s infinite ease-in-out;
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+        }
+
+        .node-1 { top: 20px; left: 20px; animation-delay: 0s; }
+        .node-2 { top: 20px; right: 20px; animation-delay: 1s; }
+        .node-3 { bottom: 20px; left: 20px; animation-delay: 2s; }
+        .node-4 { bottom: 20px; right: 20px; animation-delay: 3s; }
+
+        @keyframes integrationFlow {
+            0%, 25% { transform: scale(1) translateY(0px); opacity: 1; }
+            50% { transform: scale(1.2) translateY(-10px); opacity: 0.8; }
+            75%, 100% { transform: scale(1) translateY(0px); opacity: 1; }
+        }
+
+        /* Responsive Design for Feature Cards */
+        @media (max-width: 768px) {
+            .feature-item {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                margin-bottom: 4rem;
+            }
+
+            .feature-item.feature-right .feature-content {
+                order: 1;
+            }
+
+            .feature-item.feature-right .feature-visual {
+                order: 2;
+            }
+
+            .feature-content {
+                padding: 1.5rem;
+                text-align: center;
+            }
+
+            .feature-title {
+                font-size: 2rem;
+            }
+
+            .feature-subtitle {
+                font-size: 1.3rem;
+            }
+
+            .feature-description {
+                font-size: 1rem;
+            }
+
+            .feature-visual {
+                min-height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .feature-item {
+                margin-bottom: 3rem;
+            }
+
+            .feature-content {
+                padding: 1rem;
+            }
+
+            .feature-title {
+                font-size: 1.8rem;
+            }
+
+            .feature-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .feature-description {
+                font-size: 0.9rem;
+            }
+
+            .feature-visual {
+                min-height: 200px;
+            }
+
+            .language-flow,
+            .avatar-showcase,
+            .security-shield,
+            .industry-grid,
+            .clock-animation,
+            .integration-flow {
+                transform: scale(0.8);
+            }
+        }
+
+        /* Emma Process Section Styles */
+        .emma-process {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 6rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .process-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .process-animation {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .process-bar {
+            display: flex;
+            width: 100%;
+            height: 80px;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .process-segment {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .segment-1 {
+            background: linear-gradient(135deg, #8b5cf6, #a855f7);
+        }
+
+        .segment-2 {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .segment-3 {
+            background: linear-gradient(135deg, #06b6d4, #0891b2);
+        }
+
+        .segment-4 {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .segment-label {
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            position: relative;
+        }
+
+        .segment-progress {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            width: 0;
+            transition: width 2s ease-in-out;
+            border-radius: 40px;
+        }
+
+        .process-flow {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .flow-arrow {
+            position: absolute;
+            top: 50%;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+            border-top: 12px solid #8b5cf6;
+            transform: translateY(-50%);
+            opacity: 0;
+            animation: flowAnimation 3s infinite;
+        }
+
+        .arrow-1 {
+            left: 25%;
+            animation-delay: 0s;
+        }
+
+        .arrow-2 {
+            left: 50%;
+            animation-delay: 0.75s;
+        }
+
+        .arrow-3 {
+            left: 75%;
+            animation-delay: 1.5s;
+        }
+
+        @keyframes flowAnimation {
+            0%, 20% {
+                opacity: 0;
+                transform: translateY(-50%) translateX(-20px);
+            }
+            25%, 75% {
+                opacity: 1;
+                transform: translateY(-50%) translateX(0);
+            }
+            80%, 100% {
+                opacity: 0;
+                transform: translateY(-50%) translateX(20px);
+            }
+        }
+
+        .process-text {
+            color: white;
+        }
+
+        .process-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .process-heading {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #f8fafc;
+        }
+
+        .process-description {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+            margin-bottom: 0;
+        }
+
+        /* Animation for segments */
+        .process-segment:hover {
+            transform: scale(1.05);
+            z-index: 3;
+        }
+
+        .segment-1:hover .segment-progress {
+            width: 100%;
+            animation: progressFill 2s ease-in-out;
+        }
+
+        .segment-2:hover .segment-progress {
+            width: 100%;
+            animation: progressFill 2s ease-in-out 0.5s;
+        }
+
+        .segment-3:hover .segment-progress {
+            width: 100%;
+            animation: progressFill 2s ease-in-out 1s;
+        }
+
+        .segment-4:hover .segment-progress {
+            width: 100%;
+            animation: progressFill 2s ease-in-out 1.5s;
+        }
+
+        @keyframes progressFill {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .process-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                text-align: center;
+            }
+
+            .process-title {
+                font-size: 2rem;
+            }
+
+            .process-heading {
+                font-size: 1.5rem;
+            }
+
+            .process-bar {
+                height: 60px;
+            }
+
+            .segment-label {
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .emma-process {
+                padding: 4rem 0;
+            }
+
+            .process-content {
+                padding: 0 1rem;
+            }
+
+            .process-title {
+                font-size: 1.8rem;
+            }
+
+            .process-heading {
+                font-size: 1.3rem;
+            }
+
+            .process-description {
+                font-size: 1rem;
             }
         }
     </style>
@@ -703,7 +1871,7 @@
                         <div class="new-avatar-section">
                             <!-- Comment above the avatar box -->
                             <div class="avatar-comment">
-                                <p id="avatar-comment-text">Hi!<br>I Am Emma Your Virtual Voice Assistant</p>
+                                <p id="avatar-comment-text">Hi, I'm Emma! Your intelligent partner for smarter solutions.<br><br>Curious to learn more about me?<br>Take a look around and book a demo - I'd love to show you what I can do for you.</p>
                             </div>
                             
                             <!-- Avatar Box -->
@@ -714,17 +1882,17 @@
                             
                             <!-- Audio Options -->
                             <div class="audio-options">
-                                <div class="audio-language" data-lang="en" data-audio="/Logo And Recording/Emma English Voice .opus">
+                                <div class="audio-language" data-lang="en" data-audio="/Logo And Recording/English.mp3">
                                     <span class="flag">🇺🇸</span>
                                     <span class="lang-name">English</span>
                                 </div>
-                                <div class="audio-language" data-lang="ar" data-audio="/Logo And Recording/Emma Arabic Audio.opus">
+                                <div class="audio-language" data-lang="ar" data-audio="/Logo And Recording/Arabic.mp3">
                                     <span class="flag">🇸🇦</span>
                                     <span class="lang-name">العربية</span>
                                 </div>
-                                <div class="audio-language" data-lang="hi" data-audio="/Logo And Recording/Emma Hindi Voice.opus">
-                                    <span class="flag">🇮🇳</span>
-                                    <span class="lang-name">हिन्दी</span>
+                                <div class="audio-language" data-lang="fr" data-audio="/Logo And Recording/French.mp3">
+                                    <span class="flag">🇫🇷</span>
+                                    <span class="lang-name">Français</span>
                                 </div>
                             </div>
                             
@@ -739,6 +1907,61 @@
                                     </svg>
                                     <span id="hero-primary-text">Talk to Her Now</span>
                                 </button>
+                            </div>
+                            
+                            <!-- Exciting Coming Soon Popup -->
+                            <div id="coming-soon-popup" class="coming-soon-popup">
+                                <div class="popup-backdrop"></div>
+                                <div class="popup-container">
+                                    <div class="popup-content">
+                                        <div class="popup-header">
+                                            <div class="popup-icon">
+                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                                </svg>
+                                            </div>
+                                            <button class="popup-close" id="popup-close">&times;</button>
+                                        </div>
+                                        <div class="popup-body">
+                                            <h2 class="popup-title">Something Amazing is Coming! 🚀</h2>
+                                            <p class="popup-subtitle">Get ready to experience the future of AI conversation</p>
+                                            <div class="popup-message">
+                                                <p>We're putting the finishing touches on something that will revolutionize how you interact with AI. Emma is about to become even more incredible!</p>
+                                                <div class="popup-features">
+                                                    <div class="feature-item">
+                                                        <span class="feature-icon">🎤</span>
+                                                        <span>Real-time voice conversations</span>
+                                                    </div>
+                                                    <div class="feature-item">
+                                                        <span class="feature-icon">🧠</span>
+                                                        <span>Advanced emotional intelligence</span>
+                                                    </div>
+                                                    <div class="feature-item">
+                                                        <span class="feature-icon">⚡</span>
+                                                        <span>Lightning-fast responses</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="popup-cta">
+                                                <div class="email-input-container">
+                                                    <input type="email" id="notify-email" class="email-input" placeholder="Enter your email address" required>
+                                                    <button class="popup-notify-btn" id="notify-me-btn">
+                                                        <span>Notify Me When Ready</span>
+                                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                                            <polyline points="22,6 12,13 2,6"></polyline>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                                <div class="no-spam-assurance">
+                                                    <span class="privacy-icon">🔒</span>
+                                                    <span class="privacy-text">We respect your privacy. No spam, just one notification when the feature is ready. You can unsubscribe anytime.</span>
+                                                </div>
+                                                <div id="notification-status" class="notification-status"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             
                             <!-- Additional Stats Section -->
@@ -773,13 +1996,13 @@
                     <!-- Hero Description -->
                     <p class="hero-description" id="hero-description" data-translate="hero.description">
                         Transform your business with AI that understands, learns, and adapts. 
-                        From healthcare to banking to education - Emma delivers results across every industry.
+                        From healthcare, banking, and education - Emma delivers results across key sectors.
                     </p>
                     
                     <!-- Dynamic Use Case Showcase -->
                     <div class="use-case-showcase">
                         <div class="use-case-header">
-                            <h3 data-translate="hero.trusted_by">Trusted by Industry Leaders</h3>
+                            <h3 data-translate="hero.trusted_by">Made For Industry Leaders</h3>
                             <p data-translate="hero.see_how">See how Emma transforms operations across sectors</p>
                         </div>
                         
@@ -794,7 +2017,7 @@
                                     </div>
                                     <div class="use-case-content">
                                         <h4 data-translate="use_cases.healthcare.title">Healthcare</h4>
-                                        <p data-translate="use_cases.healthcare.description">Patient scheduling, medical records, and diagnostic assistance</p>
+                                        <p data-translate="use_cases.healthcare.description">Automates patient calls, bookings, and reminders with 24/7 voice support.</p>
                                     </div>
                                     <div class="use-case-stats">
                                         <span class="stat" data-translate="use_cases.healthcare.stats.efficiency">60% efficiency</span>
@@ -802,26 +2025,33 @@
                                     </div>
                                 </div>
                                 
-                                <div class="use-case-card" data-industry="manufacturing">
+                                <div class="use-case-card" data-industry="recruitment">
                                     <div class="use-case-icon">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path>
+                                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                                            <path d="M12 11h4"/>
+                                            <path d="M12 16h4"/>
+                                            <path d="M8 11h.01"/>
+                                            <path d="M8 16h.01"/>
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
-                                        <h4 data-translate="use_cases.manufacturing.title">Manufacturing</h4>
-                                        <p data-translate="use_cases.manufacturing.description">Smart production, predictive maintenance, and supply chain optimization</p>
+                                        <h4 data-translate="use_cases.recruitment.title">Recruitment</h4>
+                                        <p data-translate="use_cases.recruitment.description">Intelligent candidate screening, automated interviews, and talent matching</p>
                                     </div>
                                     <div class="use-case-stats">
-                                        <span class="stat" data-translate="use_cases.manufacturing.stats.cost_reduction">45% cost reduction</span>
-                                        <span class="stat" data-translate="use_cases.manufacturing.stats.monitoring">Real-time monitoring</span>
+                                        <span class="stat" data-translate="use_cases.recruitment.stats.time_saved">70% time saved</span>
+                                        <span class="stat" data-translate="use_cases.recruitment.stats.quality">Better candidate quality</span>
                                     </div>
                                 </div>
                                 
                                 <div class="use-case-card" data-industry="retail">
                                     <div class="use-case-icon">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"></path>
+                                            <circle cx="9" cy="21" r="1"></circle>
+                                            <circle cx="20" cy="21" r="1"></circle>
+                                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                                         </svg>
                                     </div>
                                     <div class="use-case-content">
@@ -898,382 +2128,404 @@
         </div>
     </section>
 
-    <!-- Emma Capabilities Section -->
-    <section id="capabilities" class="capabilities section">
+    <!-- Emma Features Section -->
+    <section id="features" class="features section">
         <div class="container">
             <div class="section-header">
-                <h2 class="section-title" id="capabilities-title" data-translate="capabilities.title">Emma's Core Capabilities</h2>
-                <p class="section-subtitle" id="capabilities-subtitle" data-translate="capabilities.subtitle">Intelligent automation that adapts, learns, and takes initiative</p>
-            </div>
-
-        
-        <div class="capabilities-grid">
-            <div class="capability-card" data-capability="scheduling">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                        <line x1="16" y1="2" x2="16" y2="6"/>
-                        <line x1="8" y1="2" x2="8" y2="6"/>
-                        <line x1="3" y1="10" x2="21" y2="10"/>
-                    </svg>
-                </div>
-                <h3 data-translate="capabilities.scheduling.title">Conversational Scheduling</h3>
-                <p data-translate="capabilities.scheduling.description">Manages bookings, reschedules, and sends reminders across WhatsApp, SMS, email, and voice</p>
-                <div class="capability-demo">
-                    <div class="demo-bubble" data-translate="capabilities.scheduling.demo_user">"Schedule a meeting for tomorrow at 2 PM"</div>
-                    <div class="demo-bubble emma-response" data-translate="capabilities.scheduling.demo_emma">"I've scheduled your meeting and sent confirmations!"</div>
+                <div class="features-header">
+                    <div class="features-title-container">
+                        <div class="features-gradient-bar"></div>
+                        <h2 class="section-title" id="features-title">Emma Features</h2>
+                    </div>
+                    <p class="section-subtitle" id="features-subtitle">Powerful capabilities that make Emma the perfect AI assistant for your business</p>
                 </div>
             </div>
 
-            
-            <div class="capability-card" data-capability="intelligence">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 12l2 2 4-4"/>
-                        <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
-                        <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
-                        <path d="M12 3c0 1-1 3-3 3s-3-2-3-3 1-3 3-3 3 2 3 3"/>
-                        <path d="M12 21c0-1 1-3 3-3s3 2 3 3-1 3-3 3-3-2-3-3"/>
-                    </svg>
+            <div class="features-list">
+                <!-- Multilingual & Accent Support -->
+                <div class="feature-item feature-left">
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="language-flow">
+                                <div class="language-bubble bubble-1">🇺🇸</div>
+                                <div class="language-bubble bubble-2">🇸🇦</div>
+                                <div class="language-bubble bubble-3">🇫🇷</div>
+                                <div class="language-bubble bubble-4">🇩🇪</div>
+                                <div class="language-bubble bubble-5">🇯🇵</div>
+                                <div class="language-bubble bubble-6">🇨🇳</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Multilingual & Accent Support.</h3>
+                        <h4 class="feature-subtitle">Communicate naturally in 50+ languages.</h4>
+                        <p class="feature-description">Perfect accent recognition and cultural context understanding across all major languages and dialects worldwide.</p>
+                    </div>
                 </div>
-                <h3 data-translate="capabilities.intelligence.title">Smart Pre-Qualification</h3>
-                <p data-translate="capabilities.intelligence.description">Gathers input, prioritizes urgent needs, and routes requests to the right place automatically</p>
-                <div class="capability-demo">
-                    <div class="demo-bubble" data-translate="capabilities.intelligence.demo_user">"I need help with my account"</div>
-                    <div class="demo-bubble emma-response" data-translate="capabilities.intelligence.demo_emma">"I'll gather some details and connect you with the right specialist"</div>
-                </div>
-            </div>
 
-            
-            <div class="capability-card" data-capability="personalization">
-                <div class="card-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
+                <!-- Human-like Conversations -->
+                <div class="feature-item feature-right">
+                    <div class="feature-content">
+                        <h3 class="feature-title">Human-like Conversations.</h3>
+                        <h4 class="feature-subtitle">Natural, empathetic dialogue that understands context.</h4>
+                        <p class="feature-description">Advanced emotional intelligence and context awareness that makes every interaction feel genuinely human and meaningful.</p>
+                    </div>
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="conversation-flow">
+                                <div class="message-bubble user-message">Hello Emma!</div>
+                                <div class="message-bubble emma-message">Hi! How can I help you today?</div>
+                                <div class="message-bubble user-message">I need assistance</div>
+                                <div class="message-bubble emma-message">I'm here to help! What do you need?</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 data-translate="capabilities.personalization.title">Hyper-Personalized Engagement</h3>
-                <p data-translate="capabilities.personalization.description">Delivers relevant nudges and follow-ups in multiple languages and tones</p>
-                <div class="capability-demo">
-                    <div class="demo-bubble" data-translate="capabilities.personalization.demo_user">"Follow up with our VIP clients"</div>
-                    <div class="demo-bubble emma-response" data-translate="capabilities.personalization.demo_emma">"Personalized messages sent in their preferred language!"</div>
-                </div>
-            </div>
-            
-        </div>
-        </div>
-    </section>
 
-    <!-- Industries Section -->
-    <section id="industries" class="industries section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title" id="industries-title" data-translate="industries.title">Industry Solutions</h2>
-                <p class="section-subtitle" id="industries-subtitle" data-translate="industries.subtitle">Tailored AI agents for your specific industry needs</p>
-            </div>
-        
-        <div class="industries-grid">
-            <!-- Healthcare Card -->
-            <div class="industry-card animate" data-industry="healthcare">
-                <div class="card-header">
-                    <div class="industry-icon healthcare">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="card-title" data-translate="industries.healthcare.title">Healthcare</h3>
-                </div>
-                <div class="card-content">
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <div class="feature-icon">🏥</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.healthcare.features.virtual_assistant.title">Virtual Health Assistant</h4>
-                                <p data-translate="industries.healthcare.features.virtual_assistant.description">24/7 patient support and symptom assessment</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📊</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.healthcare.features.patient_management.title">Patient Management</h4>
-                                <p data-translate="industries.healthcare.features.patient_management.description">Intelligent care coordination and monitoring</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🔍</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.healthcare.features.symptom_checker.title">Symptom Checker</h4>
-                                <p data-translate="industries.healthcare.features.symptom_checker.description">AI-powered diagnostic assistance</p>
+                <!-- Customizable Name & Avatar -->
+                <div class="feature-item feature-left">
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="avatar-showcase">
+                                <div class="avatar-option avatar-1">👩‍💼</div>
+                                <div class="avatar-option avatar-2">🤖</div>
+                                <div class="avatar-option avatar-3">👨‍💻</div>
+                                <div class="avatar-option avatar-4">👩‍🔬</div>
                             </div>
                         </div>
                     </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Customizable Name & Avatar.</h3>
+                        <h4 class="feature-subtitle">Personalize Emma's appearance and identity.</h4>
+                        <p class="feature-description">Match your brand identity with customizable avatars, names, and personality traits that reflect your company culture.</p>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    <button class="btn btn-outline" data-translate="common.learn_more">Learn More</button>
-                </div>
-            </div>
 
-            <!-- Banking Card -->
-            <div class="industry-card animate" data-industry="banking">
-                <div class="card-header">
-                    <div class="industry-icon banking">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
+                <!-- Enterprise-Grade Security -->
+                <div class="feature-item feature-right">
+                    <div class="feature-content">
+                        <h3 class="feature-title">Enterprise-Grade Security.</h3>
+                        <h4 class="feature-subtitle">Bank-level encryption and compliance.</h4>
+                        <p class="feature-description">SOC 2, HIPAA, and GDPR certified with military-grade encryption ensuring your data is always protected and compliant.</p>
                     </div>
-                    <h3 class="card-title" data-translate="industries.banking.title">Banking</h3>
-                </div>
-                <div class="card-content">
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <div class="feature-icon">🛡️</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.banking.features.fraud_detection.title">Fraud Detection</h4>
-                                <p data-translate="industries.banking.features.fraud_detection.description">Real-time transaction monitoring and protection</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">💰</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.banking.features.personal_finance.title">Personal Finance Agent</h4>
-                                <p data-translate="industries.banking.features.personal_finance.description">Intelligent budgeting and investment advice</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">💬</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.banking.features.chatbot_banker.title">Chatbot Banker</h4>
-                                <p data-translate="industries.banking.features.chatbot_banker.description">24/7 customer service and account management</p>
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="security-shield">
+                                <div class="shield-layer layer-1">🛡️</div>
+                                <div class="shield-layer layer-2">🔒</div>
+                                <div class="shield-layer layer-3">🔐</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="btn btn-outline" data-translate="common.learn_more">Learn More</button>
-                </div>
-            </div>
 
-            <!-- Education Card -->
-            <div class="industry-card animate" data-industry="education">
-                <div class="card-header">
-                    <div class="industry-icon education">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                        </svg>
-                    </div>
-                    <h3 class="card-title" data-translate="industries.education.title">Education</h3>
-                </div>
-                <div class="card-content">
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <div class="feature-icon">🎓</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.education.features.ai_tutor.title">AI Tutor</h4>
-                                <p data-translate="industries.education.features.ai_tutor.description">Personalized learning experiences and guidance</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📝</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.education.features.adaptive_testing.title">Adaptive Testing</h4>
-                                <p data-translate="industries.education.features.adaptive_testing.description">Dynamic assessment based on student performance</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📚</div>
-                            <div class="feature-text">
-                                <h4 data-translate="industries.education.features.curriculum_design.title">Curriculum Design</h4>
-                                <p data-translate="industries.education.features.curriculum_design.description">AI-powered educational content creation</p>
+                <!-- Industry & Domain Agnostic -->
+                <div class="feature-item feature-left">
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="industry-grid">
+                                <div class="industry-icon">🏥</div>
+                                <div class="industry-icon">🏦</div>
+                                <div class="industry-icon">🎓</div>
+                                <div class="industry-icon">🛒</div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-footer">
-                    <button class="btn btn-outline" data-translate="common.learn_more">Learn More</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Additional Industries Row -->
-        <div class="industries-grid second-row">
-            <!-- Manufacturing Card -->
-            <div class="industry-card animate" data-industry="manufacturing">
-                <div class="card-header">
-                    <div class="industry-icon manufacturing">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                            <line x1="8" y1="21" x2="16" y2="21"></line>
-                            <line x1="12" y1="17" x2="12" y2="21"></line>
-                        </svg>
-                    </div>
-                    <h3 class="card-title">Manufacturing</h3>
-                </div>
-                <div class="card-content">
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <div class="feature-icon">🏭</div>
-                            <div class="feature-text">
-                                <h4>Smart Production</h4>
-                                <p>AI-driven quality control and optimization</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🔧</div>
-                            <div class="feature-text">
-                                <h4>Predictive Maintenance</h4>
-                                <p>Prevent equipment failures before they happen</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📊</div>
-                            <div class="feature-text">
-                                <h4>Supply Chain AI</h4>
-                                <p>Intelligent inventory and logistics management</p>
-                            </div>
-                        </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Industry & Domain Agnostic.</h3>
+                        <h4 class="feature-subtitle">Adapts seamlessly to any industry.</h4>
+                        <p class="feature-description">From healthcare to finance, education to retail - Emma understands and adapts to your specific industry requirements and workflows.</p>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="btn btn-outline">Learn More</button>
-                </div>
-            </div>
 
-            <!-- Retail Card -->
-            <div class="industry-card animate" data-industry="retail">
-                <div class="card-header">
-                    <div class="industry-icon retail">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                            <polyline points="9,22 9,12 15,12 15,22"></polyline>
-                        </svg>
+                <!-- 24/7 Availability -->
+                <div class="feature-item feature-right">
+                    <div class="feature-content">
+                        <h3 class="feature-title">24/7 Availability.</h3>
+                        <h4 class="feature-subtitle">Never sleeps, never takes breaks.</h4>
+                        <p class="feature-description">Emma is always ready to assist your customers around the clock with 99.9% uptime guarantee and instant response times.</p>
                     </div>
-                    <h3 class="card-title">Retail</h3>
-                </div>
-                <div class="card-content">
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <div class="feature-icon">🛒</div>
-                            <div class="feature-text">
-                                <h4>Personalized Shopping</h4>
-                                <p>AI-powered product recommendations</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📱</div>
-                            <div class="feature-text">
-                                <h4>Virtual Assistant</h4>
-                                <p>24/7 customer support and guidance</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📈</div>
-                            <div class="feature-text">
-                                <h4>Demand Forecasting</h4>
-                                <p>Smart inventory and pricing optimization</p>
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="clock-animation">
+                                <div class="clock-face">🕐</div>
+                                <div class="clock-face">🕑</div>
+                                <div class="clock-face">🕒</div>
+                                <div class="clock-face">🕓</div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="btn btn-outline">Learn More</button>
-                </div>
-            </div>
 
-            <!-- Finance Card -->
-            <div class="industry-card animate" data-industry="finance">
-                <div class="card-header">
-                    <div class="industry-icon finance">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                    </div>
-                    <h3 class="card-title">Finance</h3>
-                </div>
-                <div class="card-content">
-                    <div class="feature-list">
-                        <div class="feature-item">
-                            <div class="feature-icon">💼</div>
-                            <div class="feature-text">
-                                <h4>Risk Assessment</h4>
-                                <p>Advanced fraud detection and compliance</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📊</div>
-                            <div class="feature-text">
-                                <h4>Algorithmic Trading</h4>
-                                <p>AI-driven investment strategies</p>
-                            </div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🤖</div>
-                            <div class="feature-text">
-                                <h4>Financial Advisor</h4>
-                                <p>Personalized wealth management</p>
+                <!-- Seamless Integrations -->
+                <div class="feature-item feature-left">
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="integration-flow">
+                                <div class="integration-node node-1">📊</div>
+                                <div class="integration-node node-2">💬</div>
+                                <div class="integration-node node-3">📧</div>
+                                <div class="integration-node node-4">🔗</div>
                             </div>
                         </div>
                     </div>
+                    <div class="feature-content">
+                        <h3 class="feature-title">Seamless Integrations.</h3>
+                        <h4 class="feature-subtitle">Connects effortlessly with your existing tools.</h4>
+                        <p class="feature-description">Integrate with 50+ platforms including CRM systems, messaging platforms, and custom APIs for a unified workflow experience.</p>
+                    </div>
                 </div>
-                <div class="card-footer">
-                    <button class="btn btn-outline">Learn More</button>
-                </div>
-            </div>
-        </div>
 
-        <!-- Industry Solutions CTA -->
-        <div class="industries-cta">
-            <div class="cta-content">
-                <div class="cta-icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
-                    </svg>
-                </div>
-                <h3>Ready to Transform Your Industry?</h3>
-                <p>Join thousands of organizations already using Emma's AI agents to revolutionize their operations and deliver exceptional results.</p>
-                <div class="cta-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">500+</div>
-                        <div class="stat-label">Companies</div>
+                <!-- Post-call Analytics -->
+                <div class="feature-item feature-right">
+                    <div class="feature-content">
+                        <h3 class="feature-title">Post-call Analytics</h3>
+                        <h4 class="feature-subtitle">Comprehensive insights and metrics to optimize performance and measure success.</h4>
+                        <p class="feature-description">Get detailed analytics with real-time reporting and 50+ key metrics to track performance, measure success, and make data-driven decisions for your business growth.</p>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">50+</div>
-                        <div class="stat-label">Industries</div>
+                    <div class="feature-visual">
+                        <div class="feature-animation">
+                            <div class="analytics-dashboard">
+                                <div class="chart-container">
+                                    <div class="chart-bars">
+                                        <div class="bar bar-1"></div>
+                                        <div class="bar bar-2"></div>
+                                        <div class="bar bar-3"></div>
+                                        <div class="bar bar-4"></div>
+                                        <div class="bar bar-5"></div>
+                                    </div>
+                                </div>
+                                <div class="metrics-grid">
+                                    <div class="metric-item">📊</div>
+                                    <div class="metric-item">📈</div>
+                                    <div class="metric-item">📉</div>
+                                    <div class="metric-item">🎯</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat-item">
-                        <div class="stat-number">99.9%</div>
-                        <div class="stat-label">Uptime</div>
-                    </div>
-                </div>
-                <div class="cta-actions">
-                    <button class="btn btn-primary btn-large">Start Free Trial</button>
-                    <button class="btn btn-ghost btn-large">Schedule Demo</button>
-                </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Security & Compliance Badges Section -->
-    <section class="badges-section" style="padding: 3rem 2rem; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); text-align: center;">
+    <!-- Emma Process Section -->
+    <section id="emma-process" class="emma-process section">
+        <div class="container">
+            <div class="process-content">
+                <!-- Left Side: Animated Process Visualization -->
+                <div class="process-visual">
+                    <div class="process-animation">
+                        <div class="process-bar">
+                            <div class="process-segment segment-1" data-step="analyze">
+                                <div class="segment-label">Analyze</div>
+                                <div class="segment-progress"></div>
+                            </div>
+                            <div class="process-segment segment-2" data-step="learn">
+                                <div class="segment-label">Learn</div>
+                                <div class="segment-progress"></div>
+                            </div>
+                            <div class="process-segment segment-3" data-step="adapt">
+                                <div class="segment-label">Adapt</div>
+                                <div class="segment-progress"></div>
+                            </div>
+                            <div class="process-segment segment-4" data-step="deliver">
+                                <div class="segment-label">Deliver</div>
+                                <div class="segment-progress"></div>
+                            </div>
+                        </div>
+                        <div class="process-flow">
+                            <div class="flow-arrow arrow-1"></div>
+                            <div class="flow-arrow arrow-2"></div>
+                            <div class="flow-arrow arrow-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Content -->
+                <div class="process-text">
+                    <h2 class="process-title">Built for the world's largest enterprises.</h2>
+                    <h3 class="process-heading">Creating value in weeks, not months.</h3>
+                    <p class="process-description">Don't waste months on complex AI implementations that don't deliver results. Work with Emma's intelligent automation that understands your business, learns from your data, and adapts to your unique needs.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Emma Architecture Section -->
+    <section id="architecture" class="architecture section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" style="background: linear-gradient(135deg, #8b5cf6, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem;">Emma Architecture</h2>
+                <p class="section-subtitle">See how Emma processes your requests through our intelligent system</p>
+            </div>
+        
+            <div class="architecture-flow">
+                <!-- Flowing Process Visualization -->
+                <div class="process-container">
+                    <!-- Step 1: Input -->
+                    <div class="process-node" data-step="1">
+                        <div class="node-orb">
+                            <div class="orb-glow"></div>
+                            <div class="orb-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="node-content">
+                            <h3>User Input</h3>
+                            <p>Voice, text, or multi-modal input in any language</p>
+                            <div class="floating-tags">
+                                <span class="floating-tag">Voice</span>
+                                <span class="floating-tag">Text</span>
+                                <span class="floating-tag">Multi-modal</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flow Line 1 -->
+                    <div class="flow-line">
+                        <div class="flow-particles">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Processing -->
+                    <div class="process-node" data-step="2">
+                        <div class="node-orb">
+                            <div class="orb-glow"></div>
+                            <div class="orb-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="3"/>
+                                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="node-content">
+                            <h3>AI Processing</h3>
+                            <p>Natural language understanding and context analysis</p>
+                            <div class="floating-tags">
+                                <span class="floating-tag">NLP</span>
+                                <span class="floating-tag">Context</span>
+                                <span class="floating-tag">Intent</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flow Line 2 -->
+                    <div class="flow-line">
+                        <div class="flow-particles">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Intelligence -->
+                    <div class="process-node" data-step="3">
+                        <div class="node-orb">
+                            <div class="orb-glow"></div>
+                            <div class="orb-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="node-content">
+                            <h3>Intelligence Layer</h3>
+                            <p>Advanced reasoning and decision making</p>
+                            <div class="floating-tags">
+                                <span class="floating-tag">Reasoning</span>
+                                <span class="floating-tag">Memory</span>
+                                <span class="floating-tag">Learning</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flow Line 3 -->
+                    <div class="flow-line">
+                        <div class="flow-particles">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Response -->
+                    <div class="process-node" data-step="4">
+                        <div class="node-orb">
+                            <div class="orb-glow"></div>
+                            <div class="orb-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="node-content">
+                            <h3>Response Generation</h3>
+                            <p>Contextual and personalized response delivery</p>
+                            <div class="floating-tags">
+                                <span class="floating-tag">Personalized</span>
+                                <span class="floating-tag">Contextual</span>
+                                <span class="floating-tag">Natural</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flow Line 4 -->
+                    <div class="flow-line">
+                        <div class="flow-particles">
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                            <div class="particle"></div>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Integration -->
+                    <div class="process-node" data-step="5">
+                        <div class="node-orb">
+                            <div class="orb-glow"></div>
+                            <div class="orb-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="node-content">
+                            <h3>System Integration</h3>
+                            <p>Seamless connection with your existing tools</p>
+                            <div class="floating-tags">
+                                <span class="floating-tag">APIs</span>
+                                <span class="floating-tag">Webhooks</span>
+                                <span class="floating-tag">Real-time</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Security & Compliance Badges Section - COMMENTED OUT -->
+    <!-- 
+    <section class="badges-section" style="padding: 1.5rem 2rem; background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%); text-align: center;">
         <div style="max-width: 1200px; margin: 0 auto;">
-            <h2 style="font-size: 2.2rem; margin-bottom: 1rem; color: #f8fafc;">Trusted & Certified</h2>
-            <p style="font-size: 1.1rem; margin-bottom: 2.5rem; color: #94a3b8; max-width: 600px; margin-left: auto; margin-right: auto;">Our platform meets the highest security and compliance standards to protect your data and ensure regulatory compliance.</p>
+            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: #f8fafc;">Trusted & Certified</h2>
+            <p style="font-size: 1rem; margin-bottom: 1rem; color: #94a3b8; max-width: 600px; margin-left: auto; margin-right: auto;">Our platform meets the highest security and compliance standards to protect your data and ensure regulatory compliance.</p>
             
-            <!-- HIPAA & SOC2 Badges Scroller -->
             <div class="badges-scroller-container">
                 <div class="badges-scroller">
-                    <!-- HIPAA Badge -->
                     <div class="badge-item">
                         <div class="badge-image">
                             <img src="/Logo And Recording/HIPPA_Badge-removebg-preview.png" alt="HIPAA Compliant" />
                         </div>
                     </div>
                     
-                    <!-- SOC2 Badge -->
                     <div class="badge-item">
                         <div class="badge-image">
                             <img src="/Logo And Recording/SOC 2 Badge.png" alt="SOC2 Certified" />
@@ -1283,18 +2535,10 @@
             </div>
         </div>
     </section>
+    -->
 
-    <!-- CTA Section -->
-    <section style="padding: 4rem 2rem; background: #0f172a; text-align: center;">
-        <div style="max-width: 800px; margin: 0 auto;">
-            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;" data-translate="cta.title">Ready to Transform Your Operations?</h2>
-            <p style="font-size: 1.25rem; margin-bottom: 2rem; color: #94a3b8;" data-translate="cta.description">Let's work together to create the perfect AI solution for your organization.</p>
-            <a href="/contact" class="btn btn-primary" data-translate="cta.button">Get Started Today</a>
-        </div>
-    </section>
 
-    <!-- Footer Separator -->
-    <div class="footer-separator"></div>
+    <!-- Footer Separator - REMOVED to eliminate spacing -->
 
     <!-- World-Class Footer -->
     <!-- Footer Component -->
@@ -1549,24 +2793,54 @@
                 });
             });
 
-            // Stats counter animation
-            gsap.utils.toArray('.stat-number').forEach(stat => {
-                const endValue = parseInt(stat.textContent);
-                gsap.from(stat, {
-                    duration: 2,
-                    innerHTML: 0,
-                    ease: "power2.out",
-                    snap: { innerHTML: 1 },
-                    onUpdate: function() {
-                        stat.textContent = Math.ceil(this.targets()[0].innerHTML);
-                    },
-                    scrollTrigger: {
-                        trigger: stat,
-                        start: "top 80%",
-                        toggleActions: "play none none reverse"
-                    }
-                });
-            });
+            // Stats counter animation - DISABLED to prevent NaN issues
+            // gsap.utils.toArray('.stat-number').forEach(stat => {
+            //     const originalText = stat.textContent;
+            //     const hasPercentage = originalText.includes('%');
+            //     const hasPlus = originalText.includes('+');
+            //     const hasSlash = originalText.includes('/');
+            //     
+            //     // Skip animation for non-numeric values
+            //     if (hasSlash || originalText === '24/7' || originalText === 'Free' || originalText === '24h') {
+            //         return;
+            //     }
+            //     
+            //     let endValue;
+            //     if (hasPercentage) {
+            //         endValue = parseFloat(originalText.replace('%', ''));
+            //     } else if (hasPlus) {
+            //         endValue = parseInt(originalText.replace('+', ''));
+            //     } else {
+            //         endValue = parseFloat(originalText);
+            //     }
+            //     
+            //     // Skip if not a valid number
+            //     if (isNaN(endValue)) {
+            //         return;
+            //     }
+            //     
+            //     gsap.from(stat, {
+            //         duration: 2,
+            //         innerHTML: 0,
+            //         ease: "power2.out",
+            //         snap: { innerHTML: 1 },
+            //         onUpdate: function() {
+            //             const currentValue = Math.ceil(this.targets()[0].innerHTML);
+            //             if (hasPercentage) {
+            //                 stat.textContent = currentValue + '%';
+            //             } else if (hasPlus) {
+            //                 stat.textContent = currentValue + '+';
+            //             } else {
+            //                 stat.textContent = currentValue;
+            //             }
+            //         },
+            //         scrollTrigger: {
+            //             trigger: stat,
+            //             start: "top 80%",
+            //             toggleActions: "play none none reverse"
+            //         }
+            //     });
+            // });
 
             // Parallax effect for hero visual
             gsap.to('.hero-visual', {
@@ -1582,7 +2856,7 @@
 
             // Floating animation for avatar
             gsap.to('.avatar-box', {
-                y: -10,
+                y: -5,
                 duration: 2,
                 ease: "power2.inOut",
                 yoyo: true,
@@ -1794,17 +3068,222 @@
             });
         });
 
-        // Audio language selection
+        // Audio language selection with messages and audio playback
+        let currentAudio = null;
+        let isPlaying = false;
+        
+        // Coming Soon Popup functionality
+        const comingSoonPopup = document.getElementById('coming-soon-popup');
+        const heroPrimaryBtn = document.getElementById('hero-primary-btn');
+        const popupClose = document.getElementById('popup-close');
+        const notifyMeBtn = document.getElementById('notify-me-btn');
+        const notifyEmail = document.getElementById('notify-email');
+        const notificationStatus = document.getElementById('notification-status');
+        
+        // Show popup when "Talk to Her Now" is clicked
+        if (heroPrimaryBtn) {
+            heroPrimaryBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                showComingSoonPopup();
+            });
+        }
+        
+        // Close popup when close button is clicked
+        if (popupClose) {
+            popupClose.addEventListener('click', function() {
+                hideComingSoonPopup();
+            });
+        }
+        
+        // Close popup when backdrop is clicked (but not when scrolling)
+        if (comingSoonPopup) {
+            comingSoonPopup.addEventListener('click', function(e) {
+                // Only close if clicking directly on the backdrop, not during scroll
+                if (e.target.classList.contains('popup-backdrop')) {
+                    hideComingSoonPopup();
+                }
+            });
+        }
+        
+        // Handle notify me button
+        if (notifyMeBtn) {
+            notifyMeBtn.addEventListener('click', function() {
+                handleNotifyMe();
+            });
+        }
+        
+        // Handle Enter key in email input
+        if (notifyEmail) {
+            notifyEmail.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleNotifyMe();
+                }
+            });
+        }
+        
+        // Close popup with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && comingSoonPopup.classList.contains('show')) {
+                hideComingSoonPopup();
+            }
+        });
+        
+        function showComingSoonPopup() {
+            if (comingSoonPopup) {
+                // First, scroll to top of page to ensure popup is fully visible
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                comingSoonPopup.classList.add('show');
+                // Allow background scrolling so users can access navigation
+                // document.body.style.overflow = 'hidden'; // Removed this line
+                
+                // Ensure popup is centered and visible after a short delay
+                setTimeout(() => {
+                    comingSoonPopup.style.animation = 'popupFadeIn 0.4s ease-out';
+                    
+                    // Force scroll to top again to ensure popup is fully visible
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Additional check for mobile devices
+                    if (window.innerHeight < 600) {
+                        // For smaller screens, ensure we're at the very top
+                        window.scrollTo(0, 0);
+                    }
+                }, 150);
+            }
+        }
+        
+        function hideComingSoonPopup() {
+            if (comingSoonPopup) {
+                comingSoonPopup.classList.remove('show');
+                // No need to restore scrolling since we never disabled it
+            }
+        }
+        
+        function handleNotifyMe() {
+            const email = notifyEmail.value.trim();
+            
+            if (!email) {
+                showNotificationStatus('Please enter your email address', 'error');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showNotificationStatus('Please enter a valid email address', 'error');
+                return;
+            }
+            
+            // Simulate API call to save email
+            saveEmailForNotification(email);
+        }
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function showNotificationStatus(message, type) {
+            notificationStatus.textContent = message;
+            notificationStatus.className = `notification-status ${type}`;
+            
+            if (type === 'success') {
+                setTimeout(() => {
+                    hideComingSoonPopup();
+                }, 2000);
+            }
+        }
+        
+        function saveEmailForNotification(email) {
+            // Show loading state
+            notifyMeBtn.innerHTML = '<span>Adding you to the list...</span>';
+            notifyMeBtn.disabled = true;
+            
+            // Call the API endpoint
+            fetch('/api/notifications/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: email,
+                    source: 'talking_feature_popup'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    showNotificationStatus(data.message, 'success');
+                    
+                    // Update button to show success
+                    notifyMeBtn.innerHTML = '<span>You\'re on the list! 🎉</span>';
+                    notifyMeBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                    
+                    console.log('✅ Email subscription successful:', email);
+                } else {
+                    // Show error message
+                    showNotificationStatus(data.error || 'Failed to subscribe. Please try again.', 'error');
+                    
+                    // Reset button
+                    notifyMeBtn.innerHTML = '<span>Notify Me When Ready</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>';
+                    notifyMeBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('❌ Email subscription error:', error);
+                
+                // Show error message
+                showNotificationStatus('Failed to subscribe. Please check your connection and try again.', 'error');
+                
+                // Reset button
+                notifyMeBtn.innerHTML = '<span>Notify Me When Ready</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>';
+                notifyMeBtn.disabled = false;
+            });
+        }
+        
+        const languageMessages = {
+            'en': "Hi, I'm Emma! Your intelligent partner for smarter solutions.<br><br>Curious to learn more about me?<br>Take a look around and book a demo - I'd love to show you what I can do for you.",
+            'ar': "مرحباً، أنا إيما! شريكتك الذكية لحلولٍ أكثر ذكاءً.<br><br>هل ترغب في معرفة المزيد عني؟<br>تصفّح الموقع واحجز عرضاً توضيحياً — يسعدني أن أُريك ما يمكنني فعله من أجلك.",
+            'fr': "Bonjour, je suis Emma ! Votre partenaire intelligent pour des solutions plus malignes.<br><br>Envie d'en savoir plus sur moi ?<br>Parcourez le site et réservez une démo — j'aimerais vous montrer tout ce que je peux faire pour vous."
+        };
+        
         document.querySelectorAll('.audio-language').forEach(lang => {
             lang.addEventListener('click', function() {
+                const langCode = this.getAttribute('data-lang');
+                const audioFile = this.getAttribute('data-audio');
+                
+                // Check if this is the same button that's currently playing
+                const isCurrentlyPlaying = this.classList.contains('playing');
+                
+                // Stop current audio if playing
+                if (currentAudio && !currentAudio.paused) {
+                    currentAudio.pause();
+                    currentAudio.currentTime = 0;
+                    isPlaying = false;
+                    document.querySelectorAll('.audio-language').forEach(l => l.classList.remove('playing'));
+                }
+                
+                // If clicking the same button that was playing, just stop (toggle off)
+                if (isCurrentlyPlaying) {
+                    // Keep the active state but remove playing state
+                    this.classList.remove('playing');
+                    return; // Exit early - just stop the audio
+                }
+                
                 // Remove active class from all
                 document.querySelectorAll('.audio-language').forEach(l => l.classList.remove('active'));
-                // Add active class to clicked
+                
+                // Add active class to clicked button (this ensures it stays visible)
                 this.classList.add('active');
                 
-                // Update avatar comment
-                const langName = this.querySelector('.lang-name').textContent;
-                document.getElementById('avatar-comment-text').innerHTML = `Hi!<br>I Am Emma Your ${langName} Virtual Voice Assistant`;
+                // Update avatar comment with new message
+                document.getElementById('avatar-comment-text').innerHTML = languageMessages[langCode];
                 
                 // Update avatar image based on language
                 const flag = this.querySelector('.flag').textContent;
@@ -1813,8 +3292,44 @@
                     avatarImg.src = '/Logo And Recording/US.jpeg';
                 } else if (flag === '🇸🇦') {
                     avatarImg.src = '/Logo And Recording/Saudi.jpeg';
-                } else if (flag === '🇮🇳') {
-                    avatarImg.src = '/Logo And Recording/India.jpeg';
+                } else if (flag === '🇫🇷') {
+                    avatarImg.src = '/Logo And Recording/image (3).jpeg';
+                }
+                
+                // Play audio
+                if (audioFile) {
+                    currentAudio = new Audio(audioFile);
+                    currentAudio.play().then(() => {
+                        isPlaying = true;
+                        this.classList.add('playing');
+                        // Add a small visual feedback
+                        this.style.transform = 'scale(1.05)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 200);
+                    }).catch(error => {
+                        console.log('Audio playback failed:', error);
+                        this.classList.remove('playing');
+                    });
+                    
+                    // Handle audio end
+                    currentAudio.addEventListener('ended', () => {
+                        isPlaying = false;
+                        this.classList.remove('playing');
+                    });
+                    
+                    // Handle audio pause
+                    currentAudio.addEventListener('pause', () => {
+                        isPlaying = false;
+                        this.classList.remove('playing');
+                    });
+                    
+                    // Handle audio error
+                    currentAudio.addEventListener('error', () => {
+                        isPlaying = false;
+                        this.classList.remove('playing');
+                        console.log('Audio error occurred');
+                    });
                 }
             });
         });
@@ -2105,54 +3620,8 @@
             return emailRegex.test(email);
         }
 
-        // Mobile Menu Toggle Functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-            const navLinks = document.getElementById('navLinks');
-            
-            if (mobileMenuToggle && navLinks) {
-                mobileMenuToggle.addEventListener('click', function() {
-                    // Toggle mobile menu
-                    navLinks.classList.toggle('mobile-open');
-                    mobileMenuToggle.classList.toggle('active');
-                    
-                    // Prevent body scroll when menu is open
-                    if (navLinks.classList.contains('mobile-open')) {
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        document.body.style.overflow = '';
-                    }
-                });
-                
-                // Close mobile menu when clicking on a link
-                const navLinkElements = navLinks.querySelectorAll('.nav-link');
-                navLinkElements.forEach(link => {
-                    link.addEventListener('click', function() {
-                        navLinks.classList.remove('mobile-open');
-                        mobileMenuToggle.classList.remove('active');
-                        document.body.style.overflow = '';
-                    });
-                });
-                
-                // Close mobile menu when clicking outside
-                document.addEventListener('click', function(event) {
-                    if (!mobileMenuToggle.contains(event.target) && !navLinks.contains(event.target)) {
-                        navLinks.classList.remove('mobile-open');
-                        mobileMenuToggle.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                });
-                
-                // Close mobile menu on window resize to desktop size
-                window.addEventListener('resize', function() {
-                    if (window.innerWidth > 768) {
-                        navLinks.classList.remove('mobile-open');
-                        mobileMenuToggle.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                });
-            }
-        });
+        // Mobile menu is handled by load-components.js
+        // No duplicate initialization needed
     </script>
     
     <!-- Language Debug Script -->

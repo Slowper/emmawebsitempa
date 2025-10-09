@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>All Resources - Emma CMS</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Quill Editor -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
+    <!-- TinyMCE Editor -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.7.0/tinymce.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -337,6 +336,162 @@
             background: #dcfce7;
             color: #166534;
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid #e2e8f0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f9fafb;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .image-preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .creation-date-info {
+            background: #f0f4ff;
+            border: 1px solid #667eea;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            color: #374151;
+        }
+
+        .creation-date-info .label {
+            font-weight: 600;
+            color: #667eea;
+        }
     </style>
 </head>
 <body>
@@ -363,15 +518,7 @@
                 </a>
                 <a href="cms-blogs.html" class="nav-item">
                     <i class="fas fa-blog"></i>
-                    Blog Posts
-                </a>
-                <a href="cms-case-studies.html" class="nav-item">
-                    <i class="fas fa-chart-line"></i>
-                    Case Studies
-                </a>
-                <a href="cms-use-cases.html" class="nav-item">
-                    <i class="fas fa-cogs"></i>
-                    Use Cases
+                    Create Post
                 </a>
             </div>
 
@@ -439,6 +586,130 @@
         </main>
     </div>
 
+    <!-- Resource Edit Modal -->
+    <div class="modal" id="resource-edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Resource</h3>
+                <button class="modal-close" onclick="closeResourceEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="creation-date-info">
+                    <span class="label">Original Creation Date:</span>
+                    <span id="creation-date-display"></span>
+                </div>
+                
+                <form id="resource-edit-form">
+                    <div class="form-group">
+                        <label class="form-label">Title *</label>
+                        <input type="text" class="form-input" id="edit-resource-title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Type *</label>
+                        <select class="form-input form-select" id="edit-resource-type" required>
+                            <option value="">Select type</option>
+                            <option value="blog">Blog</option>
+                            <option value="case-study">Case Study</option>
+                            <option value="use-case">Use Case</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Excerpt</label>
+                        <textarea class="form-input form-textarea" id="edit-resource-excerpt" placeholder="Brief description of the resource"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Content *</label>
+                        <textarea id="edit-resource-editor" class="form-input form-textarea" style="min-height: 400px;" placeholder="Enter your content here..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Industry</label>
+                        <select class="form-input form-select" id="edit-resource-industry">
+                            <option value="">Select industry</option>
+                        </select>
+                        <button type="button" onclick="loadIndustriesForEditDropdown()" style="margin-top: 5px; padding: 5px 10px; background: #007cba; color: white; border: none; border-radius: 3px; cursor: pointer;">🔄 Reload Industries</button>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tags</label>
+                        <input type="text" class="form-input" id="edit-resource-tags" placeholder="Enter tags separated by commas">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Featured Image</label>
+                        <div class="file-upload-area" onclick="document.getElementById('edit-featured-image-input').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; color: #64748b; margin-bottom: 1rem;"></i>
+                            <p>Click to upload or drag and drop</p>
+                            <p style="font-size: 0.875rem; color: #64748b;">PNG, JPG, GIF up to 10MB</p>
+                        </div>
+                        <input type="file" id="edit-featured-image-input" accept="image/*" style="display: none;" onchange="handleEditImageUpload(this, 'edit-featured-image-preview')">
+                        <div id="edit-featured-image-preview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Author Name *</label>
+                        <input type="text" class="form-input" id="edit-resource-author" placeholder="Enter author name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Author Image</label>
+                        <div class="file-upload-area" onclick="document.getElementById('edit-author-image-input').click()">
+                            <i class="fas fa-user-circle" style="font-size: 2rem; color: #64748b; margin-bottom: 1rem;"></i>
+                            <p>Click to upload author image</p>
+                        </div>
+                        <input type="file" id="edit-author-image-input" accept="image/*" style="display: none;" onchange="handleEditImageUpload(this, 'edit-author-image-preview')">
+                        <div id="edit-author-image-preview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Gallery Images</label>
+                        <div class="file-upload-area" onclick="document.getElementById('edit-gallery-input').click()">
+                            <i class="fas fa-images" style="font-size: 2rem; color: #64748b; margin-bottom: 1rem;"></i>
+                            <p>Click to upload multiple images</p>
+                        </div>
+                        <input type="file" id="edit-gallery-input" accept="image/*" multiple style="display: none;" onchange="handleEditGalleryUpload(this)">
+                        <div id="edit-gallery-preview" class="image-preview"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-input form-select" id="edit-resource-status">
+                            <option value="draft">Draft</option>
+                            <option value="published">Published</option>
+                            <option value="archived">Archived</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SEO Title</label>
+                        <input type="text" class="form-input" id="edit-resource-meta-title" placeholder="Leave empty to use main title">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SEO Description</label>
+                        <textarea class="form-input form-textarea" id="edit-resource-meta-description" placeholder="Leave empty to use excerpt"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">SEO Keywords</label>
+                        <input type="text" class="form-input" id="edit-resource-meta-keywords" placeholder="Enter keywords separated by commas">
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closeResourceEditModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="/cms-admin.js"></script>
     <script>
         // Initialize the page
@@ -451,7 +722,7 @@
             try {
                 console.log('🔄 Loading all resources...');
                 
-                const response = await fetch('/api/resources?limit=50');
+                const response = await fetch('http://localhost:3001/api/resources?limit=50');
                 const data = await response.json();
                 const resources = data.resources || [];
                 
@@ -489,7 +760,6 @@
                                 <tr>
                                     <td>
                                         <div class="resource-title">${resource.title}</div>
-                                        <div class="resource-excerpt">${resource.excerpt || ''}</div>
                                     </td>
                                     <td>
                                         <span class="type-badge type-${resource.type}">
@@ -529,15 +799,64 @@
             window.location.href = '/cms-admin-local.html?action=new';
         }
 
-        function editResource(id) {
-            // Redirect to main admin page with edit modal
-            window.location.href = '/cms-admin-local.html?action=edit&id=' + id;
+        async function editResource(id) {
+            try {
+                console.log('✏️ Editing resource:', id);
+                
+                // Fetch the resource data
+                const response = await fetch(`http://localhost:3001/api/resources/${id}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch resource');
+                }
+                
+                const resource = await response.json();
+                console.log('📝 Resource data:', resource);
+                
+                // Open edit modal
+                openResourceEditModal(resource);
+                
+            } catch (error) {
+                console.error('❌ Error loading resource:', error);
+                alert('Failed to load resource for editing. Please try again.');
+            }
         }
 
-        function deleteResource(id) {
-            if (confirm('Are you sure you want to delete this resource?')) {
-                // Implement delete functionality
-                console.log('Delete resource:', id);
+        async function deleteResource(id) {
+            if (!confirm('Are you sure you want to delete this resource?')) {
+                return;
+            }
+            
+            try {
+                console.log('🗑️ Deleting resource:', id);
+                
+                const token = localStorage.getItem('cms_token');
+                if (!token) {
+                    alert('Authentication required. Please login again.');
+                    window.location.href = '/cms-admin-local.html';
+                    return;
+                }
+                
+                const response = await fetch(`http://localhost:3001/api/resources/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    console.log('✅ Resource deleted successfully');
+                    alert('Resource deleted successfully!');
+                    // Reload the resources list
+                    loadAllResources();
+                } else {
+                    const data = await response.json();
+                    console.error('❌ Error deleting resource:', data.error);
+                    alert(data.error || 'Error deleting resource');
+                }
+            } catch (error) {
+                console.error('❌ Error deleting resource:', error);
+                alert('Error deleting resource');
             }
         }
 
@@ -545,6 +864,505 @@
             localStorage.removeItem('cms_token');
             window.location.href = '/cms-admin-local.html';
         }
+
+        // Resource Edit Modal Functions
+        function openResourceEditModal(resource) {
+            console.log('🚀 Opening resource edit modal for:', resource);
+            
+            const modal = document.getElementById('resource-edit-modal');
+            if (!modal) {
+                console.error('❌ Edit modal not found');
+                return;
+            }
+
+            // Display original creation date for digital proof
+            const creationDateDisplay = document.getElementById('creation-date-display');
+            if (creationDateDisplay && resource.created_at) {
+                creationDateDisplay.textContent = new Date(resource.created_at).toLocaleString();
+            }
+
+            // Populate form fields
+            document.getElementById('edit-resource-title').value = resource.title || '';
+            document.getElementById('edit-resource-type').value = resource.type || '';
+            document.getElementById('edit-resource-excerpt').value = resource.excerpt || '';
+            document.getElementById('edit-resource-author').value = resource.author || resource.author_name || '';
+            document.getElementById('edit-resource-status').value = resource.status || 'draft';
+            document.getElementById('edit-resource-tags').value = resource.tags || '';
+            document.getElementById('edit-resource-meta-title').value = resource.meta_title || '';
+            document.getElementById('edit-resource-meta-description').value = resource.meta_description || '';
+            document.getElementById('edit-resource-meta-keywords').value = resource.meta_keywords || '';
+
+            // Set industry
+            if (resource.industry_id) {
+                document.getElementById('edit-resource-industry').value = resource.industry_id;
+            }
+
+            // Store the resource ID for saving
+            modal.dataset.resourceId = resource.id;
+
+            // Show modal
+            modal.style.display = 'block';
+
+            // Load existing images immediately after showing modal
+            console.log('📸 Loading existing images...');
+            loadExistingImages(resource);
+
+            // Initialize TinyMCE editor after modal is shown
+            setTimeout(() => {
+                if (typeof tinymce !== 'undefined' && !tinymce.get('edit-resource-editor')) {
+                    console.log('🔧 Initializing TinyMCE for resource edit...');
+                    initTinyMCEEditorForResourceEdit(resource.content || '');
+                }
+            }, 300);
+        }
+
+        function closeResourceEditModal() {
+            const modal = document.getElementById('resource-edit-modal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            
+            // Clean up TinyMCE editor if it exists
+            if (typeof tinymce !== 'undefined' && tinymce.get('edit-resource-editor')) {
+                console.log('🧹 Cleaning up TinyMCE resource edit editor...');
+                tinymce.remove('#edit-resource-editor');
+            }
+        }
+
+        function loadExistingImages(resource) {
+            console.log('🖼️ Loading existing images for resource:', resource);
+            
+            // Load featured image - check multiple possible field names
+            const featuredPreview = document.getElementById('edit-featured-image-preview');
+            if (featuredPreview) {
+                const featuredImageUrl = resource.image_url || resource.featured_image || resource.image;
+                if (featuredImageUrl) {
+                    console.log('📸 Loading featured image:', featuredImageUrl);
+                    featuredPreview.innerHTML = `<img src="${featuredImageUrl}" alt="Featured image" style="width: 100px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">`;
+                } else {
+                    console.log('⚠️ No featured image found for resource');
+                    featuredPreview.innerHTML = '';
+                }
+            }
+
+            // Load author image - check multiple possible field names
+            const authorPreview = document.getElementById('edit-author-image-preview');
+            if (authorPreview) {
+                const authorImageUrl = resource.author_image || resource.authorImage || resource.author_img;
+                if (authorImageUrl) {
+                    console.log('👤 Loading author image:', authorImageUrl);
+                    authorPreview.innerHTML = `<img src="${authorImageUrl}" alt="Author image" style="width: 100px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">`;
+                } else {
+                    console.log('⚠️ No author image found for resource');
+                    authorPreview.innerHTML = '';
+                }
+            }
+
+            // Load gallery images
+            const galleryPreview = document.getElementById('edit-gallery-preview');
+            if (galleryPreview) {
+                const galleryImagesData = resource.gallery_images || resource.gallery || resource.images;
+                if (galleryImagesData) {
+                    try {
+                        let galleryImages;
+                        if (typeof galleryImagesData === 'string') {
+                            galleryImages = JSON.parse(galleryImagesData);
+                        } else {
+                            galleryImages = galleryImagesData;
+                        }
+                        
+                        if (Array.isArray(galleryImages) && galleryImages.length > 0) {
+                            console.log('🖼️ Loading gallery images:', galleryImages);
+                            galleryPreview.innerHTML = galleryImages.map(img => 
+                                `<img src="${img}" alt="Gallery image" style="width: 100px; height: 100px; object-fit: cover; border-radius: 6px; border: 1px solid #e2e8f0;">`
+                            ).join('');
+                        } else {
+                            console.log('⚠️ No gallery images found or empty array');
+                            galleryPreview.innerHTML = '';
+                        }
+                    } catch (e) {
+                        console.log('⚠️ Gallery images not in expected format:', galleryImagesData, e);
+                        galleryPreview.innerHTML = '';
+                    }
+                } else {
+                    console.log('⚠️ No gallery images data found');
+                    galleryPreview.innerHTML = '';
+                }
+            }
+        }
+
+        // Load industries for edit dropdown
+        async function loadIndustriesForEditDropdown() {
+            try {
+                console.log('🏭 Loading industries for edit dropdown...');
+                const response = await fetch('http://localhost:3001/api/industries');
+                const data = await response.json();
+                
+                const industries = Array.isArray(data) ? data : (data.industries || []);
+                console.log('📊 Industries data for edit:', industries);
+                
+                const select = document.getElementById('edit-resource-industry');
+                if (select) {
+                    select.innerHTML = '<option value="">Select industry</option>';
+                    if (industries && industries.length > 0) {
+                        industries.forEach(industry => {
+                            const option = document.createElement('option');
+                            option.value = industry.id;
+                            option.textContent = industry.name;
+                            select.appendChild(option);
+                        });
+                        console.log('✅ Industries loaded for edit dropdown:', industries.length, 'industries');
+                    } else {
+                        console.log('⚠️ No industries found for edit');
+                    }
+                } else {
+                    console.error('❌ Edit industry select element not found');
+                }
+            } catch (error) {
+                console.error('❌ Error loading industries for edit dropdown:', error);
+            }
+        }
+
+        // Image upload handlers for edit modal
+        function handleEditImageUpload(input, previewId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById(previewId);
+                    if (preview) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleEditGalleryUpload(input) {
+            const files = input.files;
+            const preview = document.getElementById('edit-gallery-preview');
+            if (preview) {
+                preview.innerHTML = '';
+                
+                Array.from(files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.alt = 'Gallery preview';
+                        preview.appendChild(img);
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+        }
+
+        // TinyMCE Editor Initialization for Resource Edit
+        function initTinyMCEEditorForResourceEdit(content) {
+            console.log('🔧 Initializing TinyMCE editor for resource edit...');
+            
+            tinymce.init({
+                selector: '#edit-resource-editor',
+                height: 500,
+                menubar: 'edit view insert format tools table help',
+                plugins: [
+                    'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                    'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                    'insertdatetime', 'media', 'table', 'help', 'wordcount', 'paste',
+                    'emoticons', 'codesample', 'pagebreak', 'nonbreaking', 'quickbars'
+                ],
+                toolbar: [
+                    'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough',
+                    'forecolor backcolor | alignleft aligncenter alignright alignjustify',
+                    'bullist convertToBullets | outdent indent | removeformat | cleanSpacing | formatContent | pagebreak | charmap emoticons',
+                    'fullscreen preview save | insertfile image media table link anchor codesample',
+                    'ltr rtl | code'
+                ],
+                toolbar_mode: 'sliding',
+                content_style: `
+                    body { 
+                        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; 
+                        font-size: 16px; 
+                        line-height: 1.6; 
+                        color: #333; 
+                        margin: 0; 
+                        padding: 20px;
+                    }
+                    
+                    /* Enhanced bullet styling */
+                    ul {
+                        margin: 16px 0;
+                        padding-left: 0;
+                    }
+                    
+                    li {
+                        margin: 12px 0;
+                        padding-left: 30px;
+                        position: relative;
+                        line-height: 1.6;
+                    }
+                    
+                    /* Custom bullet points */
+                    ul li::before {
+                        content: "•";
+                        color: #667eea;
+                        font-weight: bold;
+                        font-size: 18px;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                    }
+                    
+                    /* Professional bullet styling */
+                    .professional-bullet-list {
+                        list-style: none;
+                        padding: 0;
+                        margin: 1.5rem 0;
+                    }
+                    
+                    .professional-bullet-item {
+                        position: relative;
+                        padding: 0.75rem 0 0.75rem 3rem;
+                        margin-bottom: 0.75rem;
+                        background: #f8fafc;
+                        border-left: 4px solid #3b82f6;
+                        border-radius: 0 8px 8px 0;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                        line-height: 1.6;
+                        color: #374151;
+                        font-weight: 500;
+                    }
+                    
+                    .professional-bullet-item::before {
+                        content: "●";
+                        position: absolute;
+                        left: 1rem;
+                        top: 0.75rem;
+                        color: #3b82f6;
+                        font-size: 1.2rem;
+                        font-weight: bold;
+                    }
+                    
+                    .professional-bullet-item:hover {
+                        background: #f1f5f9;
+                        transform: translateX(4px);
+                        transition: all 0.2s ease;
+                    }
+                    
+                    /* Numbered lists */
+                    ol {
+                        margin: 16px 0;
+                        padding-left: 30px;
+                    }
+                    
+                    ol li {
+                        margin: 12px 0;
+                        padding-left: 10px;
+                        position: relative;
+                    }
+                    
+                    /* Headings styling */
+                    h1, h2, h3, h4, h5, h6 {
+                        color: #1e293b;
+                        margin: 24px 0 16px 0;
+                        font-weight: 600;
+                        line-height: 1.3;
+                    }
+                    
+                    h1 { font-size: 32px; }
+                    h2 { font-size: 28px; }
+                    h3 { font-size: 24px; }
+                    h4 { font-size: 20px; }
+                    h5 { font-size: 18px; }
+                    h6 { font-size: 16px; }
+                    
+                    /* Paragraph styling */
+                    p {
+                        margin: 8px 0;
+                        line-height: 1.6;
+                    }
+                    
+                    /* Reduce spacing between paragraphs */
+                    p + p {
+                        margin-top: 4px;
+                    }
+                    
+                    /* Links */
+                    a {
+                        color: #667eea;
+                        text-decoration: underline;
+                    }
+                    
+                    a:hover {
+                        color: #5a67d8;
+                    }
+                    
+                    /* Blockquotes */
+                    blockquote {
+                        border-left: 4px solid #667eea;
+                        margin: 20px 0;
+                        padding: 16px 20px;
+                        background: #f8fafc;
+                        font-style: italic;
+                        color: #64748b;
+                    }
+                    
+                    /* Code blocks */
+                    pre {
+                        background: #f1f5f9;
+                        border: 1px solid #e2e8f0;
+                        border-radius: 6px;
+                        padding: 16px;
+                        overflow-x: auto;
+                        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                        font-size: 14px;
+                    }
+                    
+                    code {
+                        background: #f1f5f9;
+                        padding: 2px 6px;
+                        border-radius: 3px;
+                        font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                        font-size: 14px;
+                    }
+                    
+                    /* Tables */
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                        margin: 20px 0;
+                    }
+                    
+                    th, td {
+                        border: 1px solid #e2e8f0;
+                        padding: 12px;
+                        text-align: left;
+                    }
+                    
+                    th {
+                        background: #f8fafc;
+                        font-weight: 600;
+                        color: #374151;
+                    }
+                    
+                    /* Highlighted content boxes */
+                    .highlight-box {
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        color: white;
+                        padding: 20px;
+                        border-radius: 8px;
+                        margin: 20px 0;
+                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    }
+                    
+                    .highlight-box h3 {
+                        color: white;
+                        margin-top: 0;
+                    }
+                    
+                    /* Custom bullet styles */
+                    .custom-bullet {
+                        background: #f0f4ff;
+                        border-left: 4px solid #667eea;
+                        padding: 16px 20px;
+                        margin: 16px 0;
+                        border-radius: 0 6px 6px 0;
+                    }
+                `,
+                paste_data_images: true,
+                paste_as_text: false,
+                paste_auto_cleanup_on_paste: true,
+                paste_remove_styles_if_webkit: false,
+                paste_merge_formats: true,
+                paste_webkit_styles: "all",
+                setup: function (editor) {
+                    editor.on('init', function () {
+                        console.log('✅ TinyMCE resource edit editor initialized successfully');
+                        // Set the content after initialization
+                        editor.setContent(content);
+                    });
+                },
+                init_instance_callback: function (editor) {
+                    console.log('🎯 TinyMCE resource edit instance ready:', editor.id);
+                }
+            });
+        }
+
+        // Handle edit form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add event listener for edit form submission
+            document.addEventListener('submit', async function(e) {
+                if (e.target.id === 'resource-edit-form') {
+                    e.preventDefault();
+                    
+                    const editModal = document.getElementById('resource-edit-modal');
+                    const resourceId = editModal.dataset.resourceId;
+                    
+                    if (!resourceId) {
+                        alert('Error: Resource ID not found');
+                        return;
+                    }
+                    
+                    try {
+                        // Get content from TinyMCE editor
+                        let content = '';
+                        if (typeof tinymce !== 'undefined' && tinymce.get('edit-resource-editor')) {
+                            content = tinymce.get('edit-resource-editor').getContent();
+                        } else {
+                            content = document.getElementById('edit-resource-editor').value;
+                        }
+                        
+                        const formData = {
+                            title: document.getElementById('edit-resource-title').value,
+                            type: document.getElementById('edit-resource-type').value,
+                            excerpt: document.getElementById('edit-resource-excerpt').value,
+                            content: content,
+                            industry_id: document.getElementById('edit-resource-industry').value,
+                            tags: document.getElementById('edit-resource-tags').value,
+                            author: document.getElementById('edit-resource-author').value,
+                            status: document.getElementById('edit-resource-status').value,
+                            meta_title: document.getElementById('edit-resource-meta-title').value,
+                            meta_description: document.getElementById('edit-resource-meta-description').value,
+                            meta_keywords: document.getElementById('edit-resource-meta-keywords').value
+                            // Note: We intentionally don't update created_at to preserve digital proof
+                        };
+                        
+                        console.log('💾 Saving resource changes:', formData);
+                        
+                        const token = localStorage.getItem('cms_token');
+                        if (!token) {
+                            alert('Authentication required. Please login again.');
+                            window.location.href = '/cms-admin-local.html';
+                            return;
+                        }
+                        
+                        const response = await fetch(`http://localhost:3001/api/resources/${resourceId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${token}`
+                            },
+                            body: JSON.stringify(formData)
+                        });
+                        
+                        if (response.ok) {
+                            console.log('✅ Resource updated successfully');
+                            closeResourceEditModal();
+                            // Reload the resources list
+                            await loadAllResources();
+                            alert('Resource updated successfully!');
+                        } else {
+                            const errorData = await response.json();
+                            console.error('❌ Failed to update resource:', errorData);
+                            alert('Failed to update resource. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('❌ Error updating resource:', error);
+                        alert('Error updating resource. Please try again.');
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -23,17 +23,17 @@ const translations = {
         hero: {
             title: "Meet Emma",
             subtitle: "Your Intelligent AI Assistant",
-            description: "Transform your business with AI that understands, learns, and adapts. From healthcare to banking to education - Emma delivers results across every industry.",
+            description: "Transform your business with AI that understands, learns, and adapts. From healthcare, banking, and education - Emma delivers results across key sectors.",
             cta_primary: "Talk to Her Now",
             cta_secondary: "Learn More",
-            trusted_by: "Trusted by Industry Leaders",
+            trusted_by: "Made For Industry Leaders",
             see_how: "See how Emma transforms operations across sectors"
         },
         
         // Home Page Specific
         home: {
             hero_title: "Meet Emma\nYour Intelligent AI Assistant",
-            trusted_by: "Trusted by Industry Leaders",
+            trusted_by: "Made For Industry Leaders",
             capabilities_title: "Emma's Core Capabilities",
             capabilities_subtitle: "Intelligent automation that adapts, learns, and takes initiative",
             industries_title: "Industry Solutions",
@@ -130,20 +130,20 @@ const translations = {
                     }
                 }
             },
-            manufacturing: {
-                title: "Manufacturing",
+            recruitment: {
+                title: "Recruitment",
                 features: {
-                    smart_production: {
-                        title: "Smart Production",
-                        description: "AI-driven quality control and optimization"
+                    candidate_screening: {
+                        title: "Intelligent Screening",
+                        description: "AI-powered candidate assessment and filtering"
                     },
-                    predictive_maintenance: {
-                        title: "Predictive Maintenance",
-                        description: "Prevent equipment failures before they happen"
+                    automated_interviews: {
+                        title: "Automated Interviews",
+                        description: "Conduct initial interviews and gather insights"
                     },
-                    supply_chain: {
-                        title: "Supply Chain AI",
-                        description: "Intelligent inventory and logistics management"
+                    talent_matching: {
+                        title: "Talent Matching",
+                        description: "Smart job-candidate matching algorithms"
                     }
                 }
             },
@@ -200,18 +200,18 @@ const translations = {
         use_cases: {
             healthcare: {
                 title: "Healthcare",
-                description: "Patient scheduling, medical records, and diagnostic assistance",
+                description: "Automates patient calls, bookings, and reminders with 24/7 voice support.",
                 stats: {
                     efficiency: "60% efficiency",
                     compliance: "HIPAA compliant"
                 }
             },
-            manufacturing: {
-                title: "Manufacturing",
-                description: "Smart production, predictive maintenance, and supply chain optimization",
+            recruitment: {
+                title: "Recruitment",
+                description: "Intelligent candidate screening, automated interviews, and talent matching",
                 stats: {
-                    cost_reduction: "45% cost reduction",
-                    monitoring: "Real-time monitoring"
+                    time_saved: "70% time saved",
+                    quality: "Better candidate quality"
                 }
             },
             retail: {
@@ -667,7 +667,7 @@ const translations = {
         hero: {
             title: "تعرف على إيما",
             subtitle: "مساعدك الذكي للذكاء الاصطناعي",
-            description: "حوّل عملك بالذكاء الاصطناعي الذي يفهم ويتعلم ويتكيف. من الرعاية الصحية إلى البنوك إلى التعليم - إيما تحقق النتائج في كل صناعة.",
+            description: "حوّل عملك بالذكاء الاصطناعي الذي يفهم ويتعلم ويتكيف. من الرعاية الصحية والبنوك والتعليم - إيما تحقق النتائج في القطاعات الرئيسية.",
             cta_primary: "تحدث معها الآن",
             cta_secondary: "اعرف المزيد",
             trusted_by: "موثوق من قادة الصناعة",
@@ -774,20 +774,20 @@ const translations = {
                     }
                 }
             },
-            manufacturing: {
-                title: "التصنيع",
+            recruitment: {
+                title: "التوظيف",
                 features: {
-                    smart_production: {
-                        title: "الإنتاج الذكي",
-                        description: "مراقبة الجودة والتحسين مدعوم بالذكاء الاصطناعي"
+                    candidate_screening: {
+                        title: "الفحص الذكي",
+                        description: "تقييم وفلترة المرشحين مدعوم بالذكاء الاصطناعي"
                     },
-                    predictive_maintenance: {
-                        title: "الصيانة التنبؤية",
-                        description: "منع أعطال المعدات قبل حدوثها"
+                    automated_interviews: {
+                        title: "المقابلات الآلية",
+                        description: "إجراء المقابلات الأولية وجمع الرؤى"
                     },
-                    supply_chain: {
-                        title: "ذكاء الاصطناعي في سلسلة التوريد",
-                        description: "إدارة المخزون واللوجستيات الذكية"
+                    talent_matching: {
+                        title: "مطابقة المواهب",
+                        description: "خوارزميات مطابقة الوظائف والمرشحين الذكية"
                     }
                 }
             },
@@ -850,12 +850,12 @@ const translations = {
                     compliance: "متوافق مع HIPAA"
                 }
             },
-            manufacturing: {
-                title: "التصنيع",
-                description: "الإنتاج الذكي والصيانة التنبؤية وتحسين سلسلة التوريد",
+            recruitment: {
+                title: "التوظيف",
+                description: "الفحص الذكي للمرشحين والمقابلات الآلية ومطابقة المواهب",
                 stats: {
-                    cost_reduction: "45% تقليل التكلفة",
-                    monitoring: "مراقبة في الوقت الفعلي"
+                    time_saved: "70% توفير الوقت",
+                    quality: "جودة مرشحين أفضل"
                 }
             },
             retail: {

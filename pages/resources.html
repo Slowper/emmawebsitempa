@@ -1426,8 +1426,19 @@
 
         .author-info {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             gap: 0.75rem;
+        }
+
+        .author-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .read-time {
+            font-size: 0.8rem;
+            color: #64748b;
         }
 
         .author-avatar {
@@ -1748,15 +1759,19 @@
             </div>
             <div class="hero-stats">
                 <div class="stat-item">
-                    <div class="stat-number" id="total-resources">6</div>
+                    <div class="stat-number" id="total-resources">7</div>
                     <div class="stat-label">Total Resources</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="case-studies-count">2</div>
+                    <div class="stat-number" id="blogs-count">5</div>
+                    <div class="stat-label">Blogs</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="case-studies-count">1</div>
                     <div class="stat-label">Case Studies</div>
                 </div>
                 <div class="stat-item">
-                    <div class="stat-number" id="use-cases-count">2</div>
+                    <div class="stat-number" id="use-cases-count">1</div>
                     <div class="stat-label">Use Cases</div>
                 </div>
             </div>
@@ -2027,7 +2042,8 @@
             try {
                 console.log('🏭 Loading industries from API...');
                 const response = await fetch('http://localhost:3001/api/industries');
-                const industries = await response.json();
+                const data = await response.json();
+                const industries = data.industries || data; // Handle both formats
                 
                 console.log('📊 Industries loaded:', industries);
                 
@@ -2062,6 +2078,26 @@
             } catch (error) {
                 console.error('❌ Error loading industries:', error);
             }
+        }
+
+        // Calculate reading time based on content length
+        function calculateReadingTime(content) {
+            if (!content) return '1 min read';
+            
+            // Remove HTML tags to get plain text
+            const plainText = content.replace(/<[^>]*>/g, '');
+            
+            // Count words (split by whitespace and filter out empty strings)
+            const wordCount = plainText.split(/\s+/).filter(word => word.length > 0).length;
+            
+            // Average reading speed: 200 words per minute
+            const wordsPerMinute = 200;
+            const readingTimeMinutes = Math.ceil(wordCount / wordsPerMinute);
+            
+            // Minimum 1 minute, maximum 30 minutes
+            const finalReadingTime = Math.max(1, Math.min(30, readingTimeMinutes));
+            
+            return `${finalReadingTime} min read`;
         }
 
         // Load resources from API
@@ -2169,6 +2205,7 @@
             const blogs = allResources.filter(r => r.type === 'blog').length;
             
             document.getElementById('total-resources').textContent = totalResources;
+            document.getElementById('blogs-count').textContent = blogs;
             document.getElementById('case-studies-count').textContent = caseStudies;
             document.getElementById('use-cases-count').textContent = useCases;
         }
@@ -2280,9 +2317,9 @@
             if (type === 'blog') {
                 linkUrl = `/blog/${resource.slug || resource.id}`;
             } else if (type === 'case-study') {
-                linkUrl = `/casestudy/${resource.slug || resource.id}`;
+                linkUrl = `/case-study/${resource.slug || resource.id}`;
             } else if (type === 'use-case') {
-                linkUrl = `/usecase/${resource.slug || resource.id}`;
+                linkUrl = `/use-case/${resource.slug || resource.id}`;
             }
             
             const cardHTML = `
@@ -2643,9 +2680,9 @@
             if (resource.type === 'blog') {
                 linkUrl = `/blog/${resource.slug || resource.id}`;
             } else if (resource.type === 'case-study') {
-                linkUrl = `/casestudy/${resource.slug || resource.id}`;
+                linkUrl = `/case-study/${resource.slug || resource.id}`;
             } else if (resource.type === 'use-case') {
-                linkUrl = `/usecase/${resource.slug || resource.id}`;
+                linkUrl = `/use-case/${resource.slug || resource.id}`;
             }
             
             console.log('📝 Card data:', {
@@ -2700,7 +2737,10 @@
                                     author.charAt(0).toUpperCase()
                                 }
                             </div>
-                            <span>${author} • ${formattedDate} • ${resource.readTime || '5'} min read</span>
+                            <div class="author-details">
+                                <span>${author} • ${formattedDate}</span>
+                                <span class="read-time">${calculateReadingTime(resource.content)}</span>
+                            </div>
                         </div>
                         <div class="view-count" style="display: flex; align-items: center; gap: 0.25rem; color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;">
                             <i class="fas fa-eye"></i>

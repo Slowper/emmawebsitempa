@@ -144,108 +144,30 @@
                     " style="bottom: 20%; right: 30%; animation-delay: 6s;">machine_learning()</div>
                 </div>
 
-                <!-- 3D Rotating Logo -->
-                <div class="logo-3d" style="
-                    perspective: 1000px;
+                <!-- EMMA Logo -->
+                <div class="logo-container" style="
                     margin-bottom: 2rem;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
                 ">
-                    <div class="logo-cube" style="
-                        width: 80px;
-                        height: 80px;
-                        position: relative;
-                        transform-style: preserve-3d;
-                        animation: rotate3d 4s linear infinite;
-                    ">
-                        <div class="cube-face" style="
-                            position: absolute;
-                            width: 80px;
-                            height: 80px;
-                            background: linear-gradient(45deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
-                            border: 2px solid rgba(255, 255, 255, 0.3);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-weight: bold;
-                            font-size: 24px;
-                            color: white;
-                        " style="transform: rotateY(0deg) translateZ(40px);">E</div>
-                        <div class="cube-face" style="
-                            position: absolute;
-                            width: 80px;
-                            height: 80px;
-                            background: linear-gradient(45deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
-                            border: 2px solid rgba(255, 255, 255, 0.3);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-weight: bold;
-                            font-size: 24px;
-                            color: white;
-                        " style="transform: rotateY(180deg) translateZ(40px);">M</div>
-                        <div class="cube-face" style="
-                            position: absolute;
-                            width: 80px;
-                            height: 80px;
-                            background: linear-gradient(45deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
-                            border: 2px solid rgba(255, 255, 255, 0.3);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-weight: bold;
-                            font-size: 24px;
-                            color: white;
-                        " style="transform: rotateY(90deg) translateZ(40px);">M</div>
-                        <div class="cube-face" style="
-                            position: absolute;
-                            width: 80px;
-                            height: 80px;
-                            background: linear-gradient(45deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
-                            border: 2px solid rgba(255, 255, 255, 0.3);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-weight: bold;
-                            font-size: 24px;
-                            color: white;
-                        " style="transform: rotateY(-90deg) translateZ(40px);">A</div>
-                        <div class="cube-face" style="
-                            position: absolute;
-                            width: 80px;
-                            height: 80px;
-                            background: linear-gradient(45deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
-                            border: 2px solid rgba(255, 255, 255, 0.3);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-weight: bold;
-                            font-size: 16px;
-                            color: white;
-                        " style="transform: rotateX(90deg) translateZ(40px);">AI</div>
-                        <div class="cube-face" style="
-                            position: absolute;
-                            width: 80px;
-                            height: 80px;
-                            background: linear-gradient(45deg, rgba(139, 92, 246, 0.8), rgba(236, 72, 153, 0.8));
-                            border: 2px solid rgba(255, 255, 255, 0.3);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            font-weight: bold;
-                            font-size: 16px;
-                            color: white;
-                        " style="transform: rotateX(-90deg) translateZ(40px);">AI</div>
-                    </div>
+                    <img src="/Logo And Recording/cropped_circle_image.png" 
+                         alt="EMMA Logo" 
+                         class="loading-logo-image">
                 </div>
 
                 <!-- Glitch Text Effect -->
                 <div class="glitch-text" style="
                     font-size: 4rem;
                     font-weight: bold;
-                    color: #fff;
+                    background: linear-gradient(135deg, #8b5cf6, #ec4899, #3b82f6);
+                    -webkit-background-clip: text;
+                    -webkit-text-fill-color: transparent;
+                    background-clip: text;
                     text-shadow: 
-                        0.05em 0 0 #00fffc,
-                        -0.03em -0.04em 0 #fc00ff,
-                        0.025em 0.04em 0 #fffc00;
+                        0.05em 0 0 rgba(139, 92, 246, 0.3),
+                        -0.03em -0.04em 0 rgba(236, 72, 153, 0.3),
+                        0.025em 0.04em 0 rgba(59, 130, 246, 0.3);
                     animation: glitch 2s linear infinite;
                     margin-bottom: 1rem;
                 ">Hi Emma</div>
@@ -324,9 +246,35 @@
                 50% { transform: translateY(-20px) rotate(5deg); }
             }
             
-            @keyframes rotate3d {
-                0% { transform: rotateX(0deg) rotateY(0deg); }
-                100% { transform: rotateX(360deg) rotateY(360deg); }
+            @keyframes logoAnimation {
+                0% { 
+                    transform: translateY(0px) rotate(0deg) scale(1);
+                    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+                }
+                25% { 
+                    transform: translateY(-8px) rotate(2deg) scale(1.05);
+                    filter: drop-shadow(0 0 30px rgba(139, 92, 246, 0.7)) drop-shadow(0 0 40px rgba(236, 72, 153, 0.4));
+                }
+                50% { 
+                    transform: translateY(-12px) rotate(-1deg) scale(1.1);
+                    filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.8)) drop-shadow(0 0 60px rgba(236, 72, 153, 0.6)) drop-shadow(0 0 80px rgba(59, 130, 246, 0.4));
+                }
+                75% { 
+                    transform: translateY(-6px) rotate(1deg) scale(1.03);
+                    filter: drop-shadow(0 0 35px rgba(139, 92, 246, 0.6)) drop-shadow(0 0 50px rgba(236, 72, 153, 0.5));
+                }
+                100% { 
+                    transform: translateY(0px) rotate(0deg) scale(1);
+                    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+                }
+            }
+            
+            .loading-logo-image {
+                width: 120px !important;
+                height: 120px !important;
+                object-fit: contain !important;
+                animation: logoAnimation 3s ease-in-out infinite !important;
+                filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5)) !important;
             }
             
             @keyframes glitch {

@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">Use Case - Emma AI</title>
     
     <!-- Primary Meta Tags -->
+    <title id="page-title">Use Case - Emma AI</title>
     <meta name="title" id="meta-title" content="Use Case - Emma AI">
     <meta name="description" id="meta-description" content="Explore our AI automation use cases and intelligent workflow solutions.">
     <meta name="keywords" content="AI use case, automation solutions, Emma AI, intelligent workflows">
@@ -17,7 +17,7 @@
     <meta property="og:url" id="og-url" content="">
     <meta property="og:title" id="og-title" content="">
     <meta property="og:description" id="og-description" content="">
-    <meta property="og:image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
+    <meta property="og:image" id="og-image" content="https://emma.kodefast.com/Logo And Recording/cropped_circle_image.png">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
@@ -36,21 +36,13 @@
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <!-- <link rel="stylesheet" href="/styles.css"> -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/styles.css">
     
     <style>
-        /* Global Reset */
-        * {
-            box-sizing: border-box;
-        }
-        
-        html, body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-        
+        /* Use Case Detail Page Styles */
         body {
             font-family: 'Inter', sans-serif;
             background: #0f172a !important;
@@ -60,299 +52,93 @@
             line-height: 1.6;
         }
 
-        /* Override any conflicting styles from main stylesheet */
-        .main-content {
+        /* Force override ALL inline styles from editor - more aggressive */
+        .article-content *[style*="color"] {
+            color: #ffffff !important;
+        }
+        
+        .article-content *[style*="background-color"] {
+            background-color: transparent !important;
+        }
+        
+        .article-content *[style*="color: rgb(0, 0, 0)"] {
+            color: #ffffff !important;
+        }
+
+        .article-content *[style*="color: rgb(89, 89, 89)"] {
+            color: #e2e8f0 !important;
+        }
+        
+        .article-content *[style*="color: rgb(255, 255, 255)"] {
+            color: #ffffff !important;
+        }
+
+        .article-content *[style*="background-color: rgb(255, 255, 255)"] {
+            background-color: transparent !important;
+        }
+        
+        /* Override specific inline styles from editor */
+        .article-content .SCXW69988423,
+        .article-content .SCXW234020636,
+        .article-content .BCX0 {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+        
+        .article-content .TextRun,
+        .article-content .NormalTextRun,
+        .article-content .Paragraph,
+        .article-content .OutlineElement {
+            color: #ffffff !important;
+        }
+        
+        /* Override any remaining black or white text */
+        .article-content span[style*="color: rgb(0, 0, 0)"],
+        .article-content p[style*="color: rgb(0, 0, 0)"],
+        .article-content div[style*="color: rgb(0, 0, 0)"],
+        .article-content span[style*="color: rgb(255, 255, 255)"],
+        .article-content p[style*="color: rgb(255, 255, 255)"],
+        .article-content div[style*="color: rgb(255, 255, 255)"] {
+            color: #ffffff !important;
+        }
+        
+        /* Force all text elements to be visible */
+        .article-content p,
+        .article-content span,
+        .article-content div,
+        .article-content li,
+        .article-content td,
+        .article-content th {
+            color: #ffffff !important;
+        }
+
+        /* Global overrides for all content */
+        #article-body * {
+            color: #ffffff !important;
+        }
+        
+        #article-body {
             background: #0f172a !important;
-            color: #f8fafc !important;
-        }
-
-        .main-content * {
-            color: inherit !important;
-        }
-
-        /* Strong overrides for all text elements */
-        .use-case-content *,
-        .use-case-content h1,
-        .use-case-content h2,
-        .use-case-content h3,
-        .use-case-content h4,
-        .use-case-content h5,
-        .use-case-content h6,
-        .use-case-content p,
-        .use-case-content span,
-        .use-case-content div,
-        .use-case-content li {
             color: #ffffff !important;
-        }
-
-        /* Override any inline styles */
-        .use-case-content [style*="color"] {
-            color: #ffffff !important;
-        }
-
-        /* Navigation Styles - Exact Copy from Blog Page */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1), 0 0 40px rgba(59, 130, 246, 0.05);
-        }
-        
-        .nav-container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0 2rem; 
-        }
-        
-        .nav-logo { 
-            display: flex; 
-            align-items: center; 
-            position: relative;
-        }
-        
-        .logo-container {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
-            min-height: 48px;
-        }
-        
-        .logo-image {
-            height: 32px;
-            width: 32px;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-            filter: drop-shadow(0 2px 8px rgba(59, 130, 246, 0.4));
-            position: relative;
-            z-index: 2;
-            object-fit: cover;
-            display: block;
-            background: #f0f0f0;
-            border: 2px solid #3b82f6;
-        }
-        
-        .logo-text {
-            font-size: 1.25rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            position: relative;
-            z-index: 2;
-            letter-spacing: -0.025em;
-        }
-        
-        .nav-links { 
-            display: flex; 
-            gap: 0.5rem; 
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 0.5rem;
-            border-radius: 1rem;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-        .nav-link { 
-            color: #94a3b8; 
-            text-decoration: none; 
-            font-weight: 500; 
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .nav-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .nav-link:hover { 
-            color: #f8fafc; 
-            background: rgba(59, 130, 246, 0.1);
-            transform: translateY(-1px);
-        }
-        .nav-link:hover::before {
-            opacity: 1;
-        }
-        .nav-link.active { 
-            color: #f8fafc; 
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-            transform: translateY(-1px);
-        }
-
-
-
-        .use-case-category {
-            color: #3b82f6;
-            font-size: 0.875rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .use-case-title {
-            font-size: 3rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.1;
-            color: #f8fafc !important;
-        }
-
-        .use-case-excerpt {
-            font-size: 1.25rem;
+            padding: 0;
             line-height: 1.6;
-            color: #cbd5e1;
-            margin-bottom: 1.5rem;
-            font-style: italic;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
-        /* Fallback for browsers that don't support background-clip */
-        @supports not (-webkit-background-clip: text) {
-            .use-case-title {
-                color: #3b82f6 !important;
-                background: none;
-            }
-        }
-
-        .use-case-meta {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .author-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #94a3b8;
-        }
-
-        .author-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border: 2px solid rgba(59, 130, 246, 0.3);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-        }
-
-        .author-avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .use-case-date {
-            color: #94a3b8;
-            font-size: 0.95rem;
-        }
-
-        .view-count {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #64748b;
-            font-size: 0.9rem;
-            background: rgba(30, 41, 59, 0.8);
-            padding: 0.5rem 1rem;
-            border-radius: 2rem;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .use-case-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #3b82f6;
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 2rem;
-            transition: all 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: #60a5fa;
-            transform: translateX(-2px);
-        }
-
-
-        .use-case-container {
+        /* Article container */
+        .article-container {
             max-width: 800px;
             margin: 0 auto;
             padding: 8rem 2rem 4rem;
+            background: #0f172a;
         }
 
-        .use-case-header {
+        /* Article header */
+        .article-header {
             margin-bottom: 3rem;
+            text-align: center;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #3b82f6;
-            text-decoration: none;
-            margin-bottom: 2rem;
-            transition: color 0.3s ease;
-        }
-
-        .back-link:hover {
-            color: #60a5fa;
-        }
-
-        .use-case-category {
+        .article-category {
             display: inline-block;
             background: rgba(59, 130, 246, 0.1);
             color: #60a5fa;
@@ -363,7 +149,7 @@
             margin-bottom: 1rem;
         }
 
-        .use-case-title {
+        .article-title {
             font-size: 3rem;
             font-weight: 800;
             margin-bottom: 1rem;
@@ -373,18 +159,31 @@
             line-height: 1.1;
         }
 
-        .use-case-meta {
+        .article-excerpt {
+            font-size: 1.25rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .article-meta {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 1rem;
             margin-bottom: 2rem;
-            color: #94a3b8;
+            flex-wrap: wrap;
         }
 
         .author-info {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            color: #94a3b8;
         }
 
         .author-avatar {
@@ -406,31 +205,127 @@
             object-fit: cover;
         }
 
-        .use-case-image {
+        .article-date {
+            color: #94a3b8;
+            font-size: 0.95rem;
+        }
+
+        .read-time {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Ensure header is visible */
+        #header-placeholder {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 1000 !important;
+        }
+
+        .view-count {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #64748b;
+            font-size: 0.9rem;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .article-image {
             width: 100%;
             height: 400px;
             object-fit: cover;
             border-radius: 1rem;
             margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
         }
 
-        .use-case-content {
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #3b82f6;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #60a5fa;
+        }
+
+        .article-content {
             font-size: 1.1rem;
             line-height: 1.8;
             color: #ffffff !important;
             max-width: 100%;
             word-wrap: break-word;
-            overflow: hidden;
-        }
-        
-        /* Remove any Quill editor artifacts */
-        .ql-clipboard,
-        .ql-tooltip {
-            display: none !important;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            min-height: auto;
+            width: 100%;
         }
 
-        .use-case-content h1,
-        .use-case-content h2 {
+        /* Enhanced content styling for better visibility */
+        .article-content-enhanced {
+            background: #1e293b !important;
+            border: 2px solid #3b82f6 !important;
+            border-radius: 1rem !important;
+            padding: 2rem !important;
+            margin: 1rem 0 !important;
+            min-height: 200px !important;
+            color: #ffffff !important;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+        }
+
+        .article-content-enhanced * {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced p {
+            color: #ffffff !important;
+            margin-bottom: 1rem !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced div {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced span {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced h1,
+        .article-content-enhanced h2,
+        .article-content-enhanced h3,
+        .article-content-enhanced h4,
+        .article-content-enhanced h5,
+        .article-content-enhanced h6 {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced ul,
+        .article-content-enhanced ol {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content-enhanced li {
+            color: #ffffff !important;
+            background: transparent !important;
+        }
+
+        .article-content h1,
+        .article-content h2 {
             font-size: 2rem;
             font-weight: 700;
             margin: 2rem 0 1rem;
@@ -442,8 +337,8 @@
             position: relative;
         }
 
-        .use-case-content h1::after,
-        .use-case-content h2::after {
+        .article-content h1::after,
+        .article-content h2::after {
             content: '';
             position: absolute;
             bottom: -0.5rem;
@@ -454,7 +349,7 @@
             border-radius: 2px;
         }
 
-        .use-case-content h3 {
+        .article-content h3 {
             font-size: 1.5rem;
             font-weight: 600;
             margin: 1.5rem 0 0.75rem;
@@ -463,7 +358,7 @@
             padding-left: 1rem;
         }
 
-        .use-case-content h3::before {
+        .article-content h3::before {
             content: '▶';
             position: absolute;
             left: 0;
@@ -471,9 +366,9 @@
             font-size: 0.8rem;
         }
 
-        .use-case-content h4,
-        .use-case-content h5,
-        .use-case-content h6 {
+        .article-content h4,
+        .article-content h5,
+        .article-content h6 {
             font-weight: 600;
             margin: 1.5rem 0 0.75rem;
             color: #93c5fd !important;
@@ -481,7 +376,7 @@
             padding-left: 0.5rem;
         }
 
-        .use-case-content h4::before {
+        .article-content h4::before {
             content: '•';
             position: absolute;
             left: 0;
@@ -489,15 +384,15 @@
             font-weight: bold;
         }
 
-        .use-case-content p {
+        .article-content p {
             margin-bottom: 1.5rem;
             color: #ffffff !important;
             text-align: justify;
             hyphens: auto;
         }
 
-        .use-case-content strong,
-        .use-case-content b {
+        .article-content strong,
+        .article-content b {
             color: #f8fafc !important;
             font-weight: 700;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
@@ -505,8 +400,8 @@
             border-radius: 0.25rem;
         }
 
-        .use-case-content em,
-        .use-case-content i {
+        .article-content em,
+        .article-content i {
             color: #cbd5e1 !important;
             font-style: italic;
             background: rgba(59, 130, 246, 0.1);
@@ -514,45 +409,50 @@
             border-radius: 0.2rem;
         }
 
-        .use-case-content ul, .use-case-content ol {
+        .article-content ul, .article-content ol {
             margin-bottom: 1.5rem;
-            padding-left: 2rem;
+            padding-left: 0;
             color: #ffffff !important;
-        }
-
-        .use-case-content ul {
             list-style: none;
         }
 
-        .use-case-content ul li {
+        .article-content ul li {
             position: relative;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             color: #ffffff !important;
-            padding-left: 1.5rem;
+            padding-left: 2rem;
+            line-height: 1.7;
+            font-size: 1rem;
+            margin-left: 1.5rem;
         }
 
-        .use-case-content ul li::before {
+        .article-content ul li::before {
             content: '✦';
             position: absolute;
-            left: 0;
+            left: -1.5rem;
+            top: 0.1rem;
             color: #3b82f6;
             font-weight: bold;
             font-size: 1.1rem;
+            width: 1rem;
+            text-align: center;
         }
 
-        .use-case-content ol {
+        .article-content ol {
             counter-reset: custom-counter;
+            list-style: none;
         }
 
-        .use-case-content ol li {
+        .article-content ol li {
             counter-increment: custom-counter;
             position: relative;
             margin-bottom: 0.75rem;
             color: #ffffff !important;
-            padding-left: 2rem;
+            padding-left: 2.5rem;
+            line-height: 1.6;
         }
 
-        .use-case-content ol li::before {
+        .article-content ol li::before {
             content: counter(custom-counter);
             position: absolute;
             left: 0;
@@ -567,9 +467,10 @@
             justify-content: center;
             font-size: 0.8rem;
             font-weight: bold;
+            text-align: center;
         }
 
-        .use-case-content a {
+        .article-content a {
             color: #60a5fa !important;
             text-decoration: none;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
@@ -579,14 +480,14 @@
             position: relative;
         }
 
-        .use-case-content a:hover {
+        .article-content a:hover {
             color: #93c5fd !important;
             background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
             transform: translateY(-1px);
             box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
         }
 
-        .use-case-content blockquote {
+        .article-content blockquote {
             border-left: 4px solid #3b82f6;
             padding: 1.5rem;
             margin: 1.5rem 0;
@@ -597,7 +498,7 @@
             position: relative;
         }
 
-        .use-case-content blockquote::before {
+        .article-content blockquote::before {
             content: '"';
             position: absolute;
             top: -0.5rem;
@@ -607,7 +508,7 @@
             opacity: 0.3;
         }
 
-        .use-case-content code {
+        .article-content code {
             background: rgba(59, 130, 246, 0.15);
             color: #60a5fa !important;
             padding: 0.25rem 0.5rem;
@@ -616,7 +517,7 @@
             border: 1px solid rgba(59, 130, 246, 0.3);
         }
 
-        .use-case-content pre {
+        .article-content pre {
             background: rgba(15, 23, 42, 0.9);
             color: #e2e8f0 !important;
             padding: 1.5rem;
@@ -627,7 +528,7 @@
             position: relative;
         }
 
-        .use-case-content pre::before {
+        .article-content pre::before {
             content: 'Code';
             position: absolute;
             top: 0.5rem;
@@ -640,14 +541,14 @@
             font-weight: bold;
         }
 
-        .use-case-content pre code {
+        .article-content pre code {
             background: none;
             padding: 0;
             color: #e2e8f0 !important;
             border: none;
         }
 
-        .use-case-tags {
+        .article-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 0.5rem;
@@ -690,72 +591,24 @@
         }
 
         @media (max-width: 768px) {
-            .use-case-container {
+            .article-container {
                 padding: 6rem 1rem 2rem;
             }
             
-            .use-case-title {
+            .article-title {
                 font-size: 2rem;
             }
             
-            .nav-container {
-                padding: 0 1rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .logo-container {
-                padding: 0.25rem 0.75rem;
-                min-height: 40px;
-            }
-            
-            .logo-image {
-                height: 28px;
-                width: 28px;
-            }
-            
-            .logo-text {
-                font-size: 1.1rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .nav-container {
-                padding: 0 0.75rem;
-            }
-            
-            .logo-container {
-                padding: 0.25rem 0.5rem;
+            .article-meta {
+                flex-direction: column;
                 gap: 0.5rem;
-            }
-            
-            .logo-text {
-                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <div class="logo-container">
-                    <img src="/Logo And Recording/cropped_circle_image.png" alt="Hi Emma Logo" class="logo-image">
-                    <span class="logo-text">Hi Emma</span>
-                </div>
-            </div>
-            <div class="nav-links">
-                <a href="/" class="nav-link">Home</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/pricing" class="nav-link">Pricing</a>
-                <a href="/resources" class="nav-link active">Resources</a>
-                <a href="/contact" class="nav-link">Contact</a>
-            </div>
-        </div>
-    </nav>
+    <!-- Header Component -->
+    <div id="header-placeholder"></div>
 
     <!-- Loading State -->
     <div id="loading-state" class="loading-state">
@@ -765,22 +618,23 @@
 
     <!-- Use Case Content -->
     <div id="use-case-content" style="display: none;">
-        <div class="use-case-container">
+        <div class="article-container">
             <a href="/resources" class="back-link">
                 <i class="fas fa-arrow-left"></i>
                 Back to Resources
             </a>
             
-            <article class="use-case-header">
-                <span class="use-case-category" id="use-case-category">Use Case</span>
-                <h1 class="use-case-title" id="use-case-title">Loading...</h1>
-                <div class="use-case-excerpt" id="use-case-excerpt">Loading excerpt...</div>
-                <div class="use-case-meta" id="use-case-meta">
+            <article class="article-header">
+                <span class="article-category" id="use-case-category">Use Case</span>
+                <h1 class="article-title" id="use-case-title">Loading...</h1>
+                <div class="article-excerpt" id="use-case-excerpt">Loading excerpt...</div>
+                <div class="article-meta" id="use-case-meta">
                     <div class="author-info">
                         <div class="author-avatar" id="author-avatar">E</div>
                         <span id="author-name">Emma AI Team</span>
                     </div>
                     <span id="use-case-date">Loading...</span>
+                    <span id="read-time">Loading...</span>
                     <div class="view-count">
                         <i class="fas fa-eye"></i>
                         <span id="view-count-number">0</span> views
@@ -788,13 +642,13 @@
                 </div>
             </article>
 
-            <img class="use-case-image" id="use-case-image" src="" alt="" style="display: none;">
+            <img class="article-image" id="use-case-image" src="" alt="" style="display: none;">
 
-            <div class="use-case-content" id="use-case-body">
+            <div class="article-content" id="article-body">
                 Loading content...
             </div>
 
-            <div class="use-case-tags" id="use-case-tags">
+            <div class="article-tags" id="use-case-tags">
                 <!-- Tags will be populated here -->
             </div>
         </div>
@@ -809,6 +663,11 @@
             Back to Resources
         </a>
     </div>
+
+    <!-- Scripts -->
+    <script src="/components/load-components.js"></script>
+    <script src="/js/translation-engine.js"></script>
+    <script src="/js/language-manager.js"></script>
 
     <script>
         // Get use case ID from URL
@@ -899,55 +758,28 @@
             cleanContent = cleanContent.replace(/'">/g, '');
             cleanContent = cleanContent.replace(/'/g, "'");
             
-            // Convert plain text numbered lists to proper HTML lists - enhanced processing
-            cleanContent = cleanContent.replace(/(\d+\.\s[^\n\r]+(?:\n\r?|\r\n?)?[^\n\r]*)/g, (match) => {
-                // Split by line breaks to handle multi-line items
-                const lines = match.split(/\n\r?|\r\n?/).filter(line => line.trim());
-                if (lines.length > 0) {
-                    // Find all numbered items in the match
-                    const numberedItems = [];
-                    let currentItem = '';
-                    
-                    lines.forEach(line => {
-                        const trimmed = line.trim();
-                        // Enhanced pattern to catch various numbering formats (numbers and letters)
-                        if (trimmed.match(/^[\d]+\./) || trimmed.match(/^[a-zA-Z]+\./)) {
-                            // Start of new item
-                            if (currentItem) {
-                                numberedItems.push(currentItem.trim());
-                            }
-                            // More aggressive removal of numbers/letters - handle various formats including malformed ones
-                            let cleanItem = trimmed.replace(/^[\d]+\.\s*/, '').replace(/^[\d]+\s*/, '');
-                            cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*/, '').replace(/^[a-zA-Z]+\s*/, '');
-                            // Handle cases like "1. 2. 4. Text" or "a. b. c. Text" - remove all leading numbers/letters
-                            cleanItem = cleanItem.replace(/^[\d]+\.\s*[\d]+\.\s*[\d]+\.\s*/, '');
-                            cleanItem = cleanItem.replace(/^[\d]+\.\s*[\d]+\.\s*/, '');
-                            cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
-                            cleanItem = cleanItem.replace(/^[a-zA-Z]+\.\s*[a-zA-Z]+\.\s*/, '');
-                            currentItem = cleanItem;
-                        } else if (trimmed && currentItem) {
-                            // Continuation of current item
-                            currentItem += ' ' + trimmed;
-                        }
-                    });
-                    
-                    if (currentItem) {
-                        numberedItems.push(currentItem.trim());
-                    }
-                    
-                    if (numberedItems.length > 0) {
-                        const listItems = numberedItems.map(item => `<li>${item}</li>`).join('');
-                        return `<ol>${listItems}</ol>`;
-                    }
-                }
-                return match;
-            });
+            document.getElementById('article-body').innerHTML = cleanContent;
             
-            // Convert section headers to proper HTML headers
-            cleanContent = cleanContent.replace(/^([A-Z][^:]+):\s*$/gm, '<h2>$1</h2>');
-            cleanContent = cleanContent.replace(/^(The Problem|The Solution|Results|Conclusion|Key Benefits|Challenges|Implementation):\s*$/gm, '<h2>$1</h2>');
-            
-            document.getElementById('use-case-body').innerHTML = cleanContent;
+            // Force apply white text color to all content after loading
+            setTimeout(() => {
+                const contentElements = document.querySelectorAll('#article-body *');
+                contentElements.forEach(el => {
+                    if (el.style.color === 'rgb(0, 0, 0)' || el.style.color === 'black' || el.style.color === 'white') {
+                        el.style.color = '#ffffff !important';
+                    }
+                    if (el.style.backgroundColor === 'rgb(255, 255, 255)' || el.style.backgroundColor === 'white') {
+                        el.style.backgroundColor = 'transparent';
+                    }
+                });
+                
+                // Force all text elements to be white
+                const allTextElements = document.querySelectorAll('#article-body p, #article-body span, #article-body div, #article-body li, #article-body td, #article-body th');
+                allTextElements.forEach(el => {
+                    el.style.color = '#ffffff';
+                });
+                
+                console.log('✅ Applied white text color to all content elements');
+            }, 100);
             
             // Update author info
             const author = useCase.author || useCase.author_name || 'Emma AI Team';
@@ -1031,91 +863,9 @@
         }
 
         // Load use case when page loads
-        document.addEventListener('DOMContentLoaded', loadUseCase);
-    </script>
-    
-    <!-- GSAP Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    
-    <!-- Translation Engine -->
-    <script src="/js/translations.js"></script>
-    <script src="/js/translation-engine.js"></script>
-    
-    <script>
-        // Initialize GSAP ScrollTrigger
-        gsap.registerPlugin(ScrollTrigger);
-
         document.addEventListener('DOMContentLoaded', function() {
-            // Section headers animation with improved visibility
-            gsap.utils.toArray('h1, h2, h3').forEach(header => {
-                // Set initial state
-                gsap.set(header, { opacity: 0, y: 50, scale: 0.9 });
-                
-                gsap.to(header, {
-                    duration: 1,
-                    y: 0,
-                    opacity: 1,
-                    scale: 1,
-                    ease: "power3.out",
-                    scrollTrigger: {
-                        trigger: header,
-                        start: "top 85%",
-                        end: "bottom 15%",
-                        toggleActions: "play none none reverse",
-                        onEnter: () => {
-                            gsap.to(header, {
-                                opacity: 1,
-                                y: 0,
-                                scale: 1,
-                                duration: 1,
-                                ease: "power3.out"
-                            });
-                        },
-                        onLeave: () => {
-                            gsap.to(header, {
-                                opacity: 0.3,
-                                y: -20,
-                                scale: 0.95,
-                                duration: 0.5,
-                                ease: "power2.out"
-                            });
-                        },
-                        onEnterBack: () => {
-                            gsap.to(header, {
-                                opacity: 1,
-                                y: 0,
-                                scale: 1,
-                                duration: 0.8,
-                                ease: "power3.out"
-                            });
-                        },
-                        onLeaveBack: () => {
-                            gsap.to(header, {
-                                opacity: 0.3,
-                                y: 20,
-                                scale: 0.95,
-                                duration: 0.5,
-                                ease: "power2.out"
-                            });
-                        }
-                    }
-                });
-            });
-
-            // Ensure all headings are visible immediately - fallback for ScrollTrigger
-            setTimeout(() => {
-                const allHeadings = document.querySelectorAll('h1, h2, h3, .section-title, .section-subtitle');
-                allHeadings.forEach(heading => {
-                    gsap.set(heading, { 
-                        opacity: 1, 
-                        y: 0, 
-                        x: 0, 
-                        scale: 1,
-                        visibility: 'visible'
-                    });
-                });
-            }, 1000);
+            // Wait a bit for header to load first
+            setTimeout(loadUseCase, 100);
         });
     </script>
 </body>

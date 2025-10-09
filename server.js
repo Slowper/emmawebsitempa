@@ -13,7 +13,7 @@ const session = require('express-session');
 require('dotenv').config({ path: './config.env' });
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 // Security middleware
 app.use(helmet({
@@ -1108,7 +1108,7 @@ app.get('/api/resources', async (req, res) => {
         const { type, status, limit, sort, order } = req.query;
         
         let query = `
-            SELECT r.id, r.type, r.title, r.excerpt, r.content, r.author, r.date, r.tags, r.status, 
+            SELECT r.id, r.type, r.title, r.excerpt, r.content, r.author_name as author, r.tags, r.status, 
                    r.created_at, r.updated_at, r.featured_image as image_url, r.author_image as authorImage, 
                    r.gallery, r.industry_id, r.meta_title, r.meta_description, r.meta_keywords, 
                    r.read_time, r.slug, r.view_count, i.name as industry_name
@@ -1162,24 +1162,7 @@ app.get('/api/resources', async (req, res) => {
     }
 });
 
-// Industries endpoints
-app.get('/api/industries', async (req, res) => {
-    try {
-        const rows = await executeWithRetry(`
-            SELECT id, name, slug, description, color, icon, is_active, sort_order, created_at, updated_at
-            FROM industries 
-            WHERE is_active = 1
-            ORDER BY sort_order ASC, name ASC
-        `);
-        res.json(rows);
-    } catch (error) {
-        console.error('Industries endpoint error:', error);
-        res.status(500).json({ 
-            error: 'Failed to load industries',
-            details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
-        });
-    }
-});
+// Industries endpoint moved to line 1659
 
 app.post('/api/industries', authenticateToken, async (req, res) => {
     try {
@@ -1403,6 +1386,27 @@ app.post('/api/resources', authenticateToken, upload.fields([
             });
         }
 
+        // Convert undefined values to null for database compatibility
+        const safeExcerpt = excerpt || null;
+        const safeAuthor = author || null;
+        const safeMetaTitle = meta_title || null;
+        const safeMetaDescription = meta_description || null;
+        const safeMetaKeywords = meta_keywords || null;
+        
+        // Debug: Log all values to identify undefined ones
+        console.log('🔍 Form data received:', {
+            title: title,
+            type: type,
+            excerpt: excerpt,
+            author: author,
+            industry_id: industry_id,
+            tags: tags,
+            meta_title: meta_title,
+            meta_description: meta_description,
+            meta_keywords: meta_keywords,
+            status: status
+        });
+
         // Generate slug from title
         const slug = title.toLowerCase()
             .replace(/[^a-z0-9\s-]/g, '')
@@ -1438,22 +1442,36 @@ app.post('/api/resources', authenticateToken, upload.fields([
             });
         }
 
-        // Parse tags
-        const tagsArray = tags ? JSON.parse(tags) : [];
+        // Parse tags safely
+        let tagsArray = [];
+        if (tags && tags.trim() !== '') {
+            try {
+                tagsArray = JSON.parse(tags);
+            } catch (e) {
+                console.log('⚠️ Error parsing tags, using empty array');
+                tagsArray = [];
+            }
+        }
 
         // Handle industry_id - convert empty string to NULL
         const industryId = industry_id && industry_id.trim() !== '' ? parseInt(industry_id) : null;
+        
+        // Ensure all values are properly handled
+        const safeTags = JSON.stringify(tagsArray);
+        const safeFeaturedImagePath = featuredImagePath || '';
+        const safeAuthorImagePath = authorImagePath || '';
+        const safeGalleryArray = JSON.stringify(galleryArray);
 
         const [result] = await pool.execute(`
             INSERT INTO resources (
-                type, title, slug, excerpt, content, author, industry_id, featured_image, 
+                type, title, slug, excerpt, content, author_name, industry_id, featured_image, 
                 author_image, gallery, tags, meta_title, meta_description, 
                 meta_keywords, status, read_time, created_at, updated_at
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
         `, [
-            type, title, slug, excerpt, content, author, industryId, featuredImagePath,
-            authorImagePath, JSON.stringify(galleryArray), JSON.stringify(tagsArray),
-            meta_title, meta_description, meta_keywords, status, readTime
+            type, title, slug, safeExcerpt, content, safeAuthor, industryId, safeFeaturedImagePath,
+            safeAuthorImagePath, safeGalleryArray, safeTags,
+            safeMetaTitle, safeMetaDescription, safeMetaKeywords, status, readTime
         ]);
 
         res.json({ 
@@ -1573,7 +1591,7 @@ app.put('/api/cms/resources/:id', authenticateToken, upload.fields([
 
         await pool.execute(`
             UPDATE resources SET 
-                type = ?, title = ?, slug = ?, excerpt = ?, content = ?, author = ?, industry_id = ?, 
+                type = ?, title = ?, slug = ?, excerpt = ?, content = ?, author_name = ?, industry_id = ?, 
                 featured_image = ?, author_image = ?, gallery = ?, tags = ?, 
                 meta_title = ?, meta_description = ?, meta_keywords = ?, 
                 status = ?, read_time = ?, updated_at = NOW()
@@ -1598,7 +1616,7 @@ app.put('/api/cms/resources/:id', authenticateToken, upload.fields([
     }
 });
 
-app.delete('/api/resources/:id', async (req, res) => {
+app.delete('/api/resources/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         
@@ -1658,10 +1676,12 @@ app.delete('/api/resources/:id', async (req, res) => {
 // Industries endpoint
 app.get('/api/industries', async (req, res) => {
     try {
-        const [rows] = await pool.execute('SELECT * FROM industries ORDER BY name');
-        res.json(rows);
+        console.log('🏢 Fetching industries...');
+        const [rows] = await pool.execute('SELECT * FROM industries WHERE is_active = 1 ORDER BY name');
+        console.log('🏢 Industries found:', rows.length);
+        res.json({ industries: rows });
     } catch (error) {
-        console.error('Error fetching industries:', error);
+        console.error('❌ Error fetching industries:', error);
         res.status(500).json({ error: 'Failed to fetch industries' });
     }
 });
@@ -1684,7 +1704,7 @@ app.get('/api/blogs', async (req, res) => {
             return res.status(503).json({ error: 'Database not ready yet' });
         }
         const [rows] = await pool.execute(`
-            SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+            SELECT id, title, excerpt, content, author_name as author, status, created_at, updated_at,
                    featured_image as image_url, author_image as authorImage, gallery, view_count
             FROM resources 
             WHERE type = 'blog' AND status = 'published' 
@@ -1842,6 +1862,130 @@ app.get('/api/usecases/:slug', async (req, res) => {
         res.status(500).json({ 
             error: 'Failed to load use case',
             details: process.env.NODE_ENV === 'development' ? error.message : 'Database connection timeout'
+        });
+    }
+});
+
+// Email Notifications API Endpoints
+app.post('/api/notifications/subscribe', async (req, res) => {
+    try {
+        const { email, source = 'talking_feature_popup' } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Email address is required' 
+            });
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Please enter a valid email address' 
+            });
+        }
+
+        // Get client IP and user agent
+        const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for'] || 'unknown';
+        const userAgent = req.headers['user-agent'] || 'unknown';
+
+        // Generate unsubscribe token
+        const crypto = require('crypto');
+        const unsubscribeToken = crypto.randomBytes(32).toString('hex');
+
+        // Check if email already exists
+        const [existingRows] = await pool.execute(
+            'SELECT id, status FROM email_notifications WHERE email = ?',
+            [email]
+        );
+
+        if (existingRows.length > 0) {
+            const existing = existingRows[0];
+            if (existing.status === 'active') {
+                return res.json({ 
+                    success: true, 
+                    message: 'You are already subscribed to notifications!',
+                    alreadySubscribed: true
+                });
+            } else {
+                // Reactivate subscription
+                await pool.execute(
+                    'UPDATE email_notifications SET status = "active", subscribed_at = NOW(), ip_address = ?, user_agent = ? WHERE email = ?',
+                    [ipAddress, userAgent, email]
+                );
+                return res.json({ 
+                    success: true, 
+                    message: 'Welcome back! Your subscription has been reactivated.',
+                    reactivated: true
+                });
+            }
+        }
+
+        // Create new subscription
+        await pool.execute(`
+            INSERT INTO email_notifications (email, source, ip_address, user_agent, unsubscribe_token, status)
+            VALUES (?, ?, ?, ?, ?, 'active')
+        `, [email, source, ipAddress, userAgent, unsubscribeToken]);
+
+        console.log(`✅ New email subscription: ${email} from ${source}`);
+
+        res.json({ 
+            success: true, 
+            message: 'Thank you! We\'ll notify you when the talking feature is ready! 🎉',
+            unsubscribeToken: unsubscribeToken
+        });
+
+    } catch (error) {
+        console.error('❌ Email subscription error:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to subscribe. Please try again later.' 
+        });
+    }
+});
+
+app.get('/api/notifications/unsubscribe/:token', async (req, res) => {
+    try {
+        const { token } = req.params;
+        
+        if (!token) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Invalid unsubscribe link' 
+            });
+        }
+
+        const [rows] = await pool.execute(
+            'SELECT email FROM email_notifications WHERE unsubscribe_token = ? AND status = "active"',
+            [token]
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Invalid or expired unsubscribe link' 
+            });
+        }
+
+        await pool.execute(
+            'UPDATE email_notifications SET status = "unsubscribed" WHERE unsubscribe_token = ?',
+            [token]
+        );
+
+        console.log(`✅ Email unsubscribed: ${rows[0].email}`);
+
+        res.json({ 
+            success: true, 
+            message: 'You have been successfully unsubscribed from notifications.' 
+        });
+
+    } catch (error) {
+        console.error('❌ Unsubscribe error:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to unsubscribe. Please try again later.' 
         });
     }
 });
@@ -2208,7 +2352,7 @@ app.get('/api/blogs/:id', async (req, res) => {
         if (isNumericId) {
             // Direct ID lookup
             query = `
-                SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                SELECT id, title, excerpt, content, author_name as author, status, created_at, updated_at,
                        featured_image as image_url, author_image as authorImage, gallery
                 FROM resources 
                 WHERE id = ? AND type = 'blog' AND status = 'published'
@@ -2217,7 +2361,7 @@ app.get('/api/blogs/:id', async (req, res) => {
         } else {
             // Slug-based lookup - create slug from title
             query = `
-                SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                SELECT id, title, excerpt, content, author_name as author, status, created_at, updated_at,
                        featured_image as image_url, author_image as authorImage, gallery
                 FROM resources 
                 WHERE type = 'blog' AND status = 'published'
@@ -2874,12 +3018,357 @@ app.get('/schedule-demo', (req, res) => {
 });
 
 // Enhanced Resource Routes with SEO-friendly URLs
-// SEO-friendly blog URLs
-app.get('/blog/:slug', async (req, res) => {
+// SEO-friendly case study URLs
+app.get('/case-study/:slug', async (req, res) => {
     try {
+        console.log('🚀 SERVER DEBUG: Case study route called!');
         if (!pool) {
             return res.status(503).sendFile(path.join(__dirname, 'pages', '404.html'));
         }
+        
+        // Read the case study detail HTML template first
+        const caseStudyTemplate = fs.readFileSync(path.join(__dirname, 'pages', 'case-study-detail.html'), 'utf8');
+        
+        const { slug } = req.params;
+        console.log('🔍 Case study route hit with slug:', slug);
+        
+        let [rows] = [];
+        
+        // Check if slug is numeric (direct ID lookup)
+        const isNumericId = /^\d+$/.test(slug);
+        
+        if (isNumericId) {
+            // Try to find by ID first
+            try {
+                [rows] = await pool.execute(
+                    `SELECT id, title, excerpt, content, COALESCE(author_name, author) as author, status, created_at, updated_at,
+                            featured_image as image_url, author_image as authorImage, gallery, view_count
+                     FROM resources 
+                     WHERE id = ? AND type = 'case-study' AND status = "published"`,
+                    [slug]
+                );
+                console.log('📝 Found by ID:', rows.length);
+            } catch (error) {
+                console.log('❌ Error finding case study by ID:', error.message);
+                [rows] = [];
+            }
+        } else {
+            // Try to find by slug match (generate slug from title and compare)
+            try {
+                // Add retry logic for database timeouts
+                let retries = 3;
+                while (retries > 0) {
+                    try {
+                        [rows] = await pool.execute(
+                            `SELECT id, title, excerpt, content, COALESCE(author_name, author) as author, status, created_at, updated_at,
+                                    featured_image as image_url, author_image as authorImage, gallery, view_count
+                             FROM resources 
+                             WHERE type = 'case-study' AND status = "published"`,
+                            []
+                        );
+                        break; // Success, exit retry loop
+                    } catch (dbError) {
+                        retries--;
+                        if (retries === 0) throw dbError;
+                        console.log(`🔄 Database timeout, retrying... (${retries} attempts left)`);
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+                    }
+                }
+                
+                // Find case study by matching slug
+                const caseStudy = rows.find(row => {
+                    const generatedSlug = row.title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, '')
+                        .replace(/\s+/g, '-')
+                        .replace(/-+/g, '-')
+                        .trim();
+                    
+                    // Check if the provided slug matches the generated slug
+                    return generatedSlug === slug || 
+                           slug.includes(generatedSlug) || 
+                           generatedSlug.includes(slug.replace(/-+/g, '-'));
+                });
+                
+                if (caseStudy) {
+                    rows = [caseStudy];
+                    console.log('📝 Found by slug match:', caseStudy.title);
+                } else {
+                    rows = [];
+                    console.log('❌ No case study found matching slug:', slug);
+                }
+            } catch (error) {
+                console.log('❌ Error finding case study by slug:', error.message);
+                [rows] = [];
+            }
+        }
+        
+        if (!rows || rows.length === 0) {
+            console.log('❌ No case study found for slug:', slug);
+            console.log('🔍 Available case studies in database:');
+            try {
+                const [allCaseStudies] = await pool.execute(
+                    'SELECT id, title, status FROM resources WHERE type = "case-study"'
+                );
+                console.log('📝 All case studies:', allCaseStudies);
+            } catch (error) {
+                console.log('❌ Error fetching all case studies:', error);
+            }
+            return res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
+        const caseStudy = rows[0];
+        console.log('✅ Case study found:', caseStudy.title);
+        console.log('📸 Author image:', caseStudy.authorImage);
+        console.log('📸 Author image type:', typeof caseStudy.authorImage);
+        console.log('📸 Full case study object keys:', Object.keys(caseStudy));
+        console.log('📝 Content length:', caseStudy.content ? caseStudy.content.length : 'No content');
+        console.log('📝 Content preview:', caseStudy.content ? caseStudy.content.substring(0, 200) + '...' : 'No content');
+        
+        // Increment view count
+        try {
+            await pool.execute(
+                'UPDATE resources SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ?',
+                [caseStudy.id]
+            );
+            console.log('📊 View count incremented for case study:', caseStudy.title);
+        } catch (error) {
+            console.error('❌ Error incrementing view count:', error);
+        }
+        console.log('📝 Excerpt:', caseStudy.excerpt ? caseStudy.excerpt.substring(0, 100) + '...' : 'No excerpt');
+        console.log('🔍 View count value:', caseStudy.view_count, 'Type:', typeof caseStudy.view_count);
+        
+        // Replace placeholders with actual case study data
+        let cleanedContent = cleanQuillContent(caseStudy.content) || '<p>No content available</p>';
+        
+        let renderedHtml = caseStudyTemplate;
+        
+        // Simple content replacement without debug boxes
+        renderedHtml = renderedHtml.replace('Loading content...', cleanedContent);
+        
+        renderedHtml = renderedHtml
+            .replace('<title id="page-title">Case Study - Emma AI</title>', `<title id="page-title">${caseStudy.title} - Emma AI</title>`)
+            .replace('content="Discover how Emma AI transforms businesses through intelligent automation and multilingual communication."', `content="${(caseStudy.excerpt || caseStudy.content.substring(0, 160)).replace(/"/g, '&quot;')}"`)
+            .replace('<h1 class="article-title" id="article-title">Loading...</h1>', `<h1 class="article-title" id="article-title">${caseStudy.title}</h1>`)
+            .replace('<div class="article-excerpt" id="article-excerpt">Loading excerpt...</div>', `<div class="article-excerpt" id="article-excerpt">${caseStudy.excerpt || ''}</div>`)
+            .replace('<span id="author-name">Emma AI Team</span>', `<span id="author-name">${caseStudy.author || 'Emma AI Team'}</span>`)
+            .replace('<h4 id="author-name">Emma AI Team</h4>', `<h4 id="author-name">${caseStudy.author || 'Emma AI Team'}</h4>`)
+            .replace(/<div class="author-avatar" id="author-avatar">E<\/div>/, (() => {
+                if (caseStudy.authorImage) {
+                    const imageUrl = caseStudy.authorImage.startsWith('/') ? caseStudy.authorImage : '/' + caseStudy.authorImage;
+                    return `<div class="author-avatar" id="author-avatar"><img src="${imageUrl}" alt="${caseStudy.author || 'Author'}" /></div>`;
+                }
+                return `<div class="author-avatar" id="author-avatar">${(caseStudy.author || 'Emma AI Team').charAt(0).toUpperCase()}</div>`;
+            })())
+            .replace('<span id="article-date">Loading...</span>', `<span id="article-date">${new Date(caseStudy.created_at).toLocaleDateString()}</span>`)
+            .replace('<span id="read-time">Loading...</span>', `<span id="read-time">${calculateReadingTime(caseStudy.content)}</span>`)
+            .replace('<span id="view-count">Loading...</span>', `<span id="view-count">${caseStudy.view_count || 0} views</span>`)
+            .replace(/<img class="article-image" id="article-image" src="" alt="" style="display: none;">/, (() => {
+                if (caseStudy.image_url) {
+                    const imageUrl = caseStudy.image_url.startsWith('/') ? caseStudy.image_url : '/' + caseStudy.image_url;
+                    return `<img class="article-image" id="article-image" src="${imageUrl}" alt="${caseStudy.title}" style="display: block;">`;
+                }
+                return '<img class="article-image" id="article-image" src="" alt="" style="display: none;">';
+            })())
+            .replace(/<div class="article-tags" id="article-tags">[\s\S]*?<\/div>/, (() => {
+                if (caseStudy.tags) {
+                    const tags = caseStudy.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+                    const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                    return `<div class="article-tags" id="article-tags">${tagHtml}</div>`;
+                }
+                return '<div class="article-tags" id="article-tags"></div>';
+            })());
+        
+        console.log('✅ Case study rendered successfully');
+        res.send(renderedHtml);
+        
+    } catch (error) {
+        console.error('Error serving case study:', error);
+        res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
+    }
+});
+
+// SEO-friendly use case URLs
+app.get('/use-case/:slug', async (req, res) => {
+    try {
+        console.log('🚀 SERVER DEBUG: Use case route called!');
+        if (!pool) {
+            return res.status(503).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
+        // Read the use case detail HTML template first
+        const useCaseTemplate = fs.readFileSync(path.join(__dirname, 'pages', 'use-case-detail.html'), 'utf8');
+        
+        const { slug } = req.params;
+        console.log('🔍 Use case route hit with slug:', slug);
+        
+        let [rows] = [];
+        
+        // Check if slug is numeric (direct ID lookup)
+        const isNumericId = /^\d+$/.test(slug);
+        
+        if (isNumericId) {
+            // Try to find by ID first
+            try {
+                [rows] = await pool.execute(
+                    `SELECT id, title, excerpt, content, COALESCE(author_name, author) as author, status, created_at, updated_at,
+                            featured_image as image_url, author_image as authorImage, gallery, view_count
+                     FROM resources 
+                     WHERE id = ? AND type = 'use-case' AND status = "published"`,
+                    [slug]
+                );
+                console.log('📝 Found by ID:', rows.length);
+            } catch (error) {
+                console.log('❌ Error finding use case by ID:', error.message);
+                [rows] = [];
+            }
+        } else {
+            // Try to find by slug match (generate slug from title and compare)
+            try {
+                // Add retry logic for database timeouts
+                let retries = 3;
+                while (retries > 0) {
+                    try {
+                        [rows] = await pool.execute(
+                            `SELECT id, title, excerpt, content, COALESCE(author_name, author) as author, status, created_at, updated_at,
+                                    featured_image as image_url, author_image as authorImage, gallery, view_count
+                             FROM resources 
+                             WHERE type = 'use-case' AND status = "published"`,
+                            []
+                        );
+                        break; // Success, exit retry loop
+                    } catch (dbError) {
+                        retries--;
+                        if (retries === 0) throw dbError;
+                        console.log(`🔄 Database timeout, retrying... (${retries} attempts left)`);
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before retry
+                    }
+                }
+                
+                // Find use case by matching slug
+                const useCase = rows.find(row => {
+                    const generatedSlug = row.title
+                        .toLowerCase()
+                        .replace(/[^a-z0-9\s-]/g, '')
+                        .replace(/\s+/g, '-')
+                        .replace(/-+/g, '-')
+                        .trim();
+                    
+                    // Check if the provided slug matches the generated slug
+                    return generatedSlug === slug || 
+                           slug.includes(generatedSlug) || 
+                           generatedSlug.includes(slug.replace(/-+/g, '-'));
+                });
+                
+                if (useCase) {
+                    rows = [useCase];
+                    console.log('📝 Found by slug match:', useCase.title);
+                } else {
+                    rows = [];
+                    console.log('❌ No use case found matching slug:', slug);
+                }
+            } catch (error) {
+                console.log('❌ Error finding use case by slug:', error.message);
+                [rows] = [];
+            }
+        }
+        
+        if (!rows || rows.length === 0) {
+            console.log('❌ No use case found for slug:', slug);
+            return res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
+        const useCase = rows[0];
+        console.log('✅ Use case found:', useCase.title);
+        console.log('📸 Author image:', useCase.authorImage);
+        console.log('📝 Content length:', useCase.content ? useCase.content.length : 'No content');
+        
+        // Increment view count
+        try {
+            await pool.execute(
+                'UPDATE resources SET view_count = COALESCE(view_count, 0) + 1 WHERE id = ?',
+                [useCase.id]
+            );
+            console.log('📊 View count incremented for use case:', useCase.title);
+        } catch (error) {
+            console.error('❌ Error incrementing view count:', error);
+        }
+        
+        // Replace placeholders with actual use case data
+        let cleanedContent = cleanQuillContent(useCase.content) || '<p>No content available</p>';
+        
+        let renderedHtml = useCaseTemplate;
+        
+        // Enhanced content with proper visibility and contrast (same as blog)
+        const enhancedContent = `
+            <div class="article-content-enhanced" style="
+                background: #1e293b !important;
+                border: 2px solid #3b82f6 !important;
+                border-radius: 1rem !important;
+                padding: 2rem !important;
+                margin: 1rem 0 !important;
+                min-height: 200px !important;
+                color: #ffffff !important;
+                box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+            ">
+                ${cleanedContent}
+            </div>
+        `;
+        
+        renderedHtml = renderedHtml.replace('Loading content...', enhancedContent);
+        
+        renderedHtml = renderedHtml
+            .replace('<title id="page-title">Use Case - Emma AI</title>', `<title id="page-title">${useCase.title} - Emma AI</title>`)
+            .replace('content="Discover how Emma AI transforms businesses through intelligent automation and multilingual communication."', `content="${(useCase.excerpt || useCase.content.substring(0, 160)).replace(/"/g, '&quot;')}"`)
+            .replace('<h1 class="article-title" id="article-title">Loading...</h1>', `<h1 class="article-title" id="article-title">${useCase.title}</h1>`)
+            .replace('<div class="article-excerpt" id="article-excerpt">Loading excerpt...</div>', `<div class="article-excerpt" id="article-excerpt">${useCase.excerpt || ''}</div>`)
+            .replace('<span id="author-name">Emma AI Team</span>', `<span id="author-name">${useCase.author || 'Emma AI Team'}</span>`)
+            .replace('<h4 id="author-name">Emma AI Team</h4>', `<h4 id="author-name">${useCase.author || 'Emma AI Team'}</h4>`)
+            .replace(/<div class="author-avatar" id="author-avatar">E<\/div>/, (() => {
+                if (useCase.authorImage) {
+                    const imageUrl = useCase.authorImage.startsWith('/') ? useCase.authorImage : '/' + useCase.authorImage;
+                    return `<div class="author-avatar" id="author-avatar"><img src="${imageUrl}" alt="${useCase.author || 'Author'}" /></div>`;
+                }
+                return `<div class="author-avatar" id="author-avatar">${(useCase.author || 'Emma AI Team').charAt(0).toUpperCase()}</div>`;
+            })())
+            .replace('<span id="article-date">Loading...</span>', `<span id="article-date">${new Date(useCase.created_at).toLocaleDateString()}</span>`)
+            .replace('<span id="read-time">Loading...</span>', `<span id="read-time">${calculateReadingTime(useCase.content)}</span>`)
+            .replace('<span id="view-count">Loading...</span>', `<span id="view-count">${useCase.view_count || 0} views</span>`)
+            .replace(/<img class="article-image" id="article-image" src="" alt="" style="display: none;">/, (() => {
+                if (useCase.image_url) {
+                    const imageUrl = useCase.image_url.startsWith('/') ? useCase.image_url : '/' + useCase.image_url;
+                    return `<img class="article-image" id="article-image" src="${imageUrl}" alt="${useCase.title}" style="display: block;">`;
+                }
+                return '<img class="article-image" id="article-image" src="" alt="" style="display: none;">';
+            })())
+            .replace(/<div class="article-tags" id="article-tags">[\s\S]*?<\/div>/, (() => {
+                if (useCase.tags) {
+                    const tags = useCase.tags.split(',').map(tag => tag.trim()).filter(tag => tag);
+                    const tagHtml = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                    return `<div class="article-tags" id="article-tags">${tagHtml}</div>`;
+                }
+                return '<div class="article-tags" id="article-tags"></div>';
+            })());
+        
+        console.log('✅ Use case rendered successfully');
+        res.send(renderedHtml);
+        
+    } catch (error) {
+        console.error('Error serving use case:', error);
+        res.status(500).sendFile(path.join(__dirname, 'pages', '404.html'));
+    }
+});
+
+// SEO-friendly blog URLs
+app.get('/blog/:slug', async (req, res) => {
+    try {
+        console.log('🚀 SERVER DEBUG: Blog route called!');
+        if (!pool) {
+            return res.status(503).sendFile(path.join(__dirname, 'pages', '404.html'));
+        }
+        
+        // Read the blog detail HTML template first
+        const blogTemplate = fs.readFileSync(path.join(__dirname, 'pages', 'blog-detail.html'), 'utf8');
         
         const { slug } = req.params;
         console.log('🔍 Blog route hit with slug:', slug);
@@ -2893,7 +3382,7 @@ app.get('/blog/:slug', async (req, res) => {
             // Try to find by ID first
             try {
                 [rows] = await pool.execute(
-                    `SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                    `SELECT id, title, excerpt, content, COALESCE(author_name, author) as author, status, created_at, updated_at,
                             featured_image as image_url, author_image as authorImage, gallery, view_count
                      FROM resources 
                      WHERE id = ? AND type = 'blog' AND status = "published"`,
@@ -2912,7 +3401,7 @@ app.get('/blog/:slug', async (req, res) => {
                 while (retries > 0) {
                     try {
                         [rows] = await pool.execute(
-                            `SELECT id, title, excerpt, content, author, status, created_at, updated_at,
+                            `SELECT id, title, excerpt, content, COALESCE(author_name, author) as author, status, created_at, updated_at,
                                     featured_image as image_url, author_image as authorImage, gallery, view_count
                              FROM resources 
                              WHERE type = 'blog' AND status = "published"`,
@@ -2958,6 +3447,15 @@ app.get('/blog/:slug', async (req, res) => {
         
         if (!rows || rows.length === 0) {
             console.log('❌ No blog found for slug:', slug);
+            console.log('🔍 Available blogs in database:');
+            try {
+                const [allBlogs] = await pool.execute(
+                    'SELECT id, title, status FROM resources WHERE type = "blog"'
+                );
+                console.log('📝 All blogs:', allBlogs);
+            } catch (error) {
+                console.log('❌ Error fetching all blogs:', error);
+            }
             return res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
         }
         
@@ -2968,6 +3466,12 @@ app.get('/blog/:slug', async (req, res) => {
         console.log('📸 Full blog object keys:', Object.keys(blog));
         console.log('📝 Content length:', blog.content ? blog.content.length : 'No content');
         console.log('📝 Content preview:', blog.content ? blog.content.substring(0, 200) + '...' : 'No content');
+        console.log('📝 Cleaned content length:', cleanQuillContent(blog.content) ? cleanQuillContent(blog.content).length : 'No cleaned content');
+        console.log('📝 Cleaned content preview:', cleanQuillContent(blog.content) ? cleanQuillContent(blog.content).substring(0, 200) + '...' : 'No cleaned content');
+        
+        // Debug: Check if template contains the placeholder
+        console.log('🔍 Template contains "Loading content...":', blogTemplate.includes('Loading content...'));
+        console.log('🔍 Template contains "article-body":', blogTemplate.includes('article-body'));
         
         // Increment view count
         try {
@@ -2982,16 +3486,73 @@ app.get('/blog/:slug', async (req, res) => {
         console.log('📝 Excerpt:', blog.excerpt ? blog.excerpt.substring(0, 100) + '...' : 'No excerpt');
         console.log('🔍 View count value:', blog.view_count, 'Type:', typeof blog.view_count);
         
-        // Read the blog detail HTML template
-        const blogTemplate = fs.readFileSync(path.join(__dirname, 'pages', 'blog-detail.html'), 'utf8');
-        
         // Replace placeholders with actual blog data
-        let renderedHtml = blogTemplate
-            .replace('<title id="page-title">Blog Post - Emma AI</title>', `<title id="page-title">${blog.title} - Emma AI</title>`)
+        let cleanedContent = cleanQuillContent(blog.content) || '<p>No content available</p>';
+        
+        // Debug reading time calculation
+        const readingTime = calculateReadingTime(blog.content);
+        console.log('📖 Blog reading time calculation:', {
+            contentLength: blog.content ? blog.content.length : 0,
+            readingTime: readingTime,
+            title: blog.title
+        });
+        
+        // Enhanced content processing for better visibility
+        console.log('📝 Original content length:', blog.content ? blog.content.length : 'No content');
+        console.log('📝 Cleaned content length:', cleanedContent.length);
+        console.log('📝 Cleaned content preview:', cleanedContent.substring(0, 300) + '...');
+        
+        // Additional content enhancement for visibility
+        if (cleanedContent && cleanedContent.length > 0) {
+            // Ensure content has proper structure
+            if (!cleanedContent.includes('<p>') && !cleanedContent.includes('<div>')) {
+                cleanedContent = `<div class="enhanced-content">${cleanedContent}</div>`;
+            }
+            
+            // Add fallback content if needed
+            if (cleanedContent.length < 100) {
+                cleanedContent = '<p>Content is being processed. Please refresh the page.</p>';
+            }
+        } else {
+            cleanedContent = '<p>No content available for this blog post.</p>';
+        }
+        
+        console.log('📝 Final processed content length:', cleanedContent.length);
+        console.log('📝 Final processed content preview:', cleanedContent.substring(0, 500) + '...');
+        
+        let renderedHtml = blogTemplate;
+        
+        // Debug: Check each replacement
+        console.log('🔍 Before title replacement:', renderedHtml.includes('<title id="page-title">Blog Post - Emma AI</title>'));
+        renderedHtml = renderedHtml.replace('<title id="page-title">Blog Post - Emma AI</title>', `<title id="page-title">${blog.title} - Emma AI</title>`);
+        
+        console.log('🔍 Before content replacement:', renderedHtml.includes('Loading content...'));
+        
+        // Enhanced content with proper visibility and contrast
+        const enhancedContent = `
+            <div class="article-content-enhanced" style="
+                color: #ffffff !important; 
+                background: #1e293b !important; 
+                padding: 2rem !important; 
+                border-radius: 1rem !important; 
+                margin: 1rem 0 !important; 
+                min-height: 200px !important;
+                border: 2px solid #3b82f6 !important;
+                box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3) !important;
+            ">
+                <div style="color: #ffffff !important; background: transparent !important;">
+                    ${cleanedContent}
+                </div>
+            </div>
+        `;
+        
+        renderedHtml = renderedHtml.replace('Loading content...', enhancedContent);
+        console.log('🔍 After content replacement:', renderedHtml.includes('article-content-enhanced'));
+        
+        renderedHtml = renderedHtml
             .replace('content="Read our latest insights on AI automation and intelligent workflows."', `content="${(blog.excerpt || blog.content.substring(0, 160)).replace(/"/g, '&quot;')}"`)
             .replace('<h1 class="article-title" id="article-title">Loading...</h1>', `<h1 class="article-title" id="article-title">${blog.title}</h1>`)
             .replace('<div class="article-excerpt" id="article-excerpt">Loading excerpt...</div>', `<div class="article-excerpt" id="article-excerpt">${blog.excerpt || ''}</div>`)
-            .replace('Loading content...', cleanQuillContent(blog.content))
             .replace('<span id="author-name">Emma AI Team</span>', `<span id="author-name">${blog.author || 'Emma AI Team'}</span>`)
             .replace(/<div class="author-avatar" id="author-avatar">E<\/div>/, (() => {
                 if (blog.authorImage) {
@@ -3002,8 +3563,8 @@ app.get('/blog/:slug', async (req, res) => {
                 }
             })())
             .replace('<span id="article-date">Loading...</span>', `<span id="article-date">${new Date(blog.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>`)
+            .replace('<span id="read-time">Loading...</span>', `<span id="read-time">${calculateReadingTime(blog.content)}</span>`)
             .replace('<span id="view-count-number">0</span>', `<span id="view-count-number">${blog.view_count || 0}</span>`)
-            .replace('<!-- DEBUG: view_count -->', `<!-- DEBUG: view_count = ${blog.view_count} -->`)
             .replace('<body>', `<body data-view-count="${blog.view_count || 0}" data-blog-id="${blog.id}">`)
             .replace('<img class="article-image" id="article-image" src="" alt="" style="display: none;">', `<img class="article-image" id="article-image" src="${blog.image_url ? (blog.image_url.startsWith('/') ? blog.image_url : '/' + blog.image_url) : ''}" alt="${blog.title}" style="${blog.image_url ? 'display: block;' : 'display: none;'}">`)
             .replace('<div class="loading-state" id="loading-state">', '<div class="loading-state" id="loading-state" style="display: none;">')
@@ -3201,6 +3762,48 @@ function generateSlug(title) {
         .trim('-'); // Remove leading/trailing hyphens
 }
 
+// Debug endpoint to check case study data
+app.get('/debug/case-study/:slug', async (req, res) => {
+    try {
+        const { slug } = req.params;
+        const [rows] = await pool.execute(
+            'SELECT id, title, author, type, slug FROM resources WHERE slug = ?',
+            [slug]
+        );
+        
+        if (rows.length > 0) {
+            res.json({
+                found: true,
+                data: rows[0]
+            });
+        } else {
+            res.json({
+                found: false,
+                message: 'Case study not found',
+                searchedSlug: slug
+            });
+        }
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Debug endpoint to check all resources
+app.get('/debug/resources', async (req, res) => {
+    try {
+        const [rows] = await pool.execute(
+            'SELECT id, title, author, type, slug, status FROM resources ORDER BY created_at DESC'
+        );
+        
+        res.json({
+            total: rows.length,
+            resources: rows
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Helper function to clean Quill editor artifacts from content
 function cleanQuillContent(content) {
     if (!content) return content;
@@ -3220,6 +3823,26 @@ function cleanQuillContent(content) {
         .replace(/<div class="ql-container"[^>]*>[\s\S]*?<\/div>/g, '');
     
     return cleanContent;
+}
+
+// Calculate reading time based on content length
+function calculateReadingTime(content) {
+    if (!content) return '1 min read';
+    
+    // Remove HTML tags to get plain text
+    const plainText = content.replace(/<[^>]*>/g, '');
+    
+    // Count words (split by whitespace and filter out empty strings)
+    const wordCount = plainText.split(/\s+/).filter(word => word.length > 0).length;
+    
+    // Average reading speed: 200 words per minute
+    const wordsPerMinute = 200;
+    const readingTimeMinutes = Math.ceil(wordCount / wordsPerMinute);
+    
+    // Minimum 1 minute, maximum 30 minutes
+    const finalReadingTime = Math.max(1, Math.min(30, readingTimeMinutes));
+    
+    return `${finalReadingTime} min read`;
 }
 
 // Function to update existing resources with slugs
@@ -3341,7 +3964,7 @@ function generateBlogPage(blog) {
                 <span>•</span>
                 <span>${formattedDate}</span>
                 <span>•</span>
-                <span>${blog.read_time || '5 min read'}</span>
+                <span>${calculateReadingTime(blog.content)}</span>
             </div>
         </div>
 
@@ -3569,6 +4192,42 @@ function generateUseCasePage(useCase) {
 </html>`;
 }
 
+// Initialize email notifications table
+async function initializeEmailNotificationsTable() {
+    try {
+        // Wait a moment for the pool to be ready
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        if (pool) {
+            await pool.execute(`
+                CREATE TABLE IF NOT EXISTS email_notifications (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    email VARCHAR(255) UNIQUE NOT NULL,
+                    source VARCHAR(100) DEFAULT 'talking_feature_popup',
+                    status ENUM('active', 'unsubscribed', 'bounced') DEFAULT 'active',
+                    ip_address VARCHAR(45),
+                    user_agent TEXT,
+                    subscribed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    last_notified_at TIMESTAMP NULL,
+                    unsubscribe_token VARCHAR(255) UNIQUE,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                    
+                    INDEX idx_email (email),
+                    INDEX idx_status (status),
+                    INDEX idx_source (source),
+                    INDEX idx_subscribed_at (subscribed_at)
+                )
+            `);
+            console.log('✅ Email notifications table initialized');
+        } else {
+            console.log('⚠️ Database pool not ready yet, table creation skipped');
+        }
+    } catch (error) {
+        console.error('❌ Error initializing email notifications table:', error.message);
+    }
+}
+
 // Start server (database initialization skipped for MPA-only mode)
 app.listen(PORT, async () => {
     console.log(`Emma CMS Server running on port ${PORT}`);
@@ -3578,4 +4237,9 @@ app.listen(PORT, async () => {
     console.log(`Resources: http://localhost:${PORT}/resources`);
     console.log(`Contact: http://localhost:${PORT}/contact`);
     console.log(`CMS Admin: http://localhost:${PORT}/cms-admin-local.html`);
+    
+    // Initialize email notifications table
+    await initializeEmailNotificationsTable();
+    
+    console.log(`\n🚀 Server is ready!`);
 });
