@@ -665,6 +665,10 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">Settings</div>
+                <a href="#" class="nav-item" data-section="privacy-policy">
+                    <i class="fas fa-shield-alt"></i>
+                    Privacy Policy
+                </a>
                 <a href="#" class="nav-item" onclick="alert('Settings coming soon!')">
                     <i class="fas fa-cog"></i>
                     Settings
@@ -744,6 +748,10 @@
                                     <i class="fas fa-blog"></i>
                                     <span>Create New Post</span>
                                 </a>
+                                <a href="#" class="quick-action-btn" onclick="showSection('privacy-policy')">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Privacy Policy</span>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -802,6 +810,38 @@
                             </div>
                             <div id="resources-content" style="display: none;">
                                 <!-- Resources table will be loaded here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Privacy Policy Section -->
+                <div id="privacy-policy-section" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Privacy Policy Management</h3>
+                            <div>
+                                <button class="btn btn-secondary" onclick="refreshPrivacyPolicy()">
+                                    <i class="fas fa-sync"></i>
+                                    Refresh
+                                </button>
+                                <button class="btn btn-success" onclick="previewPrivacyPolicy()">
+                                    <i class="fas fa-eye"></i>
+                                    Preview
+                                </button>
+                                <button class="btn btn-primary" onclick="openPrivacyPolicyModal()">
+                                    <i class="fas fa-edit"></i>
+                                    Edit Policy
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="loading" id="privacy-policy-loading">
+                                <div class="spinner"></div>
+                                Loading privacy policy...
+                            </div>
+                            <div id="privacy-policy-content" style="display: none;">
+                                <!-- Privacy policy content will be loaded here -->
                             </div>
                         </div>
                     </div>
@@ -950,6 +990,68 @@
         </div>
     </div>
 
+    <!-- Privacy Policy Modal -->
+    <div class="modal" id="privacy-policy-modal">
+        <div class="modal-content" style="max-width: 1000px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Privacy Policy</h3>
+                <button class="modal-close" onclick="closePrivacyPolicyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="privacy-policy-form">
+                    <div class="form-group">
+                        <label class="form-label">Minimum Age Requirement</label>
+                        <input type="number" class="form-input" id="privacy-minimum-age" min="13" max="25" value="18">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Introduction</label>
+                        <textarea class="form-input form-textarea" id="privacy-introduction" placeholder="Enter introduction text"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Policy Coverage</label>
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" onclick="formatText('bold', 'privacy-coverage')" title="Bold">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" class="editor-btn" onclick="formatText('italic', 'privacy-coverage')" title="Italic">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" class="editor-btn" onclick="insertLink('privacy-coverage')" title="Link">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                        <div class="simple-editor" id="privacy-coverage" contenteditable="true" data-placeholder="Enter policy coverage details..."></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Global Compliance</label>
+                        <div class="simple-editor" id="privacy-global-compliance" contenteditable="true" data-placeholder="Enter global compliance information..."></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Services Description</label>
+                        <div class="simple-editor" id="privacy-services" contenteditable="true" data-placeholder="Enter Emma's services description..."></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Contact Information</label>
+                        <div class="simple-editor" id="privacy-contact" contenteditable="true" data-placeholder="Enter contact information..."></div>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                        <button type="button" class="btn btn-secondary" onclick="closePrivacyPolicyModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Save Privacy Policy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Industry Modal -->
     <div class="modal" id="industry-modal">
         <div class="modal-content">
@@ -1018,13 +1120,208 @@
             document.execCommand('insertUnorderedList', false, null);
         }
 
-        function insertLink() {
+        function insertLink(editorId = 'resource-editor') {
             const url = prompt('Enter URL:');
             const text = prompt('Enter link text:');
             if (url && text) {
+                const editor = document.getElementById(editorId);
+                editor.focus();
                 document.execCommand('insertHTML', false, `<a href="${url}">${text}</a>`);
             }
         }
+
+        // Privacy Policy Management Functions
+        async function loadPrivacyPolicy() {
+            try {
+                console.log('🔒 Loading privacy policy...');
+                
+                const response = await fetch('/api/cms/privacy-policy');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('📋 Privacy policy loaded:', data);
+                
+                displayPrivacyPolicy(data);
+            } catch (error) {
+                console.error('❌ Error loading privacy policy:', error);
+                displayPrivacyPolicy(null);
+            }
+        }
+
+        function displayPrivacyPolicy(data) {
+            const container = document.getElementById('privacy-policy-content');
+            const loading = document.getElementById('privacy-policy-loading');
+            
+            if (!data) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #64748b;">
+                        <i class="fas fa-shield-alt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p>Privacy Policy not found</p>
+                        <p style="font-size: 0.875rem; margin-top: 0.5rem;">Create your privacy policy to get started</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                        <div class="stat-card">
+                            <div class="stat-value">${data.minimumAge || 18}</div>
+                            <div class="stat-label">Minimum Age</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" style="font-size: 0.9rem;">${new Date(data.lastModified).toLocaleDateString()}</div>
+                            <div class="stat-label">Last Modified</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h4 style="color: #374151; margin-bottom: 1rem;">Current Policy Sections:</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                            ${data.introduction ? '<div class="badge badge-published">Introduction</div>' : '<div class="badge badge-draft">Introduction</div>'}
+                            ${data.coverage ? '<div class="badge badge-published">Policy Coverage</div>' : '<div class="badge badge-draft">Policy Coverage</div>'}
+                            ${data.globalCompliance ? '<div class="badge badge-published">Global Compliance</div>' : '<div class="badge badge-draft">Global Compliance</div>'}
+                            ${data.services ? '<div class="badge badge-published">Services</div>' : '<div class="badge badge-draft">Services</div>'}
+                            ${data.contactInfo ? '<div class="badge badge-published">Contact Info</div>' : '<div class="badge badge-draft">Contact Info</div>'}
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <h4 style="color: #374151; margin-bottom: 0.5rem;">Quick Actions:</h4>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn btn-sm btn-secondary" onclick="openPrivacyPolicyModal()">
+                                <i class="fas fa-edit"></i>
+                                Edit Policy
+                            </button>
+                            <button class="btn btn-sm btn-success" onclick="previewPrivacyPolicy()">
+                                <i class="fas fa-eye"></i>
+                                Preview
+                            </button>
+                            <button class="btn btn-sm btn-secondary" onclick="exportPrivacyPolicy()">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            loading.style.display = 'none';
+            container.style.display = 'block';
+        }
+
+        function refreshPrivacyPolicy() {
+            const container = document.getElementById('privacy-policy-content');
+            const loading = document.getElementById('privacy-policy-loading');
+            
+            container.style.display = 'none';
+            loading.style.display = 'flex';
+            
+            loadPrivacyPolicy();
+        }
+
+        function openPrivacyPolicyModal() {
+            const modal = document.getElementById('privacy-policy-modal');
+            modal.style.display = 'block';
+            
+            // Load current privacy policy data into the form
+            loadPrivacyPolicyForEdit();
+        }
+
+        function closePrivacyPolicyModal() {
+            const modal = document.getElementById('privacy-policy-modal');
+            modal.style.display = 'none';
+        }
+
+        async function loadPrivacyPolicyForEdit() {
+            try {
+                const response = await fetch('/api/cms/privacy-policy');
+                if (!response.ok) {
+                    console.log('No existing privacy policy found, using defaults');
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                // Populate form fields
+                document.getElementById('privacy-minimum-age').value = data.minimumAge || 18;
+                document.getElementById('privacy-introduction').value = data.introduction?.body || '';
+                document.getElementById('privacy-coverage').innerHTML = data.coverage?.body || '';
+                document.getElementById('privacy-global-compliance').innerHTML = data.globalCompliance?.body || '';
+                document.getElementById('privacy-services').innerHTML = data.services?.body || '';
+                document.getElementById('privacy-contact').innerHTML = data.contactInfo?.body || '';
+            } catch (error) {
+                console.error('Error loading privacy policy for edit:', error);
+            }
+        }
+
+        function previewPrivacyPolicy() {
+            window.open('/privacy', '_blank');
+        }
+
+        function exportPrivacyPolicy() {
+            // Create a downloadable version of the privacy policy
+            const link = document.createElement('a');
+            link.href = '/privacy';
+            link.download = 'privacy-policy.html';
+            link.target = '_blank';
+            link.click();
+        }
+
+        // Handle privacy policy form submission
+        document.addEventListener('submit', async function(e) {
+            if (e.target.id === 'privacy-policy-form') {
+                e.preventDefault();
+                
+                const formData = {
+                    minimumAge: parseInt(document.getElementById('privacy-minimum-age').value),
+                    introduction: {
+                        title: "Introduction",
+                        body: document.getElementById('privacy-introduction').value
+                    },
+                    coverage: {
+                        title: "What this Privacy Policy covers",
+                        body: document.getElementById('privacy-coverage').innerHTML
+                    },
+                    globalCompliance: {
+                        title: "Global Compliance & Your Rights",
+                        body: document.getElementById('privacy-global-compliance').innerHTML
+                    },
+                    services: {
+                        title: "Emma's Services",
+                        body: document.getElementById('privacy-services').innerHTML
+                    },
+                    contactInfo: {
+                        title: "Contact Us",
+                        body: document.getElementById('privacy-contact').innerHTML
+                    }
+                };
+                
+                try {
+                    const response = await fetch('/api/cms/privacy-policy', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    if (response.ok) {
+                        console.log('✅ Privacy policy saved successfully');
+                        closePrivacyPolicyModal();
+                        refreshPrivacyPolicy();
+                        alert('Privacy policy saved successfully!');
+                    } else {
+                        const errorData = await response.json();
+                        console.error('❌ Failed to save privacy policy:', errorData);
+                        alert('Failed to save privacy policy. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('❌ Error saving privacy policy:', error);
+                    alert('Error saving privacy policy. Please try again.');
+                }
+            }
+        });
 
         // Override the Quill editor initialization in the main script
         if (typeof EmmaCMS !== 'undefined') {
@@ -1346,10 +1643,14 @@
                     if (window.cms && window.cms.showSection) {
                         window.cms.showSection(hash);
                     }
-                    // Also load industries if we're on industries section
+                    // Also load specific sections if needed
                     if (hash === 'industries') {
                         setTimeout(() => {
                             loadIndustries();
+                        }, 500);
+                    } else if (hash === 'privacy-policy') {
+                        setTimeout(() => {
+                            loadPrivacyPolicy();
                         }, 500);
                     }
                 }, 1000); // Wait for CMS to be fully initialized
@@ -1363,6 +1664,14 @@
 
         // Make loadIndustries globally available
         window.loadIndustries = loadIndustries;
+        
+        // Make privacy policy functions globally available
+        window.loadPrivacyPolicy = loadPrivacyPolicy;
+        window.refreshPrivacyPolicy = refreshPrivacyPolicy;
+        window.openPrivacyPolicyModal = openPrivacyPolicyModal;
+        window.closePrivacyPolicyModal = closePrivacyPolicyModal;
+        window.previewPrivacyPolicy = previewPrivacyPolicy;
+        window.exportPrivacyPolicy = exportPrivacyPolicy;
         
         // Logout function
         function logout() {

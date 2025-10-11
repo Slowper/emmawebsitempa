@@ -10,7 +10,8 @@ const translations = {
             pricing: "Pricing",
             resources: "Resources",
             schedule_demo: "Schedule Demo",
-            contact: "Contact"
+            contact: "Contact",
+            book_demo: "Book a Demo"
         },
         
         // Logo/Brand
@@ -654,7 +655,8 @@ const translations = {
             pricing: "الأسعار",
             resources: "الموارد",
             schedule_demo: "حجز عرض توضيحي",
-            contact: "اتصل بنا"
+            contact: "اتصل بنا",
+            book_demo: "احجز عرضاً توضيحياً"
         },
         
         // Logo/Brand

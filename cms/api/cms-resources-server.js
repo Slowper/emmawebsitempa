@@ -528,11 +528,7 @@ app.post('/api/resources', authenticateToken, upload.fields([
 });
 
 // Update resource
-app.put('/api/resources/:id', authenticateToken, upload.fields([
-    { name: 'featured_image', maxCount: 1 },
-    { name: 'author_image', maxCount: 1 },
-    { name: 'gallery', maxCount: 10 }
-]), async (req, res) => {
+app.put('/api/resources/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
         const {
@@ -542,6 +538,7 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
             content,
             industry_id,
             tags,
+            author,
             meta_title,
             meta_description,
             meta_keywords,
@@ -550,7 +547,7 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
 
         // Check if user can edit this resource
         const [existing] = await pool.execute(
-            'SELECT author_id FROM resources WHERE id = ?',
+            'SELECT author_id, published_at FROM resources WHERE id = ?',
             [id]
         );
 
@@ -563,42 +560,28 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
         }
 
         const slug = generateSlug(title);
-        // Clean the content to remove Quill editor artifacts
         const cleanContent = cleanQuillContent(content);
         const contentPlain = extractPlainText(cleanContent);
         const readTime = calculateReadingTime(contentPlain);
         const wordCount = contentPlain.split(/\s+/).length;
 
-        // Handle file uploads
-        const featuredImage = req.files?.featured_image?.[0];
-        const authorImage = req.files?.author_image?.[0];
-        const galleryFiles = req.files?.gallery || [];
-
         let updateFields = {
             title,
             slug,
             type,
-            excerpt,
+            excerpt: excerpt || null,
             content: cleanContent,
             content_plain: contentPlain,
-            industry_id: industry_id || null,
+            author_name: author || null,
+            industry_id: industry_id ? parseInt(industry_id) : null,
             meta_title: meta_title || title,
             meta_description: meta_description || excerpt,
-            meta_keywords,
+            meta_keywords: meta_keywords || null,
             read_time: readTime,
             word_count: wordCount,
             updated_at: new Date()
         };
 
-        if (featuredImage) {
-            updateFields.featured_image = `/cms/uploads/${featuredImage.filename}`;
-        }
-        if (authorImage) {
-            updateFields.author_image = `/cms/uploads/${authorImage.filename}`;
-        }
-        if (galleryFiles.length > 0) {
-            updateFields.gallery = JSON.stringify(galleryFiles.map(file => `/cms/uploads/${file.filename}`));
-        }
         if (status) {
             updateFields.status = status;
             if (status === 'published' && !existing[0].published_at) {
@@ -628,9 +611,10 @@ app.put('/api/resources/:id', authenticateToken, upload.fields([
         res.json({ message: 'Resource updated successfully' });
     } catch (error) {
         console.error('Update resource error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
+
 
 // Delete resource
 app.delete('/api/resources/:id', authenticateToken, async (req, res) => {

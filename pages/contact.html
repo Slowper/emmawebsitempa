@@ -505,6 +505,41 @@
         .contact-item { margin-bottom: 2rem; }
         .contact-item h3 { color: #3b82f6; margin-bottom: 0.5rem; }
         .contact-item p { color: #cbd5e1; margin: 0; }
+        .contact-item a { 
+            color: #8b5cf6; 
+            text-decoration: none; 
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .contact-item a:hover { 
+            color: #ec4899; 
+            transform: translateX(3px);
+        }
+        .contact-item a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+            transition: width 0.3s ease;
+        }
+        .contact-item a:hover::after {
+            width: 100%;
+        }
+        
+        /* Ensure contact-info section is always visible */
+        .contact-info {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        
+        .contact-info .contact-item {
+            opacity: 1 !important;
+            visibility: visible !important;
+            transform: none !important;
+        }
         .cta-section { background: #1e293b; padding: 3rem; border-radius: 1rem; text-align: center; margin-top: 4rem; }
         .cta-section h2 { color: #3b82f6; margin-bottom: 1rem; }
         .cta-section p { color: #cbd5e1; margin-bottom: 2rem; font-size: 1.1rem; }
@@ -518,7 +553,7 @@
         }
         
         /* Ensure all elements are visible by default */
-        h1, h2, h3, .contact-form, .demo-section, .demo-option, .contact-info-item, .hero-content h1, .hero-content p {
+        h1, h2, h3, .contact-form, .demo-section, .demo-option, .contact-item, .hero-content h1, .hero-content p {
             opacity: 1 !important;
             visibility: visible !important;
             transform: translateY(0) translateX(0) scale(1) !important;
@@ -646,21 +681,19 @@
                 
                 <div class="contact-item">
                     <h3>Email</h3>
-                    <p>hello@kodefast.com</p>
-                    <p>support@kodefast.com</p>
+                    <p><a href="mailto:info@hiemma.ai">info@hiemma.ai</a></p>
                 </div>
                 
                 <div class="contact-item">
                     <h3>Phone</h3>
-                    <p>+1 (555) 123-4567</p>
-                    <p>Mon-Fri 9AM-6PM EST</p>
+                    <p><a href="tel:+16317291474">631-729-1474 Ext: 392</a></p>
+                    <p style="color: #64748b; font-size: 0.9rem;">Mon-Fri 9AM-6PM EST</p>
                 </div>
                 
                 <div class="contact-item">
                     <h3>Address</h3>
-                    <p>KodeFast Headquarters<br>
-                   123 Innovation Drive<br>
-                   Tech City, TC 12345</p>
+                    <p>200 Motor Parkway, Suite D 26<br>
+                   Hauppauge, NY 11788</p>
                 </div>
                 
                 <div class="contact-item">
@@ -670,8 +703,9 @@
                 
                 <div class="contact-item">
                     <h3>Social Media</h3>
-                    <p>Follow us on Twitter: @KodeFast</p>
-                    <p>Connect on LinkedIn: KodeFast</p>
+                    <p>Follow us on Twitter: <a href="https://x.com/Emma_byKodeFast" target="_blank">@Emma_byKodeFast</a></p>
+                    <p>Connect on LinkedIn: <a href="https://www.linkedin.com/company/emmaaibykodefast/" target="_blank">Emma AI by KodeFast</a></p>
+                    <p>Follow on Instagram: <a href="https://www.instagram.com/emmaaibykodefast/" target="_blank">@emmaaibykodefast</a></p>
                 </div>
             </div>
         </div>
@@ -819,7 +853,7 @@
 
             function handleScroll() {
                 // Show all elements that are near the viewport and haven't been shown yet
-                const allElements = document.querySelectorAll('h1, h2, h3, .contact-form, .demo-section, .demo-option, .contact-info-item, .hero-content h1, .hero-content p');
+                const allElements = document.querySelectorAll('h1, h2, h3, .contact-form, .demo-section, .demo-option, .contact-item, .hero-content h1, .hero-content p');
                 allElements.forEach(el => {
                     // Only show if not already shown and is near viewport
                     if (!el.getAttribute('data-shown') && isElementNearViewport(el)) {
@@ -837,7 +871,7 @@
 
             // Fallback: Show all elements after 1 second regardless of scroll
             setTimeout(() => {
-                const allElements = document.querySelectorAll('h1, h2, h3, .contact-form, .demo-section, .demo-option, .contact-info-item, .hero-content h1, .hero-content p');
+                const allElements = document.querySelectorAll('h1, h2, h3, .contact-form, .demo-section, .demo-option, .contact-item, .hero-content h1, .hero-content p');
                 allElements.forEach(el => {
                     showElement(el);
                 });
@@ -860,7 +894,7 @@
         });
 
         // Interactive hover effects
-        document.querySelectorAll('.demo-option, .contact-info-item').forEach(item => {
+        document.querySelectorAll('.demo-option, .contact-item').forEach(item => {
             item.addEventListener('mouseenter', function() {
                 gsap.to(this, { scale: 1.02, duration: 0.3, ease: "power2.out" });
             });

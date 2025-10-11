@@ -1511,6 +1511,131 @@ app.get('/api/resources/:id', async (req, res) => {
     }
 });
 
+// Update resource endpoint
+app.put('/api/resources/:id', authenticateToken, upload.fields([
+    { name: 'featured_image', maxCount: 1 },
+    { name: 'author_image', maxCount: 1 },
+    { name: 'gallery', maxCount: 10 }
+]), async (req, res) => {
+    try {
+        const { id } = req.params;
+        const {
+            title,
+            type,
+            excerpt,
+            content,
+            author,
+            industry_id,
+            tags,
+            meta_title,
+            meta_description,
+            meta_keywords,
+            status
+        } = req.body;
+
+        if (!title || !type || !content) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Title, type, and content are required' 
+            });
+        }
+
+        // Generate slug from title
+        const slug = title.toLowerCase()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-')
+            .trim('-');
+
+        // Extract plain text from content for reading time calculation
+        const contentPlain = content.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+        const readTime = Math.max(1, Math.ceil(contentPlain.split(' ').length / 200));
+
+        // Get existing resource data
+        const [existingRows] = await pool.execute('SELECT featured_image, author_image, gallery FROM resources WHERE id = ?', [id]);
+        if (existingRows.length === 0) {
+            return res.status(404).json({ success: false, error: 'Resource not found' });
+        }
+
+        const existing = existingRows[0];
+
+        // Handle image uploads - keep existing if no new ones provided
+        let featuredImagePath = existing.featured_image || '';
+        let authorImagePath = existing.author_image || '';
+        
+        // Safely parse gallery JSON
+        let galleryArray = [];
+        if (existing.gallery) {
+            try {
+                galleryArray = JSON.parse(existing.gallery);
+            } catch (e) {
+                galleryArray = [];
+            }
+        }
+
+        if (req.files && req.files.featured_image) {
+            const filePath = req.files.featured_image[0].path;
+            featuredImagePath = filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
+        }
+
+        if (req.files && req.files.author_image) {
+            const filePath = req.files.author_image[0].path;
+            authorImagePath = filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
+        }
+
+        if (req.files && req.files.gallery) {
+            galleryArray = req.files.gallery.map(file => {
+                const filePath = file.path;
+                return filePath.replace(process.env.UPLOAD_PATH || './uploads', '/uploads');
+            });
+        }
+
+        // Safely parse tags
+        let tagsArray = [];
+        if (tags) {
+            if (typeof tags === 'string') {
+                if (tags.trim() !== '') {
+                    try {
+                        tagsArray = JSON.parse(tags);
+                    } catch (e) {
+                        tagsArray = [];
+                    }
+                }
+            } else if (Array.isArray(tags)) {
+                tagsArray = tags;
+            }
+        }
+
+        // Handle industry_id - convert empty string to NULL
+        const industryId = industry_id && industry_id.trim() !== '' ? parseInt(industry_id) : null;
+
+        await pool.execute(`
+            UPDATE resources SET 
+                type = ?, title = ?, slug = ?, excerpt = ?, content = ?, author_name = ?, industry_id = ?, 
+                featured_image = ?, author_image = ?, gallery = ?, tags = ?, 
+                meta_title = ?, meta_description = ?, meta_keywords = ?, 
+                status = ?, read_time = ?, updated_at = NOW()
+            WHERE id = ?
+        `, [
+            type, title, slug, excerpt, content, author, industryId,
+            featuredImagePath, authorImagePath, JSON.stringify(galleryArray), JSON.stringify(tagsArray),
+            meta_title, meta_description, meta_keywords, status, readTime, id
+        ]);
+
+        res.json({ 
+            success: true, 
+            message: 'Resource updated successfully' 
+        });
+    } catch (error) {
+        console.error('Resource update error:', error);
+        res.status(500).json({ 
+            success: false,
+            error: 'Failed to update resource',
+            details: error.message 
+        });
+    }
+});
+
 // CMS-specific resource update endpoint - only accessible from CMS interface
 app.put('/api/cms/resources/:id', authenticateToken, upload.fields([
     { name: 'featured_image', maxCount: 1 },
@@ -2472,6 +2597,33 @@ app.delete('/api/blogs/:id', authenticateToken, async (req, res) => {
 // Test route
 app.get('/api/test', (req, res) => {
     res.json({ message: 'Server is running updated code', timestamp: new Date().toISOString() });
+});
+
+// Privacy Policy API endpoints
+app.get('/api/cms/privacy-policy', async (req, res) => {
+    try {
+        const { setupPrivacyPolicyAPI } = require('./cms/api/privacy-policy-api');
+        const api = new (require('./cms/api/privacy-policy-api')).PrivacyPolicyAPI();
+        const lastModified = req.query.lastModified;
+        const content = await api.getContent(lastModified);
+        res.json(content);
+    } catch (error) {
+        console.error('Error fetching privacy policy:', error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/cms/privacy-policy', async (req, res) => {
+    try {
+        const { setupPrivacyPolicyAPI } = require('./cms/api/privacy-policy-api');
+        const api = new (require('./cms/api/privacy-policy-api')).PrivacyPolicyAPI();
+        const updates = req.body;
+        const result = await api.updateContent(updates);
+        res.json(result);
+    } catch (error) {
+        console.error('Error updating privacy policy:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 // Use Cases API routes - removed duplicate, using the one above

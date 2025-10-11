@@ -2041,6 +2041,7 @@ class EmmaCMS {
             'case-studies': 'Case Studies',
             'use-cases': 'Use Cases',
             'industries': 'Industries Management',
+            'privacy-policy': 'Privacy Policy Management',
             'tags': 'Tags',
             'media': 'Media Library',
             'settings': 'Settings',
@@ -2075,6 +2076,20 @@ class EmmaCMS {
             case 'industries':
                 console.log('🏭 Loading industries...');
                 await this.loadIndustriesManagement();
+                break;
+            case 'privacy-policy':
+                console.log('🔒 Loading privacy policy...');
+                // Privacy policy loading is handled by the global function
+                if (typeof window.loadPrivacyPolicy === 'function') {
+                    window.loadPrivacyPolicy();
+                } else {
+                    console.log('⚠️ Privacy policy function not available yet, will retry...');
+                    setTimeout(() => {
+                        if (typeof window.loadPrivacyPolicy === 'function') {
+                            window.loadPrivacyPolicy();
+                        }
+                    }, 1000);
+                }
                 break;
             default:
                 console.log('⚠️ Unknown section:', sectionName);

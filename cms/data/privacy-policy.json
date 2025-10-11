@@ -1,0 +1,25 @@
+{
+  "lastModified": "2025-10-10T16:08:29.713Z",
+  "minimumAge": 18,
+  "introduction": {
+    "title": "Introduction",
+    "body": "For Emma (\"Emma\", \"we\", \"our\" or \"us\") it is vitally important that users (the \"users\") feel secure when using our AI-powered assistant platform."
+  },
+  "coverage": {
+    "title": "What this Privacy Policy covers",
+    "body": "This Privacy Policy (the \"Privacy Policy\"), together with our Terms & Conditions at <a href=\"/terms\" style=\"color: #60a5fa;\">emma.ai/terms</a> and Cookie Policy at <a href=\"/cookie-policy\" style=\"color: #60a5fa;\">emma.ai/cookie-policy</a>, explains:\n\n<ul style=\"color: #cbd5e1; margin-left: 1.5rem;\">\n    <li>What personal data we collect from you or that you provide to us</li>\n    <li>How we use your personal data</li>\n    <li>When we may share your data with third parties</li>\n    <li>Your rights concerning your personal data</li>\n</ul>\n\nPlease read this carefully to understand how Emma secures your data."
+  },
+  "globalCompliance": {
+    "title": "Global Compliance & Your Rights",
+    "body": "Emma operates globally. Your rights concerning personal data may vary depending on local laws, including \n                    <span class=\"compliance-badge\">GDPR</span>\n                    <span class=\"compliance-badge\">HIPAA</span>\n                    <span class=\"compliance-badge\">CCPA</span>\n                    or other applicable privacy regulations. Where specific legal rights apply in your region, Emma will comply accordingly."
+  },
+  "services": {
+    "title": "Emma's Services",
+    "body": "Emma is an AI-powered assistant designed to help organizations automate communication, scheduling, follow-ups, and other workflows. Emma operates via voice, chat, or API integrations and may connect with partner systems to deliver your requested services (\"Emma Services\").\n\nThis Privacy Policy describes how your data is processed when using Emma Services, the platform, or any related product features. Where certain processing activities relate only to a specific product, this will be clearly indicated.\n\nYou are not required to provide personal information to Emma. However, certain features, especially those involving scheduling, reminders, or AI-driven communication, rely on user data to function. Without this information, functionality may be limited, and the accuracy of AI-driven responses may be impacted."
+  },
+  "contactInfo": {
+    "title": "Contact Us",
+    "body": "If you have any questions about this Privacy Policy or Emma's data practices, please contact us at:\n\n<div style=\"background: rgba(30, 41, 59, 0.6); border-radius: 0.75rem; padding: 1.5rem; margin: 1rem 0;\">\n    <p style=\"margin: 0; color: #cbd5e1;\">\n        <strong>Email:</strong> <a href=\"mailto:privacy@kodefast.com\" style=\"color: #60a5fa;\">privacy@kodefast.com</a><br>\n        <strong>Website:</strong> <a href=\"https://kodefast.com\" style=\"color: #60a5fa;\">kodefast.com</a><br>\n        <strong>Address:</strong> 200 Motor Parkway, Suite D 26, Hauppauge, NY. 11788\n    </p>\n</div>"
+  },
+  "footerNote": "This Privacy Policy is effective as of the last modified date and may be updated periodically. \nWe will notify users of any material changes to this policy."
+}
