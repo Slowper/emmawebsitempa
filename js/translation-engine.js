@@ -1200,7 +1200,7 @@ class TranslationEngine {
             'Use Cases': 'حالات الاستخدام',
             'Real-world applications across industries': 'تطبيقات حقيقية عبر الصناعات',
             'Ready to Transform Your Industry?': 'هل أنت مستعد لتحويل عملياتك؟',
-            'Join thousands of organizations already using Emma': 'انضم إلى آلاف المنظمات التي تستخدم إيما بالفعل',
+            'Be among the first to experience the future of AI automation': 'كن من أوائل من يجرب مستقبل أتمتة الذكاء الاصطناعي',
             'Trusted & Certified': 'موثوق ومعتمد',
             'Emma AI': 'إيما للذكاء الاصطناعي',
             'Product': 'المنتج',
@@ -1265,22 +1265,32 @@ class TranslationEngine {
         }
         
         if (currentLang === 'ar') {
-            // Arabic to English
-            const result = this.reverseWordMappings[text] || null;
-            console.log(`Arabic to English: "${text}" -> "${result}"`);
-            return result;
-        } else {
-            // English to Arabic - but we need to check if text is actually Arabic first
-            // If text contains Arabic characters, translate from Arabic to English
+            // Translating TO Arabic
+            // Check if the text is already in Arabic
             const hasArabic = /[\u0600-\u06FF]/.test(text);
             if (hasArabic) {
-                const result = this.reverseWordMappings[text] || null;
-                console.log(`Detected Arabic text, translating to English: "${text}" -> "${result}"`);
-                return result;
+                // Text is already in Arabic, return as-is
+                console.log(`Text already in Arabic: "${text}"`);
+                return text;
             } else {
+                // Text is in English, translate to Arabic
                 const result = wordMappings[text] || null;
                 console.log(`English to Arabic: "${text}" -> "${result}"`);
                 return result;
+            }
+        } else {
+            // Translating TO English (currentLang === 'en')
+            // Check if text contains Arabic characters
+            const hasArabic = /[\u0600-\u06FF]/.test(text);
+            if (hasArabic) {
+                // Text is in Arabic, translate to English
+                const result = this.reverseWordMappings[text] || null;
+                console.log(`Arabic to English: "${text}" -> "${result}"`);
+                return result;
+            } else {
+                // Text is already in English, return as-is (DON'T translate to Arabic!)
+                console.log(`Text already in English, keeping: "${text}"`);
+                return null; // Return null to indicate no translation needed
             }
         }
     }
@@ -1589,73 +1599,93 @@ class TranslationEngine {
     }
 
     translateFooterColumns(footer) {
+        // Check if footer.columns exists
+        if (!footer.columns) {
+            console.log('⚠️ Footer columns not found in translations, skipping...');
+            return;
+        }
+
         // Product column
         const productTitle = document.querySelector('.footer-column:nth-child(1) .column-title');
-        if (productTitle) {
+        if (productTitle && footer.columns.product && footer.columns.product.title) {
             productTitle.textContent = footer.columns.product.title;
             console.log('Translated product title:', footer.columns.product.title);
         }
         
-        const productLinks = document.querySelectorAll('.footer-column:nth-child(1) .footer-link');
-        const productKeys = ['features', 'pricing', 'integrations', 'api', 'security'];
-        productLinks.forEach((link, index) => {
-            if (productKeys[index]) {
-                const originalText = link.textContent;
-                link.textContent = footer.columns.product[productKeys[index]];
-                console.log(`Translated product link: "${originalText}" -> "${link.textContent}"`);
-            }
-        });
+        if (footer.columns.product) {
+            const productLinks = document.querySelectorAll('.footer-column:nth-child(1) .footer-link');
+            const productKeys = ['features', 'pricing', 'integrations', 'api', 'security'];
+            productLinks.forEach((link, index) => {
+                if (productKeys[index] && footer.columns.product[productKeys[index]]) {
+                    const originalText = link.textContent;
+                    link.textContent = footer.columns.product[productKeys[index]];
+                    console.log(`Translated product link: "${originalText}" -> "${link.textContent}"`);
+                }
+            });
+        }
 
         // Company column
-        const companyTitle = document.querySelector('.footer-column:nth-child(2) .column-title');
-        if (companyTitle) {
-            companyTitle.textContent = footer.columns.company.title;
-            console.log('Translated company title:', footer.columns.company.title);
+        if (footer.columns.company) {
+            const companyTitle = document.querySelector('.footer-column:nth-child(2) .column-title');
+            if (companyTitle && footer.columns.company.title) {
+                companyTitle.textContent = footer.columns.company.title;
+                console.log('Translated company title:', footer.columns.company.title);
+            }
         }
         
-        const companyLinks = document.querySelectorAll('.footer-column:nth-child(2) .footer-link');
-        const companyKeys = ['about_us', 'careers', 'blog', 'press', 'partners'];
-        companyLinks.forEach((link, index) => {
-            if (companyKeys[index]) {
-                const originalText = link.textContent;
-                link.textContent = footer.columns.company[companyKeys[index]];
-                console.log(`Translated company link: "${originalText}" -> "${link.textContent}"`);
-            }
-        });
+        if (footer.columns.company) {
+            const companyLinks = document.querySelectorAll('.footer-column:nth-child(2) .footer-link');
+            const companyKeys = ['about_us', 'careers', 'blog', 'press', 'partners'];
+            companyLinks.forEach((link, index) => {
+                if (companyKeys[index] && footer.columns.company[companyKeys[index]]) {
+                    const originalText = link.textContent;
+                    link.textContent = footer.columns.company[companyKeys[index]];
+                    console.log(`Translated company link: "${originalText}" -> "${link.textContent}"`);
+                }
+            });
+        }
 
         // Support column
-        const supportTitle = document.querySelector('.footer-column:nth-child(3) .column-title');
-        if (supportTitle) {
-            supportTitle.textContent = footer.columns.support.title;
-            console.log('Translated support title:', footer.columns.support.title);
+        if (footer.columns.support) {
+            const supportTitle = document.querySelector('.footer-column:nth-child(3) .column-title');
+            if (supportTitle && footer.columns.support.title) {
+                supportTitle.textContent = footer.columns.support.title;
+                console.log('Translated support title:', footer.columns.support.title);
+            }
         }
         
-        const supportLinks = document.querySelectorAll('.footer-column:nth-child(3) .footer-link');
-        const supportKeys = ['help_center', 'contact_us', 'system_status', 'documentation', 'community'];
-        supportLinks.forEach((link, index) => {
-            if (supportKeys[index]) {
-                const originalText = link.textContent;
-                link.textContent = footer.columns.support[supportKeys[index]];
-                console.log(`Translated support link: "${originalText}" -> "${link.textContent}"`);
-            }
-        });
+        if (footer.columns.support) {
+            const supportLinks = document.querySelectorAll('.footer-column:nth-child(3) .footer-link');
+            const supportKeys = ['help_center', 'contact_us', 'system_status', 'documentation', 'community'];
+            supportLinks.forEach((link, index) => {
+                if (supportKeys[index] && footer.columns.support[supportKeys[index]]) {
+                    const originalText = link.textContent;
+                    link.textContent = footer.columns.support[supportKeys[index]];
+                    console.log(`Translated support link: "${originalText}" -> "${link.textContent}"`);
+                }
+            });
+        }
 
         // Legal column
-        const legalTitle = document.querySelector('.footer-column:nth-child(4) .column-title');
-        if (legalTitle) {
-            legalTitle.textContent = footer.columns.legal.title;
-            console.log('Translated legal title:', footer.columns.legal.title);
+        if (footer.columns.legal) {
+            const legalTitle = document.querySelector('.footer-column:nth-child(4) .column-title');
+            if (legalTitle && footer.columns.legal.title) {
+                legalTitle.textContent = footer.columns.legal.title;
+                console.log('Translated legal title:', footer.columns.legal.title);
+            }
         }
         
-        const legalLinks = document.querySelectorAll('.footer-column:nth-child(4) .footer-link');
-        const legalKeys = ['privacy_policy', 'terms_of_service', 'cookie_policy', 'accessibility'];
-        legalLinks.forEach((link, index) => {
-            if (legalKeys[index]) {
-                const originalText = link.textContent;
-                link.textContent = footer.columns.legal[legalKeys[index]];
-                console.log(`Translated legal link: "${originalText}" -> "${link.textContent}"`);
-            }
-        });
+        if (footer.columns.legal) {
+            const legalLinks = document.querySelectorAll('.footer-column:nth-child(4) .footer-link');
+            const legalKeys = ['privacy_policy', 'terms_of_service', 'cookie_policy', 'accessibility'];
+            legalLinks.forEach((link, index) => {
+                if (legalKeys[index] && footer.columns.legal[legalKeys[index]]) {
+                    const originalText = link.textContent;
+                    link.textContent = footer.columns.legal[legalKeys[index]];
+                    console.log(`Translated legal link: "${originalText}" -> "${link.textContent}"`);
+                }
+            });
+        }
     }
 
     translateFooterNewsletter(footer) {
@@ -1928,7 +1958,17 @@ class TranslationEngine {
 
     getNestedTranslation(obj, path) {
         return path.split('.').reduce((current, key) => {
-            return current && current[key] !== undefined ? current[key] : null;
+            if (current === null || current === undefined) return null;
+            
+            // Handle array notation like cards[0], cards[1], etc.
+            if (key.includes('[') && key.includes(']')) {
+                const arrayName = key.split('[')[0];
+                const index = parseInt(key.split('[')[1].split(']')[0]);
+                return current[arrayName] && current[arrayName][index] !== undefined ? current[arrayName][index] : null;
+            }
+            
+            // Handle regular dot notation
+            return current[key] !== undefined ? current[key] : null;
         }, obj);
     }
 

@@ -415,3 +415,4 @@ document.addEventListener('DOMContentLoaded', function() {
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = PrivacyPolicyCMS;
 }
+

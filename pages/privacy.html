@@ -202,28 +202,6 @@
             font-size: 0.9rem;
         }
         
-        .cms-updatable {
-            position: relative;
-        }
-        
-        .cms-updatable::after {
-            content: 'CMS Editable';
-            position: absolute;
-            top: -0.5rem;
-            right: -0.5rem;
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.7rem;
-            font-weight: 500;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .cms-updatable:hover::after {
-            opacity: 1;
-        }
         
         @media (max-width: 768px) {
             .privacy-container {
@@ -281,7 +259,7 @@
         </div>
 
         <!-- Introduction -->
-        <div class="content-section cms-updatable" data-cms-section="introduction">
+        <div class="content-section">
             <h2 class="section-title">Introduction</h2>
             <p class="content-text">
                 For Emma ("Emma", "we", "our" or "us") it is vitally important that users (the "users") feel secure when using our AI-powered assistant platform.
@@ -289,7 +267,7 @@
         </div>
 
         <!-- What This Policy Covers -->
-        <div class="content-section cms-updatable" data-cms-section="coverage">
+        <div class="content-section">
             <h2 class="section-title">What this Privacy Policy covers</h2>
             <p class="content-text">
                 This Privacy Policy (the "Privacy Policy"), together with our Terms & Conditions at <a href="/terms" style="color: #60a5fa;">emma.ai/terms</a> and Cookie Policy at <a href="/cookie-policy" style="color: #60a5fa;">emma.ai/cookie-policy</a>, explains:
@@ -306,7 +284,7 @@
         </div>
 
         <!-- Global Compliance -->
-        <div class="content-section cms-updatable" data-cms-section="globalCompliance">
+        <div class="content-section">
             <h2 class="section-title">Global Compliance & Your Rights</h2>
             <p class="content-text">
                 Emma operates globally. Your rights concerning personal data may vary depending on local laws, including 
@@ -318,7 +296,7 @@
         </div>
 
         <!-- Emma's Services -->
-        <div class="content-section cms-updatable" data-cms-section="services">
+        <div class="content-section">
             <h2 class="section-title">Emma's Services</h2>
             <div class="service-description">
                 <h4>AI-Powered Assistant Platform</h4>
@@ -337,7 +315,7 @@
         </div>
 
         <!-- Contact Information -->
-        <div class="content-section cms-updatable" data-cms-section="contactInfo">
+        <div class="content-section">
             <h2 class="section-title">Contact Us</h2>
             <p class="content-text">
                 If you have any questions about this Privacy Policy or Emma's data practices, please contact us at:
@@ -392,20 +370,6 @@
                 });
             }
 
-            // CMS Integration - Make sections editable
-            const cmsSections = document.querySelectorAll('.cms-updatable');
-            cmsSections.forEach(section => {
-                section.setAttribute('data-cms-editable', 'true');
-                section.setAttribute('data-cms-type', 'content');
-            });
-
-            // Age requirement configuration (CMS editable)
-            const minimumAgeElement = document.getElementById('minimumAge');
-            if (minimumAgeElement) {
-                minimumAgeElement.setAttribute('data-cms-editable', 'true');
-                minimumAgeElement.setAttribute('data-cms-type', 'text');
-                minimumAgeElement.setAttribute('data-cms-field', 'minimum_age');
-            }
 
             // Smooth scroll for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -521,30 +485,163 @@
         const printStyles = document.createElement('style');
         printStyles.textContent = `
             @media print {
-                body { background: white !important; color: black !important; }
+                @page {
+                    size: A4;
+                    margin: 0.5in;
+                }
+                
+                * {
+                    -webkit-print-color-adjust: exact !important;
+                    color-adjust: exact !important;
+                }
+                
+                body { 
+                    background: white !important; 
+                    color: black !important;
+                    font-size: 10px !important;
+                    line-height: 1.2 !important;
+                }
+                
                 .privacy-container { 
                     background: white !important; 
-                    border: 1px solid #ccc !important;
+                    border: none !important;
                     box-shadow: none !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    max-width: none !important;
                 }
+                
+                .privacy-header {
+                    margin-bottom: 0.5rem !important;
+                    padding-bottom: 0.5rem !important;
+                }
+                
                 .privacy-title { 
+                    font-size: 18px !important;
+                    margin-bottom: 0.25rem !important;
                     background: black !important; 
                     -webkit-text-fill-color: black !important;
                 }
-                .section-title { color: black !important; }
-                .content-text { color: black !important; }
+                
+                .last-modified {
+                    font-size: 8px !important;
+                    margin-bottom: 0.25rem !important;
+                }
+                
                 .warning-box { 
                     background: #fef2f2 !important; 
                     border: 1px solid #fecaca !important;
+                    padding: 0.5rem !important;
+                    margin: 0.25rem 0 !important;
+                    page-break-inside: avoid;
                 }
-                .warning-box h3 { color: #dc2626 !important; }
-                .warning-box p { color: #991b1b !important; }
+                
+                .warning-box h3 { 
+                    color: #dc2626 !important; 
+                    font-size: 10px !important;
+                    margin: 0 0 0.25rem 1rem !important;
+                }
+                
+                .warning-box p { 
+                    color: #991b1b !important; 
+                    font-size: 8px !important;
+                    margin: 0 0 0 1rem !important;
+                }
+                
+                .age-requirement {
+                    background: #f0f9ff !important;
+                    border: 1px solid #bae6fd !important;
+                    padding: 0.5rem !important;
+                    margin: 0.25rem 0 !important;
+                    text-align: center;
+                }
+                
+                .age-requirement p {
+                    font-size: 9px !important;
+                    margin: 0 !important;
+                }
+                
+                .content-section {
+                    margin-bottom: 0.75rem !important;
+                }
+                
+                .section-title { 
+                    color: black !important; 
+                    font-size: 12px !important;
+                    margin-bottom: 0.25rem !important;
+                    padding-bottom: 0.125rem !important;
+                }
+                
+                .content-text { 
+                    color: black !important; 
+                    font-size: 9px !important;
+                    line-height: 1.3 !important;
+                    margin-bottom: 0.5rem !important;
+                }
+                
+                .service-description {
+                    background: #f8f9fa !important;
+                    border-left: 3px solid #007bff !important;
+                    padding: 0.5rem !important;
+                    margin: 0.25rem 0 !important;
+                }
+                
+                .service-description h4 {
+                    color: black !important;
+                    font-size: 10px !important;
+                    margin: 0 0 0.25rem 0 !important;
+                }
+                
+                .service-description p {
+                    font-size: 8px !important;
+                    margin: 0 !important;
+                }
+                
                 .compliance-badge { 
                     background: #f0f9ff !important; 
                     color: #0369a1 !important; 
                     border: 1px solid #bae6fd !important;
+                    padding: 0.125rem 0.25rem !important;
+                    font-size: 7px !important;
+                    margin: 0.125rem !important;
                 }
-                button { display: none !important; }
+                
+                .footer-note {
+                    background: #f8f9fa !important;
+                    border: 1px solid #dee2e6 !important;
+                    padding: 0.5rem !important;
+                    margin-top: 0.5rem !important;
+                }
+                
+                .footer-note p {
+                    font-size: 8px !important;
+                    margin: 0 !important;
+                }
+                
+                ul {
+                    margin: 0.25rem 0 !important;
+                    padding-left: 1rem !important;
+                }
+                
+                li {
+                    font-size: 8px !important;
+                    margin-bottom: 0.125rem !important;
+                }
+                
+                a {
+                    color: #007bff !important;
+                    text-decoration: underline !important;
+                }
+                
+                button { 
+                    display: none !important; 
+                }
+                
+                /* Hide header and footer placeholders */
+                #header-placeholder,
+                #footer-placeholder {
+                    display: none !important;
+                }
             }
         `;
         document.head.appendChild(printStyles);

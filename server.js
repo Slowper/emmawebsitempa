@@ -1108,14 +1108,15 @@ app.get('/api/resources', async (req, res) => {
         const { type, status, limit, sort, order } = req.query;
         
         let query = `
-            SELECT r.id, r.type, r.title, r.excerpt, r.content, r.author_name as author, r.tags, r.status, 
-                   r.created_at, r.updated_at, r.featured_image as image_url, r.author_image as authorImage, 
-                   r.gallery, r.industry_id, r.meta_title, r.meta_description, r.meta_keywords, 
-                   r.read_time, r.slug, r.view_count, i.name as industry_name
-            FROM resources r
-            LEFT JOIN industries i ON r.industry_id = i.id
-        `;
-        
+        SELECT r.id, r.type, r.title, r.excerpt, r.content, r.author_name as author, r.tags, r.status,
+               r.created_at, r.updated_at, r.featured_image as image_url, r.author_image as authorImage, 
+               r.gallery, r.industry_id, r.meta_title, r.meta_description, r.meta_keywords, 
+               r.read_time, r.slug, r.view_count, i.name as industry_name,
+               r.title_ar, r.excerpt_ar, r.content_ar, r.meta_title_ar, r.meta_description_ar,
+               r.translation_cached_at
+        FROM resources r
+        LEFT JOIN industries i ON r.industry_id = i.id
+    `;
         const conditions = [];
         const params = [];
         
@@ -1804,7 +1805,29 @@ app.get('/api/industries', async (req, res) => {
         console.log('🏢 Fetching industries...');
         const [rows] = await pool.execute('SELECT * FROM industries WHERE is_active = 1 ORDER BY name');
         console.log('🏢 Industries found:', rows.length);
-        res.json({ industries: rows });
+        
+        // Add Arabic translations for industry names
+        const industriesWithTranslations = rows.map(industry => {
+            const industryTranslations = {
+                'Banking & Finance': 'الخدمات المصرفية والمالية',
+                'Customer Service': 'خدمة العملاء',
+                'Education': 'التعليم',
+                'Government': 'الحكومة',
+                'Healthcare': 'الرعاية الصحية',
+                'Manufacturing': 'التصنيع',
+                'Non-Profit': 'المنظمات غير الربحية',
+                'Recruitment': 'التوظيف',
+                'Retail': 'التجارة بالتجزئة',
+                'Technology': 'التكنولوجيا'
+            };
+            
+            return {
+                ...industry,
+                name_ar: industryTranslations[industry.name] || industry.name
+            };
+        });
+        
+        res.json({ industries: industriesWithTranslations });
     } catch (error) {
         console.error('❌ Error fetching industries:', error);
         res.status(500).json({ error: 'Failed to fetch industries' });
@@ -2114,6 +2137,396 @@ app.get('/api/notifications/unsubscribe/:token', async (req, res) => {
         });
     }
 });
+
+
+// ============================================================================
+// TRANSLATION API ENDPOINTS - Added for Arabic Translation Support
+// ============================================================================
+
+// Translation API - Simple text translation using MyMemory API
+app.post('/api/translate', async (req, res) => {
+    try {
+        const { text, targetLang = 'ar', sourceLang = 'en' } = req.body;
+        
+        if (!text || !text.trim()) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Text is required for translation' 
+            });
+        }
+        
+        console.log(`🌐 Translation request: ${sourceLang} → ${targetLang}, length: ${text.length}`);
+        
+        // Use MyMemory Translation API (free, no API key required)
+        try {
+            const https = require('https');
+            const encodedText = encodeURIComponent(text);
+            const apiUrl = `https://api.mymemory.translated.net/get?q=${encodedText}&langpair=${sourceLang}|${targetLang}`;
+            
+            const translationResponse = await new Promise((resolve, reject) => {
+                https.get(apiUrl, (apiRes) => {
+                    let data = '';
+                    apiRes.on('data', chunk => data += chunk);
+                    apiRes.on('end', () => {
+                        try {
+                            resolve(JSON.parse(data));
+                        } catch (e) {
+                            reject(e);
+                        }
+                    });
+                }).on('error', reject);
+            });
+            
+            if (translationResponse.responseStatus === 200 && translationResponse.responseData) {
+                const translatedText = translationResponse.responseData.translatedText;
+                console.log(`✅ Translated: "${text.substring(0, 30)}..." → "${translatedText.substring(0, 30)}..."`);
+                
+                res.json({
+                    success: true,
+                    translatedText: translatedText,
+                    sourceLang: sourceLang,
+                    targetLang: targetLang,
+                    fallback: false
+                });
+            } else {
+                throw new Error('Translation API returned invalid response');
+            }
+        } catch (apiError) {
+            console.error('⚠️ Translation API error, using fallback:', apiError.message);
+            // Fallback: return original text
+            res.json({
+                success: true,
+                translatedText: text,
+                sourceLang: sourceLang,
+                targetLang: targetLang,
+                fallback: true
+            });
+        }
+        
+    } catch (error) {
+        console.error('❌ Translation endpoint error:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Translation request failed'
+        });
+    }
+});
+
+// Batch translation API using MyMemory API
+app.post('/api/translate/batch', async (req, res) => {
+    try {
+        const { texts, targetLang = 'ar', sourceLang = 'en' } = req.body;
+        
+        if (!texts || !Array.isArray(texts) || texts.length === 0) {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Texts array is required' 
+            });
+        }
+        
+        console.log(`📦 Batch translation: ${texts.length} texts`);
+        
+        // Translate each text using MyMemory API
+        const https = require('https');
+        const translations = [];
+        
+        for (const text of texts) {
+            if (!text || !text.trim()) {
+                translations.push(text);
+                continue;
+            }
+            
+            try {
+                const encodedText = encodeURIComponent(text);
+                const apiUrl = `https://api.mymemory.translated.net/get?q=${encodedText}&langpair=${sourceLang}|${targetLang}`;
+                
+                const translationResponse = await new Promise((resolve, reject) => {
+                    https.get(apiUrl, (apiRes) => {
+                        let data = '';
+                        apiRes.on('data', chunk => data += chunk);
+                        apiRes.on('end', () => {
+                            try {
+                                resolve(JSON.parse(data));
+                            } catch (e) {
+                                reject(e);
+                            }
+                        });
+                    }).on('error', reject);
+                });
+                
+                if (translationResponse.responseStatus === 200 && translationResponse.responseData) {
+                    translations.push(translationResponse.responseData.translatedText);
+                } else {
+                    translations.push(text); // Fallback to original
+                }
+                
+                // Small delay to avoid rate limiting (max 100 requests/day for free tier)
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+            } catch (apiError) {
+                console.error(`⚠️ Translation error for text "${text.substring(0, 20)}...":`, apiError.message);
+                translations.push(text); // Fallback to original
+            }
+        }
+        
+        console.log(`✅ Batch translated ${translations.length} texts`);
+        
+        res.json({
+            success: true,
+            translations: translations,
+            fallback: false
+        });
+        
+    } catch (error) {
+        console.error('❌ Batch translation error:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Batch translation failed'
+        });
+    }
+});
+
+// Translate and cache a specific resource
+app.post('/api/resources/:id/translate', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { targetLang = 'ar' } = req.body;
+        
+        console.log(`🔄 Translating resource #${id} to ${targetLang}...`);
+        
+        // Fetch the resource
+        const [rows] = await pool.execute(
+            'SELECT id, title, excerpt, content, meta_title, meta_description, title_ar, excerpt_ar, content_ar FROM resources WHERE id = ?',
+            [id]
+        );
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ 
+                success: false, 
+                error: 'Resource not found' 
+            });
+        }
+        
+        const resource = rows[0];
+        
+        // Check if already translated
+        if (resource.title_ar && resource.excerpt_ar) {
+            console.log(`✅ Resource #${id} already translated`);
+            return res.json({
+                success: true,
+                cached: true,
+                translation: {
+                    title_ar: resource.title_ar,
+                    excerpt_ar: resource.excerpt_ar,
+                    content_ar: resource.content_ar,
+                    meta_title_ar: resource.meta_title_ar,
+                    meta_description_ar: resource.meta_description_ar
+                }
+            });
+        }
+        
+        // Translate content using MyMemory API
+        const https = require('https');
+        
+        const translateText = async (text) => {
+            if (!text || !text.trim()) return text;
+            
+            try {
+                const encodedText = encodeURIComponent(text);
+                const apiUrl = `https://api.mymemory.translated.net/get?q=${encodedText}&langpair=en|ar`;
+                
+                const translationResponse = await new Promise((resolve, reject) => {
+                    https.get(apiUrl, (apiRes) => {
+                        let data = '';
+                        apiRes.on('data', chunk => data += chunk);
+                        apiRes.on('end', () => {
+                            try {
+                                resolve(JSON.parse(data));
+                            } catch (e) {
+                                reject(e);
+                            }
+                        });
+                    }).on('error', reject);
+                });
+                
+                if (translationResponse.responseStatus === 200 && translationResponse.responseData) {
+                    return translationResponse.responseData.translatedText;
+                }
+                return text; // Fallback
+            } catch (error) {
+                console.error('Translation error:', error.message);
+                return text; // Fallback
+            }
+        };
+        
+        // Translate all fields
+        console.log(`🌐 Translating resource #${id}...`);
+        const title_ar = await translateText(resource.title);
+        await new Promise(resolve => setTimeout(resolve, 100)); // Rate limit delay
+        
+        const excerpt_ar = await translateText(resource.excerpt || '');
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // For content, translate first 500 chars to avoid API limits
+        const contentPreview = resource.content ? resource.content.substring(0, 500) : '';
+        const content_ar = await translateText(contentPreview);
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const meta_title_ar = await translateText(resource.meta_title || resource.title);
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const meta_description_ar = await translateText(resource.meta_description || resource.excerpt || '');
+        
+        console.log(`✅ Translation complete for resource #${id}`);
+        console.log(`   Title: "${resource.title}" → "${title_ar}"`);
+        
+        // Cache translation in database
+        await pool.execute(`
+            UPDATE resources 
+            SET title_ar = ?, excerpt_ar = ?, content_ar = ?, meta_title_ar = ?, meta_description_ar = ?, translation_cached_at = NOW()
+            WHERE id = ?
+        `, [title_ar, excerpt_ar, content_ar, meta_title_ar, meta_description_ar, id]);
+        
+        console.log(`✅ Translation cached for resource #${id}`);
+        
+        res.json({
+            success: true,
+            cached: false,
+            translation: {
+                title_ar, excerpt_ar, content_ar, meta_title_ar, meta_description_ar
+            }
+        });
+        
+    } catch (error) {
+        console.error('❌ Resource translation error:', error);
+        res.status(500).json({ 
+            success: false, 
+            error: 'Failed to translate resource'
+        });
+    }
+});
+
+// Get cached translation
+app.get('/api/resources/:id/translation/:lang', async (req, res) => {
+    try {
+        const { id, lang } = req.params;
+        
+        if (lang !== 'ar') {
+            return res.status(400).json({ 
+                success: false, 
+                error: 'Only Arabic translations supported' 
+            });
+        }
+        
+        const [rows] = await pool.execute(
+            'SELECT title_ar, excerpt_ar, content_ar, meta_title_ar, meta_description_ar, translation_cached_at FROM resources WHERE id = ?',
+            [id]
+        );
+        
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'Resource not found' });
+        }
+        
+        const resource = rows[0];
+        
+        res.json({
+            success: true,
+            hasTranslation: !!resource.title_ar,
+            translation: {
+                title_ar: resource.title_ar,
+                excerpt_ar: resource.excerpt_ar,
+                content_ar: resource.content_ar,
+                meta_title_ar: resource.meta_title_ar,
+                meta_description_ar: resource.meta_description_ar,
+                cached_at: resource.translation_cached_at
+            }
+        });
+        
+    } catch (error) {
+        console.error('❌ Get translation error:', error);
+        res.status(500).json({ success: false, error: 'Failed to retrieve translation' });
+    }
+});
+
+// Database migration endpoint
+app.post('/api/admin/migrate-translation-columns', async (req, res) => {
+    try {
+        console.log('🚀 Starting database migration...');
+        
+        const [columns] = await pool.execute(`
+            SELECT COLUMN_NAME 
+            FROM INFORMATION_SCHEMA.COLUMNS 
+            WHERE TABLE_SCHEMA = DATABASE() 
+            AND TABLE_NAME = 'resources' 
+            AND COLUMN_NAME IN ('title_ar', 'excerpt_ar', 'content_ar', 'meta_title_ar', 'meta_description_ar', 'translation_cached_at')
+        `);
+        
+        if (columns.length === 6) {
+            return res.json({
+                success: true,
+                message: 'All columns already exist',
+                columnsExist: true
+            });
+        }
+        
+        const columnsToAdd = [
+            { name: 'title_ar', definition: 'TEXT NULL' },
+            { name: 'excerpt_ar', definition: 'TEXT NULL' },
+            { name: 'content_ar', definition: 'LONGTEXT NULL' },
+            { name: 'meta_title_ar', definition: 'VARCHAR(200) NULL' },
+            { name: 'meta_description_ar', definition: 'TEXT NULL' },
+            { name: 'translation_cached_at', definition: 'TIMESTAMP NULL' }
+        ];
+        
+        const results = [];
+        
+        for (const column of columnsToAdd) {
+            const exists = columns.some(c => c.COLUMN_NAME === column.name);
+            
+            if (!exists) {
+                try {
+                    await pool.execute(`ALTER TABLE resources ADD COLUMN ${column.name} ${column.definition}`);
+                    results.push({ column: column.name, status: 'added' });
+                    console.log(`✅ Added: ${column.name}`);
+                } catch (error) {
+                    if (error.code === 'ER_DUP_FIELDNAME') {
+                        results.push({ column: column.name, status: 'already_exists' });
+                    } else {
+                        throw error;
+                    }
+                }
+            }
+        }
+        
+        // Add index
+        try {
+            await pool.execute(`ALTER TABLE resources ADD INDEX idx_translation_cache (translation_cached_at)`);
+            results.push({ index: 'idx_translation_cache', status: 'added' });
+        } catch (error) {
+            if (error.code === 'ER_DUP_KEYNAME') {
+                results.push({ index: 'idx_translation_cache', status: 'exists' });
+            }
+        }
+        
+        res.json({
+            success: true,
+            message: 'Migration completed',
+            results: results
+        });
+        
+    } catch (error) {
+        console.error('❌ Migration failed:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Migration failed',
+            details: error.message
+        });
+    }
+});
+
+// ============================================================================
+// END OF TRANSLATION ENDPOINTS
+// ============================================================================
 
 // Authentication routes
 app.get('/api/auth/verify', authenticateToken, (req, res) => {
@@ -3167,6 +3580,10 @@ app.get('/contact', (req, res) => {
 
 app.get('/schedule-demo', (req, res) => {
     res.sendFile(path.join(__dirname, 'pages', 'schedule-demo.html'));
+});
+
+app.get('/privacy', (req, res) => {
+    res.sendFile(path.join(__dirname, 'pages', 'privacy.html'));
 });
 
 // Enhanced Resource Routes with SEO-friendly URLs
@@ -4379,6 +4796,18 @@ async function initializeEmailNotificationsTable() {
         console.error('❌ Error initializing email notifications table:', error.message);
     }
 }
+
+// 404 Catch-all route - must be last route before server start
+app.get('*', (req, res) => {
+    console.log(`❌ 404 - Page not found: ${req.url}`);
+    res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+});
+
+// Catch-all for other HTTP methods (POST, PUT, DELETE, etc.)
+app.all('*', (req, res) => {
+    console.log(`❌ 404 - Method ${req.method} not found: ${req.url}`);
+    res.status(404).sendFile(path.join(__dirname, 'pages', '404.html'));
+});
 
 // Start server (database initialization skipped for MPA-only mode)
 app.listen(PORT, async () => {

@@ -1754,25 +1754,25 @@
         </div>
         <div class="hero-content">
             <div class="hero-text">
-                <h1>Resources</h1>
-                <p>Explore insights, case studies, and best practices for AI automation across industries</p>
+                <h1 data-translate="resources.page_title">Resources</h1>
+                <p data-translate="resources.page_description">Explore insights, case studies, and best practices for AI automation across industries</p>
             </div>
             <div class="hero-stats">
                 <div class="stat-item">
                     <div class="stat-number" id="total-resources">7</div>
-                    <div class="stat-label">Total Resources</div>
+                    <div class="stat-label" data-translate="resources.stats.total">Total Resources</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" id="blogs-count">5</div>
-                    <div class="stat-label">Blogs</div>
+                    <div class="stat-label" data-translate="resources.categories.blogs">Blogs</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" id="case-studies-count">1</div>
-                    <div class="stat-label">Case Studies</div>
+                    <div class="stat-label" data-translate="resources.categories.case_studies">Case Studies</div>
                 </div>
                 <div class="stat-item">
                     <div class="stat-number" id="use-cases-count">1</div>
-                    <div class="stat-label">Use Cases</div>
+                    <div class="stat-label" data-translate="resources.categories.use_cases">Use Cases</div>
                 </div>
             </div>
         </div>
@@ -1782,20 +1782,20 @@
     <div class="filters-section">
         <!-- Content Type Filter -->
         <div class="resource-type-filter">
-            <h3 class="filter-section-title">Filter by Resource Type</h3>
+            <h3 class="filter-section-title" data-translate="resources.filters.filter_by_type">Filter by Resource Type</h3>
             <div class="filter-tabs">
-                <button class="filter-tab active" onclick="filterByType('all')">All Resources</button>
-                <button class="filter-tab" onclick="filterByType('blog')">Blog Posts</button>
-                <button class="filter-tab" onclick="filterByType('case-study')">Case Studies</button>
-                <button class="filter-tab" onclick="filterByType('use-case')">Use Cases</button>
+                <button class="filter-tab active" data-translate="resources.filters.all_resources" onclick="filterByType('all')">All Resources</button>
+                <button class="filter-tab" data-translate="resources.categories.blogs" onclick="filterByType('blog')">Blog Posts</button>
+                <button class="filter-tab" data-translate="resources.categories.case_studies" onclick="filterByType('case-study')">Case Studies</button>
+                <button class="filter-tab" data-translate="resources.categories.use_cases" onclick="filterByType('use-case')">Use Cases</button>
             </div>
         </div>
 
         <!-- Industry Filter -->
         <div class="industry-filter">
-            <h3 class="filter-section-title">Filter by Industry</h3>
+            <h3 class="filter-section-title" data-translate="resources.filters.filter_by_industry">Filter by Industry</h3>
             <div class="industry-tags" id="industry-filters-container">
-                <span class="industry-tag active" onclick="filterByIndustry('all')">All Industries</span>
+                <span class="industry-tag active" data-translate="resources.filters.all_industries" onclick="filterByIndustry('all')">All Industries</span>
                 <!-- Dynamic industry filters will be loaded here -->
             </div>
         </div>
@@ -1808,7 +1808,7 @@
             <!-- Blog Posts Section -->
             <div class="content-section" id="blog-section" style="display: flex;">
                 <div class="content-section-header">
-                    <h2 class="content-section-title">Blog Posts</h2>
+                    <h2 class="content-section-title" data-translate="resources.categories.blogs">Blog Posts</h2>
                     <div class="content-section-nav">
                         <button class="content-nav-btn" onclick="scrollContent('blog', 'left')">
                             <i class="fas fa-chevron-left"></i>
@@ -1828,7 +1828,7 @@
             <!-- Case Studies Section -->
             <div class="content-section" id="case-studies-section" style="display: flex;">
                 <div class="content-section-header">
-                    <h2 class="content-section-title">Case Studies</h2>
+                    <h2 class="content-section-title" data-translate="resources.categories.case_studies">Case Studies</h2>
                     <div class="content-section-nav">
                         <button class="content-nav-btn" onclick="scrollContent('case-studies', 'left')">
                             <i class="fas fa-chevron-left"></i>
@@ -1848,7 +1848,7 @@
             <!-- Use Cases Section -->
             <div class="content-section" id="use-cases-section" style="display: flex;">
                 <div class="content-section-header">
-                    <h2 class="content-section-title">Use Cases</h2>
+                    <h2 class="content-section-title" data-translate="resources.categories.use_cases">Use Cases</h2>
                     <div class="content-section-nav">
                         <button class="content-nav-btn" onclick="scrollContent('use-cases', 'left')">
                             <i class="fas fa-chevron-left"></i>
@@ -1868,19 +1868,18 @@
             <!-- All Resources Section -->
             <div class="content-section" id="all-resources-section" style="display: flex;">
                 <div class="content-section-header">
-                    <h2 class="content-section-title">All Resources</h2>
+                    <h2 class="content-section-title" data-translate="resources.filters.all_resources">All Resources</h2>
                 </div>
                 <div class="resources-grid" id="resources-grid">
-                    <!-- Loading state -->
                     <div class="loading-state" id="loading-state">
                         <div class="loading-spinner"></div>
-                        <p>Loading resources...</p>
+                        <p data-translate="resources.loading_state.loading">Loading resources...</p>
                     </div>
                     
                     <!-- Empty state -->
                     <div class="empty-state" id="empty-state" style="display: none;">
-                        <h3>No resources found</h3>
-                        <p>Check back later for new content.</p>
+                        <h3 data-translate="resources.empty_state.title">No resources found</h3>
+                        <p data-translate="resources.empty_state.description">Check back later for new content.</p>
                     </div>
                 </div>
             </div>
@@ -1899,6 +1898,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     
+    <!-- Translation API and Managers -->
+    <script src="/js/translation-api.js"></script>
+    <script src="/js/resources-translation.js"></script>
+
     <!-- Translation Engine -->
     <script src="/js/translations.js"></script>
     <script src="/js/language-manager.js"></script>
@@ -2066,7 +2069,12 @@
                     industries.forEach(industry => {
                         const industryTag = document.createElement('span');
                         industryTag.className = 'industry-tag';
-                        industryTag.textContent = industry.name;
+                        
+                        // Use Arabic name if available and language is Arabic
+                        const currentLang = window.languageManager?.getCurrentLanguage() || 'en';
+                        const displayName = (currentLang === 'ar' && industry.name_ar) ? industry.name_ar : industry.name;
+                        
+                        industryTag.textContent = displayName;
                         industryTag.onclick = () => filterByIndustry(industry.name.toLowerCase(), industryTag);
                         container.appendChild(industryTag);
                     });
@@ -2153,11 +2161,23 @@
                 });
                 
                 allResources = uniqueResources;
-                
+
+                // Apply translations if in Arabic mode
+                const currentLang = window.languageManager?.getCurrentLanguage() || 'en';
+                if (currentLang === 'ar' && window.resourcesTranslationManager) {
+                    console.log('🌍 Arabic mode detected, translating resources...');
+                    try {
+                        allResources = await window.resourcesTranslationManager.translateResources(allResources);
+                    } catch (error) {
+                        console.error('Translation failed, using English:', error);
+                    }
+                }
+
                 // Initialize filtered resources with all resources by default
                 filteredResources = [...allResources];
                 console.log('✅ Initialized filteredResources with all resources:', filteredResources.length);
-                
+
+
                 // Separate blog posts and other resources
                 blogPosts = allResources.filter(resource => resource.type === 'blog');
                 otherResources = allResources.filter(resource => resource.type !== 'blog');
@@ -2300,6 +2320,7 @@
         function createContentCard(resource, type) {
             const card = document.createElement('div');
             card.className = 'content-card';
+            card.setAttribute('data-resource-id', resource.id);
             
             // Format date
             const date = resource.date || resource.created_at || new Date().toISOString();
@@ -2312,6 +2333,10 @@
             // Get author info
             const author = resource.author || resource.author_name || 'Emma AI Team';
             
+            // Use translated content if available
+            const title = resource.displayTitle || resource.title || 'Untitled';
+            const excerpt = resource.displayExcerpt || resource.excerpt || resource.description || 'No description available.';
+            
             // Create link based on type
             let linkUrl = '#';
             if (type === 'blog') {
@@ -2323,16 +2348,16 @@
             }
             
             const cardHTML = `
-                <div class="content-card-header">
-                    <h3 class="content-card-title">${resource.title || 'Untitled'}</h3>
-                    <span class="content-card-date">${formattedDate}</span>
-                </div>
-                <p class="content-card-excerpt">${(resource.excerpt || resource.description || 'No description available.').substring(0, 100)}${(resource.excerpt || resource.description || '').length > 100 ? '...' : ''}</p>
-                <div class="content-card-footer">
-                    <span class="content-card-author">By ${author}</span>
-                    <a href="${linkUrl}" class="content-card-link">Read More →</a>
-                </div>
-            `;
+            <div class="content-card-header">
+                <h3 class="content-card-title resource-title">${title}</h3>
+                <span class="content-card-date">${formattedDate}</span>
+            </div>
+            <p class="content-card-excerpt resource-excerpt">${excerpt.substring(0, 100)}${excerpt.length > 100 ? '...' : ''}</p>
+            <div class="content-card-footer">
+                <span class="content-card-author"><span data-translate="resources.card.by">By</span> ${author}</span>
+                <a href="${linkUrl}" class="content-card-link"><span data-translate="resources.actions.read_more">Read More</span> →</a>
+            </div>
+        `;
             
             card.innerHTML = cardHTML;
             return card;
@@ -2623,6 +2648,7 @@
             
             const card = document.createElement('div');
             card.className = 'resource-card';
+            card.setAttribute('data-resource-id', resource.id);
             card.setAttribute('data-category', resource.type);
             card.setAttribute('data-industry', resource.industry || 'all');
             
@@ -2693,6 +2719,10 @@
                 type: resource.type
             });
             
+            // Use translated content if available
+            const resourceTitle = resource.displayTitle || resource.title || 'Untitled';
+            const resourceExcerpt = resource.displayExcerpt || resource.excerpt || resource.description || 'No description available.';
+            
             // Get the correct image URL with fallback to existing images
             let imageUrl = resource.image_url || resource.featured_image || resource.image;
             
@@ -2727,8 +2757,8 @@
                 </div>
                 <div class="resource-content">
                     <div class="resource-category">${config.category}</div>
-                    <h3 class="resource-title">${resource.title || 'Untitled'}</h3>
-                    <p class="resource-excerpt">${(resource.excerpt || resource.description || 'No description available.').substring(0, 150)}${(resource.excerpt || resource.description || '').length > 150 ? '...' : ''}</p>
+                    <h3 class="resource-title">${resourceTitle}</h3>
+                    <p class="resource-excerpt">${resourceExcerpt.substring(0, 150)}${resourceExcerpt.length > 150 ? '...' : ''}</p>
                     <div class="resource-meta">
                         <div class="author-info">
                             <div class="author-avatar">
@@ -2768,6 +2798,40 @@
             return card;
         }
 
+        // Listen for language changes and re-translate resources
+        window.addEventListener('languageChanged', async function(event) {
+            const newLang = event.detail.language;
+            console.log('🌍 Language changed to:', newLang, 'on resources page');
+            
+            if (newLang === 'ar' && allResources.length > 0) {
+                console.log('🔄 Translating resources to Arabic...');
+                
+                if (window.resourcesTranslationManager) {
+                    try {
+                        // Translate all resources
+                        const translatedResources = await window.resourcesTranslationManager.translateResources(allResources);
+                        
+                        // Update the global arrays
+                        allResources = translatedResources;
+                        
+                        // Re-filter with translated content
+                        filterResources();
+                        
+                        console.log('✅ Resources translated and displayed');
+                    } catch (error) {
+                        console.error('❌ Translation failed:', error);
+                    }
+                }
+            } else if (newLang === 'en') {
+                // Reload resources to get original English content
+                console.log('🔄 Switching back to English...');
+                await loadResources();
+            }
+            
+            // Reload industries to update language
+            console.log('🔄 Reloading industries for language:', newLang);
+            await loadIndustries();
+        });
         // Initialize on DOM load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Resources page loaded successfully');
@@ -2888,11 +2952,7 @@
         gsap.registerPlugin(ScrollTrigger);
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Auto-update copyright year
-            const currentYearElement = document.getElementById('currentYear');
-            if (currentYearElement) {
-                currentYearElement.textContent = new Date().getFullYear();
-            }
+            // Copyright year is handled by load-components.js
 
             // Hero section animation
             gsap.timeline()
